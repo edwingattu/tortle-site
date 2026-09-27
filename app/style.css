@@ -67,6 +67,37 @@ button {
   padding: 28px 30px;
 }
 
+/* Top-right cluster: Areas -> Tiles -> User, pinned right of the map */
+.top-cluster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.map-topbar .header-counts {
+  align-items: center;
+  padding: 5px 8px;
+  background: rgba(248, 247, 242, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(21, 73, 60, 0.12);
+}
+
+.map-topbar .count-panel { padding: 0 5px; gap: 3px; }
+
+.map-topbar .count-box {
+  min-width: 30px;
+  height: 27px;
+  padding: 0 7px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.map-topbar .box-sublabel { display: none; }
+
+.map-topbar .count-divider { margin: 1px 2px; }
+
 .brand {
   color: var(--navy);
   font: 700 22px Manrope, sans-serif;
@@ -1437,6 +1468,11 @@ button {
 }
 
 #userPuck.dimmed { opacity: 0.3; }
+
+/* Memory tools live in the collapsed card: heading + capture row + gallery */
+.memory-block { margin-top: 12px; }
+
+.memory-heading h2 { font-size: 14px; }
 
 .tile-gallery .g-item { position: relative; }
 

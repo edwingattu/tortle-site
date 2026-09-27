@@ -854,6 +854,11 @@ function bindUi() {
   summaryToggle?.addEventListener('click', () => {
     setExpanded(!bottomCard?.classList.contains('expanded'));
   });
+  // Memory tools live inside the collapsed card: their taps/keys must act,
+  // never expand/collapse the sheet.
+  const memoryBlock = $('#memoryBlock');
+  memoryBlock?.addEventListener('click', (e) => e.stopPropagation());
+  memoryBlock?.addEventListener('keydown', (e) => e.stopPropagation());
   summaryToggle?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();

@@ -20,7 +20,36 @@
         <a href="#" class="brand" aria-label="Tortle home">
           <img class="brand-logo" src="app/brand/main-logo-800.png" alt="Tortle" height="46">
         </a>
-        <button class="icon-button" id="profileButton" type="button" aria-label="View profile">A</button>
+        <div class="top-cluster">
+          <div class="header-counts">
+            <div class="count-panel" aria-label="Areas">
+              <span class="panel-title">Areas</span>
+              <div class="count-boxes">
+                <div class="count-item">
+                  <div class="count-box activated" id="areasActivatedBox" aria-label="Activated areas">
+                    <b id="areasActivatedCount">0</b><span class="box-dot blue" aria-hidden="true"></span>
+                  </div>
+                  <span class="box-sublabel">Active</span>
+                </div>
+                <div class="count-item">
+                  <div class="count-box unlocked" id="areasUnlockedBox" aria-label="Unlocked areas">
+                    <b id="areasUnlockedCount">0</b><span class="box-dot green" aria-hidden="true"></span>
+                  </div>
+                  <span class="box-sublabel">Unlocked</span>
+                </div>
+              </div>
+            </div>
+            <span class="count-divider" aria-hidden="true"></span>
+            <div class="count-panel" aria-label="Tiles">
+              <span class="panel-title">Tiles</span>
+              <div class="count-box neutral" id="tilesUnlockedBox" aria-label="Tiles explored">
+                <b id="tilesUnlockedCount">0</b>
+              </div>
+              <span class="box-sublabel">Explored</span>
+            </div>
+          </div>
+          <button class="icon-button" id="profileButton" type="button" aria-label="View profile">A</button>
+        </div>
       </div>
 
       <div class="zoom-level" id="zoomLevel" aria-hidden="true">–</div>
@@ -56,33 +85,6 @@
                 <p class="area-name" id="areaName">Locating area…</p>
                 <p class="hex-line" id="hexLine">H3 · —</p>
               </div>
-              <div class="header-counts">
-                <div class="count-panel" aria-label="Areas">
-                  <span class="panel-title">Areas</span>
-                  <div class="count-boxes">
-                    <div class="count-item">
-                      <div class="count-box activated" id="areasActivatedBox" aria-label="Activated areas">
-                        <b id="areasActivatedCount">0</b><span class="box-dot blue" aria-hidden="true"></span>
-                      </div>
-                      <span class="box-sublabel">Active</span>
-                    </div>
-                    <div class="count-item">
-                      <div class="count-box unlocked" id="areasUnlockedBox" aria-label="Unlocked areas">
-                        <b id="areasUnlockedCount">0</b><span class="box-dot green" aria-hidden="true"></span>
-                      </div>
-                      <span class="box-sublabel">Unlocked</span>
-                    </div>
-                  </div>
-                </div>
-                <span class="count-divider" aria-hidden="true"></span>
-                <div class="count-panel" aria-label="Tiles">
-                  <span class="panel-title">Tiles</span>
-                  <div class="count-box neutral" id="tilesUnlockedBox" aria-label="Tiles explored">
-                    <b id="tilesUnlockedCount">0</b>
-                  </div>
-                  <span class="box-sublabel">Explored</span>
-                </div>
-              </div>
             </div>
             <div class="countdown-row" id="countdownRow">
               <span class="countdown-text" id="countdownText">Current Tile Unlocks in <b id="countdown">3:00</b></span>
@@ -90,6 +92,54 @@
             </div>
             <div class="progress-track" id="tileProgressTrack">
               <span id="tileProgressBar"></span>
+            </div>
+            <div class="memory-block" id="memoryBlock">
+              <div class="section-heading memory-heading">
+                <h2>Make a Memory <span class="outing-chip" id="outingBadge" hidden>Outing live</span></h2>
+              </div>
+              <div class="activity-choices">
+                <button class="activity-choice" data-capture="photo" type="button">
+                  <span class="choice-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg>
+                  </span>
+                  <b>Photo</b>
+                </button>
+                <button class="activity-choice" data-capture="voice" type="button">
+                  <span class="choice-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>
+                  </span>
+                  <b>Voice note</b>
+                </button>
+                <button class="activity-choice" data-capture="session" type="button">
+                  <span class="choice-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="1.8"/><path d="M13 8l-2 5 2 3v6M13 8l3 2 3 1M11 13l-3 2M13 16l3 2 1 4"/></svg>
+                  </span>
+                  <b>Outing</b>
+                </button>
+              </div>
+              <div class="capture-area" id="voiceCapture" hidden>
+                <div class="voice-bar">
+                  <div class="voice-wave" id="voiceWave"></div>
+                  <span class="voice-timer" id="voiceTimer">0:00</span>
+                </div>
+                <div class="capture-actions">
+                  <button class="capture-btn" id="voiceRec" type="button">● Record</button>
+                  <button class="capture-btn" id="voiceStop" type="button" hidden>■ Stop</button>
+                  <button class="capture-btn" id="voicePlay" type="button" hidden>Play</button>
+                  <button class="capture-btn primary" id="voiceSave" type="button" hidden>Save</button>
+                  <button class="capture-btn" id="voiceClose" type="button">Close</button>
+                </div>
+                <audio id="voiceAudio" hidden></audio>
+              </div>
+              <div class="gallery-bar" id="galleryBar" hidden>
+                <span class="gallery-count" id="galleryCount"></span>
+                <button class="gallery-select" id="gallerySelect" type="button">Select</button>
+              </div>
+              <div class="tile-gallery" id="tileGallery" hidden></div>
+              <div class="gallery-deletebar" id="galleryDeleteBar" hidden>
+                <button class="gallery-cancel" id="galleryDeleteCancel" type="button">Cancel</button>
+                <button class="gallery-delete" id="galleryDeleteConfirm" type="button">Delete</button>
+              </div>
             </div>
           </div>
         </div>
@@ -115,56 +165,6 @@
               <span>What is Tortle?</span>
               <span class="info-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
             </button>
-          </div>
-
-          <div class="section-block">
-            <div class="section-heading">
-              <h2>Make a Memory <span class="outing-chip" id="outingBadge" hidden>Outing live</span></h2>
-            </div>
-            <p class="section-subtitle">This tile can hold your precious memories. Personalise it.</p>
-            <div class="activity-choices">
-              <button class="activity-choice" data-capture="photo" type="button">
-                <span class="choice-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg>
-                </span>
-                <b>Photo</b>
-              </button>
-              <button class="activity-choice" data-capture="voice" type="button">
-                <span class="choice-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>
-                </span>
-                <b>Voice note</b>
-              </button>
-              <button class="activity-choice" data-capture="session" type="button">
-                <span class="choice-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="1.8"/><path d="M13 8l-2 5 2 3v6M13 8l3 2 3 1M11 13l-3 2M13 16l3 2 1 4"/></svg>
-                </span>
-                <b>Outing</b>
-              </button>
-            </div>
-            <div class="capture-area" id="voiceCapture" hidden>
-              <div class="voice-bar">
-                <div class="voice-wave" id="voiceWave"></div>
-                <span class="voice-timer" id="voiceTimer">0:00</span>
-              </div>
-              <div class="capture-actions">
-                <button class="capture-btn" id="voiceRec" type="button">● Record</button>
-                <button class="capture-btn" id="voiceStop" type="button" hidden>■ Stop</button>
-                <button class="capture-btn" id="voicePlay" type="button" hidden>Play</button>
-                <button class="capture-btn primary" id="voiceSave" type="button" hidden>Save</button>
-                <button class="capture-btn" id="voiceClose" type="button">Close</button>
-              </div>
-              <audio id="voiceAudio" hidden></audio>
-            </div>
-            <div class="gallery-bar" id="galleryBar" hidden>
-              <span class="gallery-count" id="galleryCount"></span>
-              <button class="gallery-select" id="gallerySelect" type="button">Select</button>
-            </div>
-            <div class="tile-gallery" id="tileGallery" hidden></div>
-            <div class="gallery-deletebar" id="galleryDeleteBar" hidden>
-              <button class="gallery-cancel" id="galleryDeleteCancel" type="button">Cancel</button>
-              <button class="gallery-delete" id="galleryDeleteConfirm" type="button">Delete</button>
-            </div>
           </div>
 
           <div class="section-block leaderboard-block">
