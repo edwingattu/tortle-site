@@ -1484,29 +1484,45 @@ button {
 .capture-rail .activity-choices {
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 8px;
+}
+
+/* Icon containers equal-sized; labels sit outside, below each button */
+.capture-rail .choice-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 64px;
+}
+
+.capture-rail .choice-item > b {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--ink);
 }
 
 .capture-rail .activity-choice {
-  flex-direction: column;
+  width: 44px;
+  height: 44px;
   aspect-ratio: auto;
-  align-items: center;
-  padding: 7px 8px;
-  gap: 4px;
-  border-radius: 11px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
 }
 
-.capture-rail .activity-choice b { font-size: 11px; }
-
 .capture-rail .choice-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
 }
 
 .capture-rail .choice-icon svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* Voice + gallery fill the collapsed card under the title row */

@@ -203,7 +203,7 @@ function updateCountdown(rec) {
   } else {
     const left = remainingMs(rec);
     const mmss = formatCountdown(left);
-    textEl.innerHTML = `Current Tile Unlocks in <b id="countdown">${mmss} mins</b>`;
+    textEl.innerHTML = `Current Tile Unlocks in <b id="countdown">${mmss}</b>`;
     iconEl.innerHTML = LOCK_SVG;
   }
 }
@@ -851,22 +851,8 @@ function bindUi() {
     summaryToggle?.setAttribute('aria-expanded', String(on));
     summaryToggle?.setAttribute('aria-label', on ? 'Collapse details' : 'Expand details');
   };
-  // Sheet opens/closes on swipe, never tap: a vertical swipe over 40px
-  // (steeper than horizontal) toggles. A scrolled detail list keeps its
-  // scroll — collapse yields only when already at the top.
-  let swipeX = null, swipeY = null;
-  bottomCard?.addEventListener('pointerdown', (e) => {
-    swipeX = e.clientX; swipeY = e.clientY;
-  });
-  bottomCard?.addEventListener('pointerup', (e) => {
-    if (swipeX == null || swipeY == null) return;
-    const dx = e.clientX - swipeX, dy = e.clientY - swipeY;
-    swipeX = swipeY = null;
-    if (Math.abs(dy) < 40 || Math.abs(dy) <= Math.abs(dx)) return;
-    if (dy < 0) { setExpanded(true); return; }
-    const dc = $('#detailContent');
-    if (bottomCard?.classList.contains('expanded') && dc && dc.scrollTop > 0 && dc.contains(e.target)) return;
-    setExpanded(false);
+  summaryToggle?.addEventListener('click', () => {
+    setExpanded(!bottomCard?.classList.contains('expanded'));
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
   // never expand/collapse the sheet.
@@ -1256,8 +1242,9 @@ function bindUi() {
           engine.startOuting();
           const here = mapView.getUserLocation();
           engine.dwell(cellAt(here.lat, here.lng), 0);
-          button.querySelector('b').textContent = 'End outing';
-          const sm = button.querySelector('small'); if (sm) sm.textContent = 'Close session and boost touched tiles';
+          // Label lives beside the button in .choice-item (not inside it).
+          const bl = button.closest('.choice-item')?.querySelector('b');
+          if (bl) bl.textContent = 'End outing';
           toast('Outing started. Tiles you enter now will all receive the Activity boost.');
           renderHud();
           return;
@@ -1397,8 +1384,8 @@ function bindUi() {
     if (captureType === 'session') {
       engine.endOuting();
       const outingBtn = document.querySelector('[data-capture="session"]');
-      outingBtn.querySelector('b').textContent = 'Start outing';
-      outingBtn.querySelector('small').textContent = 'Track multiple tiles live';
+      const ol = outingBtn.closest('.choice-item')?.querySelector('b');
+      if (ol) ol.textContent = 'Outing';
     }
     engine.logActivity({
       title,
