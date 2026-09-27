@@ -1,5 +1,5 @@
 // Tortle PWA — shell precache + network-first for HTML, network-only for tiles/supabase
-const CACHE = 'tortle-shell-v1';
+const CACHE = 'tortle-shell-v2';
 const SHELL = [
   '/',
   '/index.html',
