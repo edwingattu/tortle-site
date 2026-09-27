@@ -239,57 +239,30 @@ let lastTitleCell = undefined;
 function showTitleView(name) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
-  const message = $('#tileTitleMessage');
   const btn = $('#tileTitleSave');
   if (input) input.hidden = true;
-  if (message) message.hidden = true;
   if (display) { display.hidden = false; display.textContent = name || ''; }
-  if (btn) { btn.hidden = false; btn.textContent = 'Edit'; }
+  if (btn) btn.textContent = 'Edit';
 }
 function showTitleEdit(preset) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
-  const message = $('#tileTitleMessage');
   const btn = $('#tileTitleSave');
   if (display) display.hidden = true;
-  if (message) message.hidden = true;
   if (input) {
     input.hidden = false;
     if (preset !== null && preset !== undefined) input.value = preset;
   }
-  if (btn) { btn.hidden = false; btn.textContent = 'Save'; }
+  if (btn) btn.textContent = 'Save';
 }
-// Locked / Activated tiles: no naming — a static line in place of the field.
-function showTitleMessage(text) {
-  const input = $('#tileTitleInput');
-  const display = $('#tileTitleDisplay');
-  const message = $('#tileTitleMessage');
-  const btn = $('#tileTitleSave');
-  if (input) input.hidden = true;
-  if (display) display.hidden = true;
-  if (message) { message.hidden = false; message.textContent = text; }
-  if (btn) btn.hidden = true;
-}
-function renderTitleField(name, status) {
+function renderTitleField(name) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  const open = status === 'unlocked' || status === 'mastered';
-  if (selectedCell !== lastTitleCell) {
-    // New tile: drop any in-progress edit and render for the new tile.
-    lastTitleCell = selectedCell;
-    if (document.activeElement === input) input.blur();
-    if (!open) {
-      showTitleMessage(status === 'activated' ? "It's just a matter of Time.." : 'Activate Me..');
-    } else if (name) {
-      showTitleView(name);
-    } else {
-      showTitleEdit('');
-    }
-    return;
-  }
   if (document.activeElement === input) return;
-  if (!open) {
-    showTitleMessage(status === 'activated' ? "It's just a matter of Time.." : 'Activate Me..');
+  if (selectedCell !== lastTitleCell) {
+    lastTitleCell = selectedCell;
+    if (name) showTitleView(name);
+    else showTitleEdit('');
   } else if (name) {
     // Covers fresh saves and names arriving from another device.
     showTitleView(name);
@@ -812,7 +785,7 @@ function renderHud() {
   let hudStatus = 'unclaimed';
   try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
   updateCountdown(rec, hudStatus);
-  renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
+  renderTitleField(snap.store.tiles[selectedCell]?.name);
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);
