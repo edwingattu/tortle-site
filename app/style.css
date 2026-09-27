@@ -1499,10 +1499,17 @@ button {
   flex: none;
 }
 
+/* Title row: buttons left, tile info after them, arrow clears right */
+.city-header {
+  align-items: flex-start;
+  padding-right: 36px;
+}
+
 .city-header .title-stack {
-  margin-left: auto;
-  text-align: right;
-  align-items: flex-end;
+  margin-left: 0;
+  text-align: left;
+  align-items: flex-start;
+  min-width: 0;
 }
 
 .capture-rail .outing-chip { margin-left: 0; }
