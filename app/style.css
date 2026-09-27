@@ -77,12 +77,19 @@ button {
   gap: 7px;
 }
 
-.brand-mark {
+.brand-logo {
   display: block;
-  width: 28px;
-  height: 28px;
   object-fit: contain;
 }
+
+.map-topbar .brand-logo { height: 46px; width: auto; }
+
+.auth-brand {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.auth-brand .brand-logo { width: 168px; height: auto; }
 
 
 
