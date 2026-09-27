@@ -399,6 +399,16 @@ let gallerySig = null; // null = must rebuild ('' is a valid empty-tile signatur
 let galleryBuiltAt = 0;
 let deleteArmTimer = 0;
 const PLAY_BADGE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M7 4l13 8-13 8z"/></svg>';
+// Media failure trace: every unloadable item lands here with its requested
+// path. Read via console, or quote the sticky area-name toast which now
+// includes the failure count. Compare paths against Storage dashboard keys.
+const mediaErrors = [];
+function noteMediaError(id, path, stage) {
+  mediaErrors.push({ t: new Date().toISOString().slice(11, 19), id: String(id || '').slice(0, 8), path, stage });
+  if (mediaErrors.length > 20) mediaErrors.shift();
+  try { window.__tortleMediaErrors = mediaErrors.slice(); } catch {}
+  console.warn('[media] unloadable:', stage, path);
+}
 
 function exitGallerySelect() {
   gallerySelectMode = false;
@@ -489,7 +499,10 @@ async function renderTileGallery() {
         if (!p) continue;
         try {
           url = await signedUrl(p);
-        } catch {
+        } catch (e) {
+          // Signed-URL failures (bucket/policy) mean the whole tile is
+          // unloadable — trace the path so dashboard keys can be compared.
+          noteMediaError(a.id, p, `sign:${e?.message || e}`);
           continue;
         }
         if (my !== galleryToken || forCell !== selectedCell) return;
@@ -517,6 +530,10 @@ async function renderTileGallery() {
         el.preload = 'auto';
         el.muted = true;
         el.playsInline = true;
+        el.addEventListener('error', () => {
+          el.style.opacity = '0.25';
+          noteMediaError(id, url.split('#')[0].split('?')[0].slice(-64), 'video-load');
+        });
         const badge = document.createElement('span');
         badge.className = 'g-play';
         badge.innerHTML = PLAY_BADGE;
@@ -531,7 +548,10 @@ async function renderTileGallery() {
       }
       else {
         el = document.createElement('img'); el.alt = 'memory';
-        el.addEventListener('error', () => { el.style.opacity = '0.25'; });
+        el.addEventListener('error', () => {
+          el.style.opacity = '0.25';
+          noteMediaError(id, url.split('?')[0].slice(-64), 'img-load');
+        });
         el.src = url;
       }
       if (kind !== 'audio') el.className = 'g-thumb';
@@ -891,7 +911,7 @@ function bindUi() {
       diag = ` · base ${(snap.store.baseCell || '?').slice(0, 8)} · ${getLocationChoice() || 'no-choice'}` +
         (pull ? ` · cloud ${pull.cloudBase || 'none'}${pull.adoptedBase ? ' (adopted)' : ''}` : '');
     } catch {}
-    toastDiag(`${info.status} · H3 ${info.cell} · ${progressPercent(info.rec)}% dwell${diag} · tap toast to dismiss`);
+    toastDiag(`${info.status} · H3 ${info.cell} · ${progressPercent(info.rec)}% dwell${diag}${mediaErrors.length ? ` · mediaFails ${mediaErrors.length}` : ''} · tap toast to dismiss`);
   });
   // Tap-to-dismiss for the sticky diagnostic toast.
   $('#toast')?.addEventListener('click', () => {
