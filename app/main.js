@@ -215,6 +215,8 @@ let viewerIndex = 0;
 let navTimer = 0;
 // While the voice recorder is open the gallery stays hidden (returns on save/close)
 let voiceCaptureOpen = false;
+// Assigned in bindUi: closes the recorder, reports whether audio existed.
+let dismissVoiceCapture = null;
 const VOICE_SVG = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>';
 function mediaKind(a, url) {
   if (a.captureType === 'video') return 'video';
@@ -627,6 +629,13 @@ function isMasteredCell(store, cell) {
 }
 
 function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
+  // An open voice recorder dies on tile switch: capture is presence-only,
+  // so a recorder opened elsewhere must never survive onto a new tile.
+  try {
+    if (voiceCaptureOpen && typeof dismissVoiceCapture === 'function') {
+      if (dismissVoiceCapture()) toast('Tile changed — unsaved voice note discarded.');
+    }
+  } catch {}
   // A new tile always leaves gallery select mode (stale checkboxes die here).
   exitGallerySelect();
   gallerySig = null;
@@ -716,28 +725,26 @@ function renderHud() {
   mapView.paint(snap.store);
 }
 
-// Capture matrix: present on the tile → everything unmuted (active or unlocked).
-// Remote unlocked tile → Voice + gallery only. Remote active/unclaimed → all muted.
+// Capture matrix: presence-only, no exceptions. Every capture type arms
+// solely on the tile underfoot — remote tiles (any status) stay muted, so
+// no remote action can activate, boost, or write media to a tile.
 function updateCaptureAvailability(snap) {
   let present = false;
-  let status = 'unclaimed';
   try {
     if (mapView && selectedCell && !gateOpen) {
       const { lat, lng } = mapView.getUserLocation();
       present = cellAt(lat, lng) === selectedCell;
-      status = mapView.inspectCell(snap.store, selectedCell).status;
     }
   } catch {}
-  const voiceOpen = present || status === 'unlocked' || status === 'mastered';
   document.querySelectorAll('[data-capture="photo"], [data-capture="session"]').forEach((b) => {
     b.disabled = !present;
     b.classList.toggle('muted', !present);
     b.title = present ? '' : 'Go to this tile to capture';
   });
   document.querySelectorAll('[data-capture="voice"]').forEach((b) => {
-    b.disabled = !voiceOpen;
-    b.classList.toggle('muted', !voiceOpen);
-    b.title = voiceOpen ? '' : 'Unlock this tile to leave a voice note';
+    b.disabled = !present;
+    b.classList.toggle('muted', !present);
+    b.title = present ? '' : 'Go to this tile to leave a voice note';
   });
 }
 
@@ -1257,6 +1264,12 @@ function bindUi() {
   });
 
   $('#voiceClose')?.addEventListener('click', closeVoiceArea);
+  // selectCell calls this on every tile switch (presence-only capture).
+  dismissVoiceCapture = () => {
+    const had = !!(voiceBlob || (voiceRecorder && voiceRecorder.state !== 'inactive'));
+    closeVoiceArea();
+    return had;
+  };
 
   // Voice recorder: live mic wave while recording; decoded static wave +
   // clock playhead for preview playback (no live graph — fails silently).
@@ -1342,9 +1355,16 @@ function bindUi() {
   });
   $('#voiceSave')?.addEventListener('click', async () => {
     if (!voiceBlob) return;
-    // Voice belongs to the VIEWED tile (it can be left remotely on
-    // unlocked/mastered tiles) — not the live cell. Pins + gallery key on
-    // this cell, so the dot sits on the right tile.
+    // Presence re-validated at save: a recorder that outlived its tile
+    // (switch closed it already — this is the backstop) saves nothing.
+    try {
+      const here = mapView.getUserLocation();
+      if (cellAt(here.lat, here.lng) !== selectedCell) {
+        toast('Go to this tile to save a voice note.');
+        return;
+      }
+    } catch {}
+    // Voice belongs to the tile underfoot (== selected while recording).
     const cell = selectedCell;
     const c = cellCenter(cell);
     const { lat, lng } = { lat: c.lat, lng: c.lng };
