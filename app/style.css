@@ -562,29 +562,26 @@ button {
   text-overflow: ellipsis;
 }
 
-/* Collapsed-card tile info: name + H3 left, single state pill right. */
+/* Row 1: tile name + Save/Edit, clear of the chevron corner. */
 .tile-info-row {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   margin-bottom: 0;
-  /* Chevron occupies the card's top-right corner — keep the field short
+  /* Chevron occupies the card's top-right corner — keep the row short
    * of it so nothing runs underneath. */
   padding-right: 48px;
 }
 
-/* Row 3: tile info left, Save/Edit right, vertically centered.
- * Same 48px chevron clearance as Row 2, so the button lands directly
- * below the text field's right edge. */
+/* Row 2: status + info, full width below the chevron zone. */
 .tile-sub-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
-  padding-right: 48px;
 }
 
 .tile-sub-row .title-stack {
@@ -593,12 +590,6 @@ button {
 }
 
 .title-save[hidden] { display: none !important; }
-
-/* Row 3: tile info sits below with a clear gap under the pills. */
-.tile-sub-row {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
 
 /* Row 2: tile name field shares the row with the status block + button. */
 .tile-info-row input {
@@ -740,9 +731,9 @@ button {
 }
 
 .tile-state-pill.is-open {
-  background: #fff;
-  color: #1f8a4c;
-  border: 1px solid #1f8a4c;
+  background: #5cc581;
+  color: #fff;
+  border: 1px solid #5cc581;
 }
 
 /* Author display rules beat the UA [hidden] style — re-assert it so
