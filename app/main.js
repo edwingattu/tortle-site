@@ -212,7 +212,7 @@ function updateCountdown(rec, status) {
   const open = status === 'unlocked' || status === 'mastered' || isUnlocked(rec);
   if (open) {
     // Open tiles: the pill is the whole story — countdown + bar hide.
-    if (pill) { pill.hidden = false; pill.textContent = 'Open'; pill.className = 'tile-state-pill is-open'; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Unlocked'; pill.className = 'tile-state-pill is-open'; }
     if (row) row.hidden = true;
     if (track) track.hidden = true;
     return;
@@ -230,6 +230,25 @@ function updateCountdown(rec, status) {
   }
   const pct = progressPercent(rec);
   bar.style.width = `${pct}%`;
+}
+
+// Tile naming: the field follows the selected tile, never the 1s HUD
+// refresh. Refills only on tile switch (or when unfocused and diverged),
+// so typing is never clobbered while tracking ticks.
+let lastTitleCell = undefined;
+function syncTitleField(name) {
+  const input = $('#tileTitleInput');
+  if (!input) return;
+  try {
+    const city = areasDbg.regionLabel();
+    if (input.placeholder !== city) input.placeholder = city;
+  } catch {}
+  if (selectedCell !== lastTitleCell) {
+    lastTitleCell = selectedCell;
+    input.value = name || '';
+  } else if (document.activeElement !== input && (input.value || '') !== (name || '')) {
+    input.value = name || '';
+  }
 }
 
 // Per-tile media gallery: module scope so renderHud/selectCell can refresh it
@@ -746,6 +765,7 @@ function renderHud() {
   let hudStatus = 'unclaimed';
   try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
   updateCountdown(rec, hudStatus);
+  syncTitleField(snap.store.tiles[selectedCell]?.name);
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);
@@ -1452,6 +1472,39 @@ function bindUi() {
     $('#activityTitle').value = '';
     renderHud();
     toast('Activity saved — every touched tile received a boost.');
+  });
+
+  // Tile naming: Save writes the record (+ cloud outbox via flush); an
+  // empty save opens the Keep/Change dialog instead of saving a blank.
+  const saveTileTitle = (name) => {
+    if (!selectedCell) return;
+    engine.setTileName(selectedCell, name);
+    lastTitleCell = selectedCell;
+    const input = $('#tileTitleInput');
+    if (input) { input.value = name; input.blur(); }
+  };
+  $('#tileTitleSave')?.addEventListener('click', () => {
+    const input = $('#tileTitleInput');
+    if (!input || !selectedCell) return;
+    const val = (input.value || '').trim();
+    if (val) { saveTileTitle(val); return; }
+    const city = areasDbg.regionLabel();
+    const copy = $('#titleDialogCopy');
+    if (copy) copy.textContent = `You didn't give this tile a title. Keep "${city}" as the title, or change it to something more personal?`;
+    try { $('#titleDialog').showModal(); } catch {}
+  });
+  $('#tileTitleInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); $('#tileTitleSave')?.click(); }
+    e.stopPropagation();
+  });
+  $('#titleKeepBtn')?.addEventListener('click', () => {
+    try { $('#titleDialog').close(); } catch {}
+    saveTileTitle(areasDbg.regionLabel());
+  });
+  $('#titleChangeBtn')?.addEventListener('click', () => {
+    try { $('#titleDialog').close(); } catch {}
+    const input = $('#tileTitleInput');
+    if (input) { input.value = ''; input.focus(); }
   });
 }
 

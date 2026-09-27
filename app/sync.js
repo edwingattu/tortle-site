@@ -100,6 +100,23 @@ export async function flush(engine) {
       engine.markPushed(batch, sent);
     }
 
+    // 1b. Tile names (last-write-wins by name_updated_at). Only the name
+    // columns ride here — dwell/boost flow through the deltas RPC above.
+    // Failures stay queued in pendingNames and retry on the next flush.
+    const pendingNames = engine.getPendingNames();
+    const nameCells = Object.keys(pendingNames);
+    if (nameCells.length) {
+      const rows = nameCells.map((cell) => ({
+        user_id: uid,
+        h3_cell: cell,
+        name: pendingNames[cell].name,
+        name_updated_at: new Date(pendingNames[cell].updatedAt).toISOString(),
+      }));
+      const { error } = await supabase.from('tile_progress').upsert(rows, { onConflict: 'user_id,h3_cell' });
+      if (error) throw error;
+      engine.markNamesPushed(nameCells);
+    }
+
     // 2. Activities since cursor (upsert by id: retries are idempotent).
     // Sandbox-tagged activities never leave the device.
     const cursor = snap.store.activityCursor;
@@ -196,6 +213,10 @@ function seedMigration(engine) {
   if (snap.store.cloudLinked) return;
   for (const [cell, rec] of Object.entries(snap.store.tiles)) {
     snap.store.pending[cell] = { dwell: rec.dwellMs || 0, boost: rec.boostMs || 0 };
+    if (rec.name) {
+      snap.store.pendingNames = snap.store.pendingNames || {};
+      snap.store.pendingNames[cell] = { name: rec.name, updatedAt: rec.nameUpdatedAt || Date.now() };
+    }
   }
   snap.store.cloudLinked = true;
   engine.markPushed([]); // persist seed + flag

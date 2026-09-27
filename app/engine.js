@@ -150,6 +150,9 @@ function emptyStore() {
     // Cloud outbox: per-cell deltas not yet pushed (cleared only after the
     // server confirms). Survives reloads and crashes inside localStorage.
     pending: {},
+    // Tile-name outbox: {cell: {name, updatedAt}} not yet pushed. Names are
+    // last-write-wins by updatedAt (server column tile_progress.name).
+    pendingNames: {},
     // Sandbox ledger (joystick diagnostics): per-cell gains accrued while
     // sandboxMode was on. Persisted so a reload can't launder them into a
     // push — bootstrap rolls them back before any seed or upload.
@@ -408,9 +411,32 @@ export function createEngine(userId = null) {
       }
       emit();
     },
+    // Personal tile name: stored on the record, queued for cloud push.
+    // Last-write-wins across devices via nameUpdatedAt (see applyServerTiles).
+    setTileName(cell, name) {
+      if (!cell) return null;
+      const rec = ensureTile(store, cell);
+      rec.name = name;
+      rec.nameUpdatedAt = Date.now();
+      store.pendingNames = store.pendingNames || {};
+      store.pendingNames[cell] = { name, updatedAt: rec.nameUpdatedAt };
+      emit();
+      return rec;
+    },
+    getPendingNames() {
+      return store.pendingNames || {};
+    },
+    // Called after flush() confirms the name upsert.
+    markNamesPushed(cells) {
+      if (!store.pendingNames) return;
+      for (const cell of cells) delete store.pendingNames[cell];
+      emit();
+    },
     // Adopt server tile totals: fresh server numbers + our still-unsent
     // pending deltas (already reflected locally, so re-added, never lost).
     // Timestamps keep the earliest non-null; unlocks recompute from totals.
+    // Names merge last-write-wins by updatedAt — except our own unsent
+    // renames, which always win (they ride up on the next flush).
     applyServerTiles(rows) {
       const next = {};
       for (const r of rows) {
@@ -422,11 +448,23 @@ export function createEngine(userId = null) {
         const unlockStamps = [local?.unlockedAt, r.unlocked_at ? Date.parse(r.unlocked_at) : null].filter(
           (v) => v != null,
         );
+        let name = local?.name || null;
+        let nameUpdatedAt = local?.nameUpdatedAt || null;
+        const hasPendingName = !!(store.pendingNames && store.pendingNames[r.h3_cell]);
+        if (!hasPendingName && r.name) {
+          const srvTs = r.name_updated_at ? Date.parse(r.name_updated_at) : 0;
+          if (!name || (srvTs && srvTs > (nameUpdatedAt || 0))) {
+            name = r.name;
+            nameUpdatedAt = srvTs || nameUpdatedAt;
+          }
+        }
         next[r.h3_cell] = {
           dwellMs: (r.dwell_ms || 0) + p.dwell,
           boostMs: (r.boost_ms || 0) + p.boost,
           firstSeenAt: firstStamps.length ? Math.min(...firstStamps) : Date.now(),
           unlockedAt: unlockStamps.length ? Math.min(...unlockStamps) : null,
+          name,
+          nameUpdatedAt,
         };
         if (!next[r.h3_cell].unlockedAt && maybeUnlock(next[r.h3_cell])) {
           /* crossed via another device's deltas — stamped now */

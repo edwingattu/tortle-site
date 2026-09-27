@@ -24,6 +24,8 @@ create table if not exists public.tile_progress (
   first_seen_at timestamptz,
   unlocked_at timestamptz,
   updated_at timestamptz not null default now(),
+  name text,
+  name_updated_at timestamptz,
   primary key (user_id, h3_cell)
 );
 

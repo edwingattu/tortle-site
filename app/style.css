@@ -571,6 +571,85 @@ button {
   margin-bottom: 10px;
 }
 
+/* Tile naming: editable field + Save, above the tile info. */
+.title-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.title-row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  outline-color: #4c8fcf;
+}
+
+.title-row input::placeholder {
+  color: #9fb0c3;
+  font-weight: 600;
+}
+
+.title-save {
+  flex: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 16px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Persistent small-caps label over the state pill. */
+.tile-status-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  flex: none;
+}
+
+.status-label {
+  font: 700 9px "DM Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6e8278;
+  line-height: 1;
+}
+
+.title-dialog-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.title-dialog-btn {
+  flex: 1;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.title-dialog-btn.solid {
+  border: 0;
+  background: var(--navy);
+  color: #fff;
+}
+
+.title-dialog-btn.ghost {
+  border: 1px solid #cfd8de;
+  background: #fff;
+  color: var(--navy);
+}
+
 .tile-info-row .title-stack {
   min-width: 0;
   /* Don't grow: the pill clusters directly beside the tile info text

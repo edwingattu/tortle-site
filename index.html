@@ -113,8 +113,15 @@
         <div class="card-handle" aria-hidden="true"><span></span></div>
         <div class="map-summary" id="summaryToggle">
           <div class="summary-text">
+            <div class="title-row">
+              <input id="tileTitleInput" type="text" maxlength="50" placeholder="Hyderabad" autocomplete="off" autocapitalize="words" aria-label="Tile name">
+              <button class="title-save" id="tileTitleSave" type="button">Save</button>
+            </div>
             <div class="tile-info-row">
-              <span class="tile-state-pill is-locked" id="tileStatePill" hidden>Locked</span>
+              <div class="tile-status-block">
+                <span class="status-label">Tile Status</span>
+                <span class="tile-state-pill is-locked" id="tileStatePill" hidden>Locked</span>
+              </div>
               <div class="title-stack">
                 <p class="area-name" id="areaName">Locating area…</p>
                 <p class="hex-line" id="hexLine">H3 · —</p>
@@ -327,6 +334,17 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
     </form>
+  </dialog>
+
+  <dialog class="dialog" id="titleDialog" aria-labelledby="titleDialogHeading">
+    <div class="dialog-card">
+      <h2 id="titleDialogHeading">Name this tile?</h2>
+      <p class="dialog-copy" id="titleDialogCopy">You didn't give this tile a title. Keep the city name as the title, or change it to something more personal?</p>
+      <div class="title-dialog-actions">
+        <button class="title-dialog-btn ghost" id="titleChangeBtn" type="button">Change Name</button>
+        <button class="title-dialog-btn solid" id="titleKeepBtn" type="button">Keep Name</button>
+      </div>
+    </div>
   </dialog>
 
   <script type="module" src="app/main.js"></script>
