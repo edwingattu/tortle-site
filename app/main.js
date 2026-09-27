@@ -851,8 +851,22 @@ function bindUi() {
     summaryToggle?.setAttribute('aria-expanded', String(on));
     summaryToggle?.setAttribute('aria-label', on ? 'Collapse details' : 'Expand details');
   };
-  summaryToggle?.addEventListener('click', () => {
-    setExpanded(!bottomCard?.classList.contains('expanded'));
+  // Sheet opens/closes on swipe, never tap: a vertical swipe over 40px
+  // (steeper than horizontal) toggles. A scrolled detail list keeps its
+  // scroll — collapse yields only when already at the top.
+  let swipeX = null, swipeY = null;
+  bottomCard?.addEventListener('pointerdown', (e) => {
+    swipeX = e.clientX; swipeY = e.clientY;
+  });
+  bottomCard?.addEventListener('pointerup', (e) => {
+    if (swipeX == null || swipeY == null) return;
+    const dx = e.clientX - swipeX, dy = e.clientY - swipeY;
+    swipeX = swipeY = null;
+    if (Math.abs(dy) < 40 || Math.abs(dy) <= Math.abs(dx)) return;
+    if (dy < 0) { setExpanded(true); return; }
+    const dc = $('#detailContent');
+    if (bottomCard?.classList.contains('expanded') && dc && dc.scrollTop > 0 && dc.contains(e.target)) return;
+    setExpanded(false);
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
   // never expand/collapse the sheet.

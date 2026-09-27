@@ -1469,10 +1469,52 @@ button {
 
 #userPuck.dimmed { opacity: 0.3; }
 
-/* Memory tools live in the collapsed card: heading + capture row + gallery */
-.memory-block { margin-top: 12px; }
+/* Capture rail: compact buttons stacked right of the tile title */
+.capture-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex: none;
+  margin-left: auto;
+}
 
-.memory-heading h2 { font-size: 14px; }
+.capture-rail .outing-chip { margin-left: 0; }
+
+.capture-rail .activity-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.capture-rail .activity-choice {
+  flex-direction: row;
+  aspect-ratio: auto;
+  justify-content: flex-start;
+  min-width: 118px;
+  padding: 7px 10px;
+  gap: 7px;
+  border-radius: 11px;
+}
+
+.capture-rail .activity-choice b { font-size: 11px; }
+
+.capture-rail .choice-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+}
+
+.capture-rail .choice-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Voice + gallery fill the collapsed card under the title row */
+.memory-block { margin-top: 10px; }
+
+.memory-block .capture-area { margin-top: 0; }
+.memory-block .tile-gallery { margin-top: 10px; }
 
 .tile-gallery .g-item { position: relative; }
 
