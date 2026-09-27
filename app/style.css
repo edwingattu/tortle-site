@@ -566,7 +566,7 @@ button {
 .tile-info-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -600,6 +600,11 @@ button {
   color: #1f8a4c;
   border: 1px solid #1f8a4c;
 }
+
+/* Author display rules beat the UA [hidden] style — re-assert it so
+ * Open tiles truly hide the countdown row + progress track. */
+.countdown-row[hidden],
+.progress-track[hidden] { display: none !important; }
 
 .countdown-row {
   display: flex;

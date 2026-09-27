@@ -1022,12 +1022,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       if (cellResolution(cell) === CONFIG.h3Resolution) {
         const rec = store.tiles[cell];
         const neighborSet = unlockedNeighborSet(store);
-        let status = tileStatus(cell, store, neighborSet);
-        if (status === 'unclaimed' && areas.levelReady('area')) {
-          const areaStats = areas.getRollup(store).areaStats;
-          const aid = areas.areaOfHex(cell);
-          if (aid && areaStats.get(aid)?.status !== 'unclaimed') status = 'activated';
-        }
+        // Per-hex truth only: a tile is unlocked by its own progress,
+        // activated as a 1-ring neighbor of an opened tile, else locked.
+        // Area membership never promotes a hex — the Area tile itself
+        // activates via the rollup when a member opens.
+        const status = tileStatus(cell, store, neighborSet);
         return {
           cell,
           status,
