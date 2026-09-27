@@ -244,7 +244,7 @@ function showTitleView(name) {
   if (input) input.hidden = true;
   if (message) message.hidden = true;
   if (display) { display.hidden = false; display.textContent = name || ''; }
-  if (btn) { btn.hidden = false; btn.textContent = 'Edit'; }
+  if (btn) { btn.hidden = false; btn.textContent = 'Edit'; btn.classList.add('is-edit'); }
 }
 function showTitleEdit(preset) {
   const input = $('#tileTitleInput');
@@ -257,7 +257,7 @@ function showTitleEdit(preset) {
     input.hidden = false;
     if (preset !== null && preset !== undefined) input.value = preset;
   }
-  if (btn) { btn.hidden = false; btn.textContent = 'Save'; }
+  if (btn) { btn.hidden = false; btn.textContent = 'Save'; btn.classList.remove('is-edit'); }
 }
 function showTitleMessage(text) {
   const input = $('#tileTitleInput');

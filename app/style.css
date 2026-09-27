@@ -621,13 +621,19 @@ button {
 
 .title-save {
   flex: none;
-  border: 0;
+  border: 1px solid var(--navy);
   border-radius: 10px;
   padding: 9px 16px;
   background: var(--navy);
   color: #fff;
   font-size: 12px;
   font-weight: 800;
+}
+
+/* Edit variant: white button, navy border, navy text. */
+.title-save.is-edit {
+  background: #fff;
+  color: var(--navy);
 }
 
 /* Saved title: title font in place of the field. */
