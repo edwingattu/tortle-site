@@ -52,12 +52,12 @@ const mapView = createMap({
   // Every map gesture restarts the dot attention clock (browse mode only —
   // the map already dropped out of follow before this fires).
   onUserGesture: () => {
-    stopDotSequence();
+    interruptDotSequence(false);
     try { if (mapView && !mapView.isFollowing()) scheduleDotAttention(); } catch {}
   },
   // Dot tap centers the live location (same as recenter, silent).
   onUserDotTap: () => {
-    stopDotSequence();
+    interruptDotSequence(true);
     mapView.recenter();
     selectionPinned = false;
     try { selectCell(mapView.cellUnderUser(), { src: 'dottap' }); } catch {}
@@ -909,7 +909,7 @@ function bindUi() {
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
   $('#recenterButton').addEventListener('click', () => {
-    stopDotSequence();
+    interruptDotSequence(true);
     mapView.recenter();
     // Explicit "take me home": unpin and show the live tile's card.
     selectionPinned = false;
@@ -1438,10 +1438,14 @@ function bindUi() {
 const DOT_WAIT_MS = 15 * 1000;
 let dotSeq = 0;
 let dotTimer = 0;
-function stopDotSequence() {
+// Interrupt from anywhere in the sequence: timers die, anims clear, and the
+// dot jumps to its fade — 30% when browsed away, full view when back on the
+// live tile (recenter/dot-tap already restored follow underneath).
+function interruptDotSequence(toLive = false) {
   dotSeq++;
   clearTimeout(dotTimer);
   try { mapView.setPuckAnim(''); } catch {}
+  try { mapView.setPuckDimmed(!toLive); } catch {}
 }
 function scheduleDotAttention() {
   clearTimeout(dotTimer);
@@ -1669,7 +1673,7 @@ async function postGateSetup(region, opts = {}) {
   // Push the fresh grant/city base to the cloud NOW (don't wait 30s — a
   // quick close used to leave a stale cloud row behind).
   flush(engine).catch(() => {});
-  stopDotSequence();
+  interruptDotSequence(true);
 }
 /** Swap the active region's packs and repaint. Districts lazy-load on zoom. */
 let regionSwitching = false;
@@ -1691,7 +1695,7 @@ async function switchRegion(next) {
     const credit = $('#dataCredit');
     if (credit) credit.textContent = areasDbg.regionCredit();
     // New map context: restart the attention clock if still browsed.
-    stopDotSequence();
+    interruptDotSequence(false);
     try { if (!mapView.isFollowing()) scheduleDotAttention(); } catch {}
     console.log(`[region] switched to ${next}`);
   } finally {
