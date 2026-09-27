@@ -574,7 +574,9 @@ button {
   padding-right: 48px;
 }
 
-/* Row 3: tile info left, Save/Edit right, vertically centered. */
+/* Row 3: tile info left, Save/Edit right, vertically centered.
+ * Same 48px chevron clearance as Row 2, so the button lands directly
+ * below the text field's right edge. */
 .tile-sub-row {
   display: flex;
   align-items: center;
@@ -582,6 +584,7 @@ button {
   gap: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
+  padding-right: 48px;
 }
 
 .tile-sub-row .title-stack {
