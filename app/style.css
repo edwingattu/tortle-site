@@ -113,7 +113,7 @@ button {
   object-fit: contain;
 }
 
-.map-topbar .brand-logo { height: 46px; width: auto; }
+.map-topbar .brand-logo { height: 64px; width: auto; }
 
 .auth-brand {
   display: block;
@@ -167,12 +167,12 @@ button {
   flex-wrap: wrap;
 }
 
-/* Diagnostic readouts (V0 transient tuning). Top-right stack, in the slot
- * freed by the tracking pill. Superadmin gets both; admin gets zoom only. */
+/* Diagnostic readouts (V0 transient tuning). Top-left stack.
+ * Superadmin gets both; admin gets zoom only. */
 .zoom-level {
   position: absolute;
   z-index: 3;
-  right: 24px;
+  left: 24px;
   top: 88px;
   background: rgba(23, 54, 104, 0.85);
   color: #fff;
@@ -187,7 +187,7 @@ button {
 .tilt-level {
   position: absolute;
   z-index: 3;
-  right: 24px;
+  left: 24px;
   top: 118px;
   background: rgba(23, 54, 104, 0.85);
   color: #fff;
