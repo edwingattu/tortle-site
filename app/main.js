@@ -242,7 +242,7 @@ function showTitleView(name) {
   const btn = $('#tileTitleSave');
   if (input) input.hidden = true;
   if (display) { display.hidden = false; display.textContent = name || ''; }
-  if (btn) btn.textContent = 'Edit Title';
+  if (btn) btn.textContent = 'Edit';
 }
 function showTitleEdit(preset) {
   const input = $('#tileTitleInput');
@@ -258,10 +258,6 @@ function showTitleEdit(preset) {
 function renderTitleField(name) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  try {
-    const city = areasDbg.regionLabel();
-    if (input.placeholder !== city) input.placeholder = city;
-  } catch {}
   if (document.activeElement === input) return;
   if (selectedCell !== lastTitleCell) {
     lastTitleCell = selectedCell;

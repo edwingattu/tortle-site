@@ -568,17 +568,17 @@ button {
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
+  margin-bottom: 0;
+}
+
+/* Row 3: tile info sits below with a clear gap under the pills. */
+.tile-sub-row {
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
-/* Tile naming: editable field + Save, above the tile info. */
-.title-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.title-row input {
+/* Row 2: tile name field shares the row with the status block + button. */
+.tile-info-row input {
   flex: 1;
   min-width: 0;
   border: 1px solid var(--line);
@@ -591,7 +591,7 @@ button {
   outline-color: #4c8fcf;
 }
 
-.title-row input::placeholder {
+.tile-info-row input::placeholder {
   color: #9fb0c3;
   font-weight: 600;
 }
@@ -622,7 +622,7 @@ button {
 }
 
 .tile-title-display[hidden],
-.title-row input[hidden] { display: none !important; }
+.tile-info-row input[hidden] { display: none !important; }
 
 /* Persistent small-caps label over the state pill. */
 .tile-status-block {

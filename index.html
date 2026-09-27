@@ -113,16 +113,16 @@
         <div class="card-handle" aria-hidden="true"><span></span></div>
         <div class="map-summary" id="summaryToggle">
           <div class="summary-text">
-            <div class="title-row">
-              <input id="tileTitleInput" type="text" maxlength="50" placeholder="Hyderabad" autocomplete="off" autocapitalize="words" aria-label="Tile name">
-              <p class="tile-title-display" id="tileTitleDisplay" hidden></p>
-              <button class="title-save" id="tileTitleSave" type="button">Save</button>
-            </div>
             <div class="tile-info-row">
               <div class="tile-status-block">
                 <span class="status-label">Tile Status</span>
                 <span class="tile-state-pill is-locked" id="tileStatePill" hidden>Locked</span>
               </div>
+              <input id="tileTitleInput" type="text" maxlength="50" placeholder="Name Your Tile.." autocomplete="off" autocapitalize="words" aria-label="Tile name">
+              <p class="tile-title-display" id="tileTitleDisplay" hidden></p>
+              <button class="title-save" id="tileTitleSave" type="button">Save</button>
+            </div>
+            <div class="tile-sub-row">
               <div class="title-stack">
                 <p class="area-name" id="areaName">Locating area…</p>
                 <p class="hex-line" id="hexLine">H3 · —</p>
