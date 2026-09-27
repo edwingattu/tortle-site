@@ -562,6 +562,45 @@ button {
   text-overflow: ellipsis;
 }
 
+/* Collapsed-card tile info: name + H3 left, single state pill right. */
+.tile-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tile-info-row .title-stack {
+  min-width: 0;
+}
+
+.tile-state-pill {
+  flex: none;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.tile-state-pill[hidden] { display: none !important; }
+
+.tile-state-pill.is-locked {
+  background: #3a4b5e;
+  color: #fff;
+}
+
+.tile-state-pill.is-active {
+  background: #8fd0f2;
+  color: #3a4b5e;
+}
+
+.tile-state-pill.is-open {
+  background: #fff;
+  color: #1f8a4c;
+  border: 1px solid #1f8a4c;
+}
+
 .countdown-row {
   display: flex;
   align-items: center;

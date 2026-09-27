@@ -141,9 +141,7 @@ function smoothFix(coords) {
   return { lat, lng, weak: false };
 }
 
-// Summary card helpers: My City title, area name, live mm:ss countdown.
-const LOCK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-const UNLOCK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0"/><path d="M16 8V6a4 4 0 0 0-4-4"/></svg>';
+// Summary card helpers: tile info row, state pill, live mm:ss countdown.
 
 function formatCountdown(ms) {
   const totalSec = Math.ceil(ms / 1000);
@@ -185,36 +183,43 @@ function updateAreaName(cell = selectedCell) {
   if (hexEl) hexEl.textContent = `H3 · ${id}`;
 }
 
-function updateCountdown(rec) {
+function updateCountdown(rec, status) {
   const row = $('#countdownRow');
   const textEl = $('#countdownText');
-  const iconEl = $('#lockIcon');
   const track = $('#tileProgressTrack');
   const bar = $('#tileProgressBar');
-  if (!textEl || !iconEl || !bar) return;
+  const pill = $('#tileStatePill');
+  if (!textEl || !bar) return;
   // Gated (no location yet): neutral row, no default-tile countdown.
   if (gateOpen) {
     textEl.textContent = 'Share your location to begin';
-    iconEl.innerHTML = LOCK_SVG;
     bar.style.width = '0%';
-    if (track) track.classList.remove('unlocked');
-    if (row) row.classList.remove('unlocked');
+    if (track) { track.classList.remove('unlocked'); track.hidden = false; }
+    if (row) { row.classList.remove('unlocked'); row.hidden = false; }
+    if (pill) pill.hidden = true;
     return;
   }
-  const unlocked = isUnlocked(rec);
-  const pct = progressPercent(rec);
-  bar.style.width = `${pct}%`;
-  if (track) track.classList.toggle('unlocked', unlocked);
-  if (row) row.classList.toggle('unlocked', unlocked);
-  if (unlocked) {
-    textEl.textContent = 'Unlocked';
-    iconEl.innerHTML = UNLOCK_SVG;
-  } else {
+  const open = status === 'unlocked' || status === 'mastered' || isUnlocked(rec);
+  if (open) {
+    // Open tiles: the pill is the whole story — countdown + bar hide.
+    if (pill) { pill.hidden = false; pill.textContent = 'Open'; pill.className = 'tile-state-pill is-open'; }
+    if (row) row.hidden = true;
+    if (track) track.hidden = true;
+    return;
+  }
+  if (row) { row.classList.remove('unlocked'); row.hidden = false; }
+  if (track) { track.classList.remove('unlocked'); track.hidden = false; }
+  if (status === 'activated') {
+    if (pill) { pill.hidden = false; pill.textContent = 'Active'; pill.className = 'tile-state-pill is-active'; }
     const left = remainingMs(rec);
     const mmss = formatCountdown(left);
-    textEl.innerHTML = `Current Tile Unlocks in <b id="countdown">${mmss}</b>`;
-    iconEl.innerHTML = LOCK_SVG;
+    textEl.innerHTML = `This Tile Will Open in <b id="countdown">${mmss}</b>`;
+  } else {
+    if (pill) { pill.hidden = false; pill.textContent = 'Locked'; pill.className = 'tile-state-pill is-locked'; }
+    textEl.textContent = 'Pass Through this Tile to Activate it';
   }
+  const pct = progressPercent(rec);
+  bar.style.width = `${pct}%`;
 }
 
 // Per-tile media gallery: module scope so renderHud/selectCell can refresh it
@@ -657,7 +662,7 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
   const pct = progressPercent(info.rec);
   updateAreaName(cell);
   updateCityTitle();
-  updateCountdown(info.rec);
+  updateCountdown(info.rec, info.status);
   // Activity dots: only for tapped mastered tiles, fading over 60s.
   // Guarded so a pins failure can never break selection/boot.
   try {
@@ -728,7 +733,9 @@ function renderHud() {
   }
   updateCityTitle();
   updateAreaName(selectedCell);
-  updateCountdown(rec);
+  let hudStatus = 'unclaimed';
+  try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
+  updateCountdown(rec, hudStatus);
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);

@@ -113,9 +113,15 @@
         <div class="card-handle" aria-hidden="true"><span></span></div>
         <div class="map-summary" id="summaryToggle">
           <div class="summary-text">
+            <div class="tile-info-row">
+              <div class="title-stack">
+                <p class="area-name" id="areaName">Locating area…</p>
+                <p class="hex-line" id="hexLine">H3 · —</p>
+              </div>
+              <span class="tile-state-pill is-locked" id="tileStatePill" hidden>Locked</span>
+            </div>
             <div class="countdown-row" id="countdownRow">
               <span class="countdown-text" id="countdownText">Current Tile Unlocks in <b id="countdown">3:00</b></span>
-              <span class="lock-icon" id="lockIcon" aria-hidden="true"></span>
             </div>
             <div class="progress-track" id="tileProgressTrack">
               <span id="tileProgressBar"></span>
@@ -124,10 +130,6 @@
         </div>
 
         <div class="detail-content" id="detailContent">
-          <div class="title-stack detail-titles">
-            <p class="area-name" id="areaName">Locating area…</p>
-            <p class="hex-line" id="hexLine">H3 · —</p>
-          </div>
           <div class="memory-block" id="memoryBlock">
             <div class="capture-area" id="voiceCapture" hidden>
               <div class="voice-bar">
