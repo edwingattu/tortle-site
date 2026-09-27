@@ -144,7 +144,9 @@ function emptyStore() {
     // areas.js recomputes only when this moves (pan/zoom paints reuse).
     rev: 0,
     outing: null,
-    baseCell: cellAt(CONFIG.defaultCenter[1], CONFIG.defaultCenter[0]),
+    // Home tile: null until a real location lands (GPS grant or explicit
+    // city choice). There is no silent fallback — never a default street.
+    baseCell: null,
     // Cloud outbox: per-cell deltas not yet pushed (cleared only after the
     // server confirms). Survives reloads and crashes inside localStorage.
     pending: {},
@@ -234,6 +236,12 @@ export function createEngine(userId = null) {
       }
     }
     if (raw?.version === 1 && raw.tiles) store = { ...emptyStore(), ...raw };
+    // One-time purge: pre-kill stores were born on a silent fallback tile.
+    // That fallback is gone — nulling it forces the location gate instead
+    // of rolling the user back onto a street they never stood on.
+    try {
+      if (store.baseCell === cellAt(17.4375, 78.4867)) store.baseCell = null;
+    } catch {}
   } catch {
     /* first run */
   }
@@ -256,7 +264,7 @@ export function createEngine(userId = null) {
     const unlocked = Object.entries(store.tiles)
       .filter(([, rec]) => isUnlocked(rec))
       .map(([cell]) => cell);
-    const universe = coverageUniverse(store.baseCell);
+    const universe = store.baseCell ? coverageUniverse(store.baseCell) : [];
     const coverage = universe.length
       ? Math.round((unlocked.filter((c) => universe.includes(c)).length / universe.length) * 100)
       : 0;
@@ -502,17 +510,15 @@ export function createEngine(userId = null) {
       emit();
     },
     // Adopt the cloud profile row (last-write-wins), never regressing streak.
-    // Base is fill-only: a real local base is NEVER overwritten by the cloud
-    // row (stale/second-client rows used to plant the default back). The
-    // cloud base only fills in when this device has never been located.
+    // Base is fill-only and only fills a never-located device (null base):
+    // a real local base is NEVER overwritten by the cloud row.
     adoptProfile(prow) {
       if (!prow) return false;
       if ((prow.streak_days || 0) > store.streakDays) store.streakDays = prow.streak_days;
       if (prow.last_active_date && (store.lastActiveDate || '') < prow.last_active_date) {
         store.lastActiveDate = prow.last_active_date;
       }
-      const dflt = cellAt(CONFIG.defaultCenter[1], CONFIG.defaultCenter[0]);
-      const adoptedBase = prow.base_cell && store.baseCell === dflt && prow.base_cell !== dflt;
+      const adoptedBase = !store.baseCell && !!prow.base_cell;
       if (adoptedBase) store.baseCell = prow.base_cell;
       // A live outing on another device resumes here (mid-outing sync).
       if (prow.current_outing) {

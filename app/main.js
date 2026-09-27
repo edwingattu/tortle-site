@@ -71,7 +71,9 @@ const mapView = createMap({
 
 const locationFilter = {
   samples: [],
-  lastGood: { lat: CONFIG.defaultCenter[1], lng: CONFIG.defaultCenter[0] },
+  // No silent seed: the first real fix anchors it. Weak fixes before that
+  // are dropped instead of rolling back onto a street never stood on.
+  lastGood: null,
   frozen: false,
 };
 
@@ -128,6 +130,7 @@ function smoothFix(coords) {
   if (typeof coords.speed === 'number' && coords.speed > CONFIG.implausibleSpeedMps) return null;
   if (coords.accuracy > CONFIG.weakAccuracyM) {
     locationFilter.frozen = true;
+    if (!locationFilter.lastGood) return null;
     return { ...locationFilter.lastGood, weak: true };
   }
   locationFilter.frozen = false;
@@ -174,9 +177,16 @@ function updateAreaName(cell = selectedCell) {
     lat = c.lat; lng = c.lng; id = cell;
   } else if (mapView) {
     const p = mapView.getUserLocation();
+    if (!p) {
+      el.textContent = 'Locating…';
+      if (hexEl) hexEl.textContent = 'H3 · —';
+      return;
+    }
     lat = p.lat; lng = p.lng; id = cellAt(lat, lng);
   } else {
-    lat = CONFIG.defaultCenter[1]; lng = CONFIG.defaultCenter[0]; id = cellAt(lat, lng);
+    el.textContent = 'Locating…';
+    if (hexEl) hexEl.textContent = 'H3 · —';
+    return;
   }
   const area = areasDbg.areaAt(lng, lat) || areasDbg.districtAt(lng, lat);
   el.textContent = area ? area.name : 'Outside mapped areas';
@@ -1166,7 +1176,9 @@ function bindUi() {
   function closeCamera() { stopCamStream(); try { $('#cameraSheet').close(); } catch {} }
   async function saveCamBlob() {
     const blob = camPhotoBlob || camVideoBlob; if (!blob) return;
-    const { lat, lng } = mapView.getUserLocation();
+    const pos = mapView.getUserLocation();
+    if (!pos) { closeCamera(); return; }
+    const { lat, lng } = pos;
     const cell = cellAt(lat, lng);
     const isVideo = blob.type.startsWith('video/');
     const activity = engine.logActivity({ title: isVideo ? 'Video memory' : 'Photo memory', category: selectedCategory, captureType: isVideo ? 'video' : 'photo', lat, lng, cell });
@@ -1375,11 +1387,14 @@ function bindUi() {
     // (switch closed it already — this is the backstop) saves nothing.
     try {
       const here = mapView.getUserLocation();
-      if (cellAt(here.lat, here.lng) !== selectedCell) {
+      if (!here || cellAt(here.lat, here.lng) !== selectedCell) {
         toast('Go to this tile to save a voice note.');
         return;
       }
-    } catch {}
+    } catch {
+      toast('Go to this tile to save a voice note.');
+      return;
+    }
     // Voice belongs to the tile underfoot (== selected while recording).
     const cell = selectedCell;
     const c = cellCenter(cell);
@@ -1415,7 +1430,9 @@ function bindUi() {
     if (event.submitter?.value === 'cancel') return;
     event.preventDefault();
     const title = $('#activityTitle').value.trim() || 'Untitled outing';
-    const { lat, lng } = mapView.getUserLocation();
+    const pos = mapView.getUserLocation();
+    if (!pos) { $('#activityDialog').close(); return; }
+    const { lat, lng } = pos;
     const cell = cellAt(lat, lng);
     if (captureType === 'session') {
       engine.endOuting();
@@ -1491,8 +1508,9 @@ function tick() {
     const now = performance.now();
     const dt = now - lastDwellAt;
     lastDwellAt = now;
-    const { lat, lng } = mapView.getUserLocation();
-    engine.dwell(cellAt(lat, lng), dt);
+    const pos = mapView.getUserLocation();
+    if (!pos) return;
+    engine.dwell(cellAt(pos.lat, pos.lng), dt);
     renderHud();
   } else {
     lastDwellAt = performance.now();
@@ -1520,16 +1538,15 @@ try { localStorage.removeItem(LOCATION_CHOICE_PREFIX); } catch {}
 // area name) and presence is forced false so no capture can arm.
 let gateOpen = false;
 function hasRealBase() {
-  const base = engine.getSnapshot().store.baseCell;
-  return base !== cellAt(CONFIG.defaultCenter[1], CONFIG.defaultCenter[0]);
+  return !!engine.getSnapshot().store.baseCell;
 }
 function needsGate() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('region')) return false;
   const choice = getLocationChoice();
   if (choice?.startsWith('city:')) return false;
-  // 'granted' only counts with a real non-default base — a stale granted
-  // with the default base means "never actually located", so gate.
+  // 'granted' only counts with a real located base — a stale granted
+  // with no base means "never actually located", so gate.
   if (choice === 'granted' && hasRealBase()) return false;
   return true;
 }
@@ -1637,8 +1654,11 @@ let gatePending = null;
     activeRegion = savedRegion();
     setRegion(activeRegion, { persist: false });
   } else if (!needsGate()) {
-    const base = cellCenter(engine.getSnapshot().store.baseCell);
-    activeRegion = regionForPoint(base.lat, base.lng);
+    const baseCell = engine.getSnapshot().store.baseCell;
+    if (baseCell) {
+      const base = cellCenter(baseCell);
+      activeRegion = regionForPoint(base.lat, base.lng);
+    }
     setRegion(activeRegion, { persist: false });
   } else {
     // Gate will decide; keep hyd as placeholder for map init (not shown as user loc)
@@ -1731,14 +1751,17 @@ if (gatePending) {
     mapView.map.setCenter([lng, lat]);
     mapView.map.setZoom(10);
   } else {
-    // No gate: restore last granted base or saved region center
-    const base = cellCenter(engine.getSnapshot().store.baseCell);
-    const restored = getLocationChoice() === 'granted' || getLocationChoice()?.startsWith('city:');
+    // No gate: restore the last located base, or show the region center
+    // on camera only — the user pointer stays unset until a real fix.
+    const baseCell = engine.getSnapshot().store.baseCell;
+    const restored = (getLocationChoice() === 'granted' || getLocationChoice()?.startsWith('city:')) && !!baseCell;
     if (restored) {
+      const base = cellCenter(baseCell);
       mapView.setUserLocation(base.lng, base.lat);
       mapView.map.setCenter([base.lng, base.lat]);
     } else {
-      mapView.setUserLocation(CONFIG.defaultCenter[0], CONFIG.defaultCenter[1]);
+      const [lng, lat] = regionCenter();
+      mapView.map.setCenter([lng, lat]);
     }
   }
   engine.subscribe(() => mapView.paint(engine.getSnapshot().store));
@@ -1759,7 +1782,10 @@ await bootstrap(engine);
       `area=${area?.id || 'none'} district=${dist?.id || 'none'}`,
   );
 }
-if (!gatePending) selectCell(mapView.cellUnderUser(), { src: 'boot' });
+if (!gatePending) {
+  const bootCell = mapView.cellUnderUser();
+  if (bootCell) selectCell(bootCell, { src: 'boot' });
+}
 bindUi();
 // If gated, re-run select after picker/share picks a city — postGateSetup handles it.
 // Add a helper on window to re-trigger gate (for manual city switch later)

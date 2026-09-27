@@ -573,6 +573,9 @@ button {
 
 .tile-info-row .title-stack {
   min-width: 0;
+  /* Don't grow: the pill clusters directly beside the tile info text
+   * instead of being shoved to the card's right edge. */
+  flex: 0 1 auto;
 }
 
 .tile-state-pill {

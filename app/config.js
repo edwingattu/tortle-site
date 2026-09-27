@@ -20,7 +20,8 @@ export const CONFIG = {
   syncIntervalMs: 30_000,
   syncBatchCells: 500,
   mapStyle: 'https://tiles.openfreemap.org/styles/positron',
-  defaultCenter: [78.4867, 17.4375],
+  // No default user location: the map boots on a neutral wide view and the
+  // location gate is the sole granter. Nothing silently falls back anywhere.
   defaultZoom: 14.51,
   coverageRingK: 12,
   // City-core precompute: gridDisk radius around the base cell cached once,

@@ -22,8 +22,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   const map = new maplibregl.Map({
     container: 'liveMap',
     style: CONFIG.mapStyle,
-    center: CONFIG.defaultCenter,
-    zoom: CONFIG.defaultZoom,
+    // Neutral wide view until the gate grants a real place — never a street.
+    center: [0, 22],
+    zoom: 2,
     pitch: 45,
     maxPitch: 45,
     minPitch: 45,
@@ -47,7 +48,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     onUserGesture?.();
   }
   let selectedCell = null;
-  let userLngLat = CONFIG.defaultCenter;
+  // No silent user position: null until a real fix lands via the gate,
+  // tracking, or the sandbox joystick. Nothing defaults to any street.
+  let userLngLat = null;
 
   // ---- Paint scheduler + caches (perf) ----
   // paint() is called up to twice per second (dwell tick + HUD) plus on every
@@ -1004,12 +1007,15 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     },
 
     getUserLocation() {
+      if (!userLngLat) return null;
       return { lng: userLngLat[0], lat: userLngLat[1] };
     },
     cellUnderUser() {
+      if (!userLngLat) return null;
       return cellAt(userLngLat[1], userLngLat[0]);
     },
     recenter(target = userLngLat) {
+      if (!target) return;
       const to = Array.isArray(target) ? target : [target.lng, target.lat];
       following = true;
       setPuckDimmed(false);
