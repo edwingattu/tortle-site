@@ -1210,6 +1210,8 @@ function bindUi() {
   });
 
   function showVoiceArea() {
+    // Voice UI lives inside the card: expand so it's visible.
+    setExpanded(true);
     voiceCaptureOpen = true;
     const gal = $('#tileGallery'); if (gal) gal.hidden = true;
     if (voiceArea) voiceArea.hidden = false;
