@@ -911,7 +911,10 @@ function bindUi() {
       diag = ` · base ${(snap.store.baseCell || '?').slice(0, 8)} · ${getLocationChoice() || 'no-choice'}` +
         (pull ? ` · cloud ${pull.cloudBase || 'none'}${pull.adoptedBase ? ' (adopted)' : ''}` : '');
     } catch {}
-    toastDiag(`${info.status} · H3 ${info.cell} · ${progressPercent(info.rec)}% dwell${diag}${mediaErrors.length ? ` · mediaFails ${mediaErrors.length}` : ''} · tap toast to dismiss`);
+    // Last failing storage key, verbatim: compare against the Storage
+    // dashboard object key. Any extra folder level = the whole bug.
+    const lastFail = mediaErrors.length ? mediaErrors[mediaErrors.length - 1].path : null;
+    toastDiag(`${info.status} · H3 ${info.cell} · ${progressPercent(info.rec)}% dwell${diag}${mediaErrors.length ? ` · mediaFails ${mediaErrors.length}${lastFail ? ` want ${lastFail}` : ''}` : ''} · tap toast to dismiss`);
   });
   // Tap-to-dismiss for the sticky diagnostic toast.
   $('#toast')?.addEventListener('click', () => {
