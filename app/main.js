@@ -240,19 +240,16 @@ function showTitleView(name) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
   const message = $('#tileTitleMessage');
-  const btnRow = $('#titleBtnRow');
   const btn = $('#tileTitleSave');
   if (input) input.hidden = true;
   if (message) message.hidden = true;
   if (display) { display.hidden = false; display.textContent = name || ''; }
-  if (btnRow) btnRow.hidden = false;
-  if (btn) btn.textContent = 'Edit';
+  if (btn) { btn.hidden = false; btn.textContent = 'Edit'; }
 }
 function showTitleEdit(preset) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
   const message = $('#tileTitleMessage');
-  const btnRow = $('#titleBtnRow');
   const btn = $('#tileTitleSave');
   if (display) display.hidden = true;
   if (message) message.hidden = true;
@@ -260,18 +257,17 @@ function showTitleEdit(preset) {
     input.hidden = false;
     if (preset !== null && preset !== undefined) input.value = preset;
   }
-  if (btnRow) btnRow.hidden = false;
-  if (btn) btn.textContent = 'Save';
+  if (btn) { btn.hidden = false; btn.textContent = 'Save'; }
 }
 function showTitleMessage(text) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
   const message = $('#tileTitleMessage');
-  const btnRow = $('#titleBtnRow');
+  const btn = $('#tileTitleSave');
   if (input) input.hidden = true;
   if (display) display.hidden = true;
   if (message) { message.hidden = false; message.textContent = text; }
-  if (btnRow) btnRow.hidden = true;
+  if (btn) btn.hidden = true;
 }
 function renderTitleField(name, status) {
   const input = $('#tileTitleInput');

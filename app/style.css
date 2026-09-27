@@ -574,15 +574,22 @@ button {
   padding-right: 48px;
 }
 
-/* Row 3: Save/Edit sits below the field, aligned to its shortened edge. */
-.title-btn-row {
+/* Row 3: tile info left, Save/Edit right, vertically centered. */
+.tile-sub-row {
   display: flex;
-  justify-content: flex-end;
-  padding-right: 48px;
-  margin-top: 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.title-btn-row[hidden] { display: none !important; }
+.tile-sub-row .title-stack {
+  min-width: 0;
+  flex: 1;
+}
+
+.title-save[hidden] { display: none !important; }
 
 /* Row 3: tile info sits below with a clear gap under the pills. */
 .tile-sub-row {
