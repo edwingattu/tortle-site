@@ -1,4 +1,4 @@
--- Tourtle role ladder: superadmin > admin > developer. Run once in Supabase SQL editor.
+-- Tortle role ladder: superadmin > admin > developer. Run once in Supabase SQL editor.
 -- All enforcement is server-side (RLS); clients only read their own rung.
 -- Idiom: presence of a row IS the grant. Removing the row revokes.
 

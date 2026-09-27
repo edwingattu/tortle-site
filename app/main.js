@@ -76,7 +76,7 @@ let selectionPinned = false;
 let lastLiveCell = null;
 let liveCandidate = null;
 // Selection trail (last 10): who set the card's tile and why. Readable via
-// window.__tourtleSel when the card ever looks wrong.
+// window.__tortleSel when the card ever looks wrong.
 const selTrail = [];
 function noteSel(source, cell) {
   selTrail.push({
@@ -86,7 +86,7 @@ function noteSel(source, cell) {
     pinned: selectionPinned,
   });
   if (selTrail.length > 10) selTrail.shift();
-  try { window.__tourtleSel = selTrail.slice(); } catch {}
+  try { window.__tortleSel = selTrail.slice(); } catch {}
 }
 let liveCandidateHits = 0;
 let captureType = 'photo';
@@ -850,7 +850,7 @@ function bindUi() {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    if (!isStandalone && pwaBanner && !localStorage.getItem('tourtle.pwa.dismissed')) {
+    if (!isStandalone && pwaBanner && !localStorage.getItem('tortle.pwa.dismissed')) {
       pwaBanner.hidden = false;
     }
     console.log('[pwa] install prompt ready');
@@ -864,7 +864,7 @@ function bindUi() {
   });
   pwaDismissBtn?.addEventListener('click', () => {
     if (pwaBanner) pwaBanner.hidden = true;
-    try { localStorage.setItem('tourtle.pwa.dismissed', '1'); } catch {}
+    try { localStorage.setItem('tortle.pwa.dismissed', '1'); } catch {}
   });
   // iOS has no beforeinstallprompt — banner never shows; user uses Share → Add to Home Screen
 
@@ -887,7 +887,7 @@ function bindUi() {
     // Quote this back if the home tile ever looks wrong.
     let diag = '';
     try {
-      const pull = window.__tourtlePull;
+      const pull = window.__tortlePull;
       diag = ` · base ${(snap.store.baseCell || '?').slice(0, 8)} · ${getLocationChoice() || 'no-choice'}` +
         (pull ? ` · cloud ${pull.cloudBase || 'none'}${pull.adoptedBase ? ' (adopted)' : ''}` : '');
     } catch {}
@@ -904,7 +904,7 @@ function bindUi() {
   const unlockingContent = $('#unlockingContent');
   const collapsedBar = $('#collapsedBar');
   const understoodBtn = $('#understoodBtn');
-  const UNDERSTOOD_KEY = 'tourtle.v0.unlockingDismissed';
+  const UNDERSTOOD_KEY = 'tortle.v0.unlockingDismissed';
   const setUnlockingCollapsed = (collapsed) => {
     if (!unlockingContent || !collapsedBar) return;
     unlockingContent.hidden = collapsed;
@@ -1408,7 +1408,7 @@ function tick() {
 // the auth uid) — a device-level key let one account's Share suppress the
 // gate for the next account, planting it on the Ramgopalpet default.
 // The legacy device-level value is ignored and deleted on boot.
-const LOCATION_CHOICE_PREFIX = 'tourtle.v0.locationChoice';
+const LOCATION_CHOICE_PREFIX = 'tortle.v0.locationChoice';
 function choiceKey() {
   const uid = currentUser?.id || null;
   return uid ? `${LOCATION_CHOICE_PREFIX}.${uid}` : LOCATION_CHOICE_PREFIX;
@@ -1554,7 +1554,7 @@ let gatePending = null;
   // Boot log (last 5): conclusive reading if the base ever looks wrong.
   // Quoted back via the area-name tap toast — no console needed.
   try {
-    const log = JSON.parse(localStorage.getItem('tourtle.v0.bootlog') || '[]');
+    const log = JSON.parse(localStorage.getItem('tortle.v0.bootlog') || '[]');
     log.push({
       t: new Date().toISOString().slice(5, 19),
       uid: (currentUser?.id || '?').slice(0, 8),
@@ -1562,7 +1562,7 @@ let gatePending = null;
       gate: !!gatePending,
       base: (engine.getSnapshot().store.baseCell || '?').slice(0, 8),
     });
-    localStorage.setItem('tourtle.v0.bootlog', JSON.stringify(log.slice(-5)));
+    localStorage.setItem('tortle.v0.bootlog', JSON.stringify(log.slice(-5)));
   } catch {}
 }
 async function postGateSetup(region, opts = {}) {
@@ -1665,7 +1665,7 @@ if (!gatePending) selectCell(mapView.cellUnderUser(), { src: 'boot' });
 bindUi();
 // If gated, re-run select after picker/share picks a city — postGateSetup handles it.
 // Add a helper on window to re-trigger gate (for manual city switch later)
-window.__tourtleGate = { show: showLocationGate, choice: getLocationChoice };
+window.__tortleGate = { show: showLocationGate, choice: getLocationChoice };
 // Superadmin escape hatch: the TILT pill re-opens the location gate (re-share
 // GPS or switch city). The pill doesn't exist for non-superadmins, so there
 // is zero prod surface. Fixes a stuck city choice with no other UI to redo it.
@@ -1702,7 +1702,7 @@ window.addEventListener('pagehide', () => {
   flush(engine);
 });
 try {
-  window.__tourtleBoot = {
+  window.__tortleBoot = {
     ok: true,
     at: new Date().toISOString(),
     user: currentUser?.email || null,

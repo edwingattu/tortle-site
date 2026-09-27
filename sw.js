@@ -1,5 +1,5 @@
-// Tourtle PWA — shell precache + network-first for HTML, network-only for tiles/supabase
-const CACHE = 'tourtle-shell-v1';
+// Tortle PWA — shell precache + network-first for HTML, network-only for tiles/supabase
+const CACHE = 'tortle-shell-v1';
 const SHELL = [
   '/',
   '/index.html',
@@ -18,7 +18,6 @@ const SHELL = [
   '/app/icons/icon-512.png',
   '/app/icons/favicon-32.png',
   '/app/brand/turtle-dark-256.png',
-  '/app/brand/tourtle-lockup-800.png',
   '/app/data/meta.json',
   '/app/data/areas.json',
 ];

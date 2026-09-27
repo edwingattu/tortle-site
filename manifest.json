@@ -1,6 +1,6 @@
 {
-  "name": "Tourtle",
-  "short_name": "Tourtle",
+  "name": "Tortle",
+  "short_name": "Tortle",
   "description": "Clear the fog — explore your city hex by hex.",
   "start_url": "/?pwa=1",
   "scope": "/",

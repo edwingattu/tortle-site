@@ -61,7 +61,6 @@ export async function flushMediaOutbox(engine) {
       const rec = acts.find((a) => a.id === job.id);
       if (rec) { rec.media_url = url; rec.media_path = job.path; }
       try { engine.persist(); } catch {}
-      try { localStorage.setItem('tourtle.v0.hex-progress', JSON.stringify(engine.getSnapshot().store)); } catch {}
       done.push(job);
     } catch (e) { console.warn('[media] retry failed', e?.message || e); }
   }
@@ -74,7 +73,7 @@ const signCache = new Map();
 export async function signedUrl(path, expiresIn = 3600) {
   const hit = signCache.get(path);
   if (hit && hit.exp > Date.now() + 5 * 60 * 1000) return hit.url;
-  const { data, error } = await supabase.storage.from('tourtle-media').createSignedUrl(path, expiresIn);
+  const { data, error } = await supabase.storage.from('tortle-media').createSignedUrl(path, expiresIn);
   if (error) throw error;
   signCache.set(path, { url: data.signedUrl, exp: Date.now() + expiresIn * 1000 });
   return data.signedUrl;
@@ -85,7 +84,7 @@ export function pathFromActivity(a) {
   if (!a) return null;
   if (a.media_path) return a.media_path;
   const u = a.media_url || '';
-  const m = u.match(/\/tourtle-media\/([^?]+)/);
+  const m = u.match(/\/(?:tourtle|tortle)-media\/([^?]+)/);
   return m ? m[1] : null;
 }
 
@@ -94,12 +93,12 @@ export function hasMedia(a) {
 }
 
 export async function uploadMedia(path, blob, contentType) {
-  const { data, error } = await supabase.storage.from('tourtle-media').upload(path, blob, {
+  const { data, error } = await supabase.storage.from('tortle-media').upload(path, blob, {
     contentType: contentType || blob.type || 'application/octet-stream',
     upsert: true,
     cacheControl: '3600',
   });
   if (error) throw error;
-  const { data: pub } = supabase.storage.from('tourtle-media').getPublicUrl(path);
+  const { data: pub } = supabase.storage.from('tortle-media').getPublicUrl(path);
   return pub?.publicUrl || data.path;
 }

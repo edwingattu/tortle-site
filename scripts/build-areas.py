@@ -1,4 +1,4 @@
-"""Build Tourtle semantic-tile packs from raw boundary downloads.
+"""Build Tortle semantic-tile packs from raw boundary downloads.
 
 Reads raw_geo/*, simplifies, assigns hierarchy (ward->district->state->country
 ->continent, city = districts containing wards), and emits compact JSON packs

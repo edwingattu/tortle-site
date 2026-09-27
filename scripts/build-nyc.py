@@ -1,4 +1,4 @@
-"""Build Tourtle NYC semantic-tile packs from raw boundary downloads.
+"""Build Tortle NYC semantic-tile packs from raw boundary downloads.
 
 Reads raw_geo/nta-2020.geojson (NYC Open Data, DCP), raw_geo/nyc-boroughs.geojson
 (NYC Open Data, DCP), raw_geo/usa-states-gadm.json (GADM 4.1 level 1) and emits

@@ -35,7 +35,7 @@ export async function pullAll(engine) {
   const [tiles, acts, prof] = await Promise.all([
     supabase.from('tile_progress').select('*').eq('user_id', uid),
     supabase.from('activities').select('*').eq('user_id', uid).order('created_at'),
-    supabase.from('tourtle_profiles').select('*').eq('user_id', uid).limit(1),
+    supabase.from('tortle_profiles').select('*').eq('user_id', uid).limit(1),
   ]);
   if (tiles.error || acts.error || prof.error) {
     console.warn('[sync] pull failed:', tiles.error?.message, acts.error?.message, prof.error?.message);
@@ -45,11 +45,11 @@ export async function pullAll(engine) {
   engine.mergeActivities(acts.data || []);
   // Diagnostic footprint: what the cloud profile claimed (base fills local
   // only when local never located — see adoptProfile). Readable via
-  // window.__tourtlePull / the area-name tap toast.
+  // window.__tortlePull / the area-name tap toast.
   try {
     const prow = prof.data?.[0] || null;
     const adopted = prow ? engine.adoptProfile(prow) : false;
-    window.__tourtlePull = {
+    window.__tortlePull = {
       at: new Date().toISOString(),
       cloudBase: prow?.base_cell ? String(prow.base_cell).slice(0, 8) : null,
       adoptedBase: !!adopted,
@@ -151,7 +151,7 @@ export async function flush(engine) {
       const ids = pendingDeletes.map((d) => d.id);
       const paths = pendingDeletes.map((d) => d.path).filter(Boolean);
       if (paths.length) {
-        const { error } = await supabase.storage.from('tourtle-media').remove(paths);
+        const { error } = await supabase.storage.from('tortle-media').remove(paths);
         if (error) console.warn('[sync] media delete failed:', error.message);
       }
       const { error } = await supabase.from('activities').delete().in('id', ids);
@@ -162,7 +162,7 @@ export async function flush(engine) {
     // 3. Profile: base, streak, and the live outing (mid-outing sync rides
     // here — every flush carries the current touched list).
     const outing = snap.store.outing;
-    const { error: profileError } = await supabase.from('tourtle_profiles').upsert(
+    const { error: profileError } = await supabase.from('tortle_profiles').upsert(
       {
         user_id: uid,
         base_cell: snap.store.baseCell,
@@ -218,10 +218,10 @@ export async function bootstrap(engine) {
   }
 }
 
-// Dev hook: window.__tourtleSync.flush() / .pullAll() / .engine from console.
+// Dev hook: window.__tortleSync.flush() / .pullAll() / .engine from console.
 export function exposeDebug(target, engine) {
   try {
-    target.__tourtleSync = {
+      target.__tortleSync = {
       flush: () => flush(engine),
       pullAll: () => pullAll(engine),
       pending: () => engine.getPending(),

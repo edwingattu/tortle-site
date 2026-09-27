@@ -1,7 +1,26 @@
 import * as h3 from 'https://esm.sh/h3-js@4.5.0';
 import { CONFIG } from './config.js';
 
-const STORAGE_PREFIX = 'tourtle.v0.hex-progress';
+const STORAGE_PREFIX = 'tortle.v0.hex-progress';
+// One-time prefix migration Tourtle→Tortle: renames every tourtle.* key to
+// tortle.* (copy-if-absent, then delete the old). Runs before any read, so
+// no tiles, region, choices, or logs are lost in the rename.
+export function migrateStoragePrefix() {
+  try {
+    const ren = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('tourtle.')) ren.push(k);
+    }
+    for (const k of ren) {
+      const nk = 'tortle.' + k.slice('tourtle.'.length);
+      try {
+        if (localStorage.getItem(nk) == null) localStorage.setItem(nk, localStorage.getItem(k));
+      } catch {}
+      try { localStorage.removeItem(k); } catch {}
+    }
+  } catch {}
+}
 // Per-user stores: localStorage is per-browser, not per-user. A shared key let
 // a second login inherit the first user's tiles + media. Namespace by uid;
 // one-time legacy move (not copy) for pre-upgrade devices.
@@ -197,6 +216,7 @@ function bumpStreak(store) {
 }
 
 export function createEngine(userId = null) {
+  migrateStoragePrefix();
   const STORAGE_KEY = storageKeyFor(userId);
   let store = emptyStore();
   try {

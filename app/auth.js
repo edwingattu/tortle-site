@@ -50,7 +50,7 @@ export async function signOut() {
     const drop = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith('tourtle.v0.hex-progress')) drop.push(k);
+      if (k && k.startsWith('tortle.v0.hex-progress')) drop.push(k);
     }
     drop.forEach((k) => localStorage.removeItem(k));
   } catch {}

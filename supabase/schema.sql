@@ -1,11 +1,11 @@
--- Tourtle V0 cloud sync schema. Run once in the Supabase SQL editor.
+-- Tortle V0 cloud sync schema. Run once in the Supabase SQL editor.
 -- Tables are owner-only via RLS (user_id = auth.uid()); the anon key is
 -- safe in the client because no row is visible to anyone but its owner.
 
--- ---- tourtle_profiles: single row per user (base, streak, live outing) ----
+-- ---- tortle_profiles: single row per user (base, streak, live outing) ----
 -- Named to avoid colliding with the default Supabase starter `profiles`
 -- table, which has a different shape. Existing tables are left untouched.
-create table if not exists public.tourtle_profiles (
+create table if not exists public.tortle_profiles (
   user_id uuid primary key references auth.users (id) on delete cascade,
   base_cell text,
   streak_days integer not null default 0,
@@ -41,12 +41,12 @@ create table if not exists public.activities (
   created_at timestamptz not null default now()
 );
 
-alter table public.tourtle_profiles enable row level security;
+alter table public.tortle_profiles enable row level security;
 alter table public.tile_progress enable row level security;
 alter table public.activities enable row level security;
 
-drop policy if exists "owner all" on public.tourtle_profiles;
-create policy "owner all" on public.tourtle_profiles
+drop policy if exists "owner all" on public.tortle_profiles;
+create policy "owner all" on public.tortle_profiles
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 drop policy if exists "owner all" on public.tile_progress;
@@ -60,7 +60,7 @@ create policy "owner all" on public.activities
 -- Tables created via raw SQL get no role privileges by default (the
 -- dashboard builder adds these silently). Without them PostgREST refuses
 -- before RLS is even evaluated — the 403 "permission denied for table".
-grant all on public.tourtle_profiles to authenticated;
+grant all on public.tortle_profiles to authenticated;
 grant all on public.tile_progress to authenticated;
 grant all on public.activities to authenticated;
 grant execute on function public.apply_tile_deltas(jsonb) to authenticated;

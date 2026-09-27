@@ -84,16 +84,7 @@ button {
   object-fit: contain;
 }
 
-.auth-lockup {
-  display: block;
-  margin-bottom: 18px;
-}
 
-.auth-lockup img {
-  display: block;
-  width: 220px;
-  height: auto;
-}
 
 .icon-button {
   width: 38px;

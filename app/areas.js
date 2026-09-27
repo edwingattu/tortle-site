@@ -38,7 +38,7 @@ const REGIONS = {
       'Boundaries: NYC Dept. of City Planning / NYC Open Data · State: GADM · Countries: Natural Earth',
   },
 };
-const REGION_KEY = 'tourtle.v0.region';
+const REGION_KEY = 'tortle.v0.region';
 let region = 'hyd';
 // Retained per-region state: packs + derived caches survive switches, so
 // returning is instant (states/countries stay global, shared across regions).
