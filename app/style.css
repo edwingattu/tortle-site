@@ -1514,11 +1514,13 @@ button {
   flex: none;
 }
 
-/* Title row: buttons left, tile info after them, arrow clears right */
+/* Title row: buttons only (tile info lives inside the card) */
 .city-header {
   align-items: flex-start;
   padding-right: 36px;
 }
+
+.detail-titles { margin: 2px 0 12px; }
 
 .city-header .title-stack {
   margin-left: 0;

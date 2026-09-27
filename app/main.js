@@ -1431,11 +1431,11 @@ function bindUi() {
   });
 }
 
-// Dot attention loop (browse mode only): 30s dimmed-wait → 100% visible →
+// Dot attention loop (browse mode only): 15s dimmed-wait → 100% visible →
 // 1s hold → 2s bounce → 2s pulse → 3s solid → fade to 30% → loop.
 // Any map gesture or dot tap destroys the run (new wait starts on gestures);
 // follow mode never runs it.
-const DOT_WAIT_MS = 30 * 1000;
+const DOT_WAIT_MS = 15 * 1000;
 let dotSeq = 0;
 let dotTimer = 0;
 function stopDotSequence() {
