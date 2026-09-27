@@ -569,7 +569,20 @@ button {
   justify-content: flex-start;
   gap: 10px;
   margin-bottom: 0;
+  /* Chevron occupies the card's top-right corner — keep the field short
+   * of it so nothing runs underneath. */
+  padding-right: 48px;
 }
+
+/* Row 3: Save/Edit sits below the field, aligned to its shortened edge. */
+.title-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 48px;
+  margin-top: 8px;
+}
+
+.title-btn-row[hidden] { display: none !important; }
 
 /* Row 3: tile info sits below with a clear gap under the pills. */
 .tile-sub-row {
@@ -623,6 +636,22 @@ button {
 
 .tile-title-display[hidden],
 .tile-info-row input[hidden] { display: none !important; }
+
+/* Locked/Activated stand-in: title font, lighter dark grey. */
+.tile-title-message {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 9px 2px;
+  font: 800 17px Manrope, sans-serif;
+  letter-spacing: -0.02em;
+  color: #6b7c8f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile-title-message[hidden] { display: none !important; }
 
 /* Persistent small-caps label over the state pill. */
 .tile-status-block {

@@ -239,36 +239,58 @@ let lastTitleCell = undefined;
 function showTitleView(name) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
+  const message = $('#tileTitleMessage');
+  const btnRow = $('#titleBtnRow');
   const btn = $('#tileTitleSave');
   if (input) input.hidden = true;
+  if (message) message.hidden = true;
   if (display) { display.hidden = false; display.textContent = name || ''; }
+  if (btnRow) btnRow.hidden = false;
   if (btn) btn.textContent = 'Edit';
 }
 function showTitleEdit(preset) {
   const input = $('#tileTitleInput');
   const display = $('#tileTitleDisplay');
+  const message = $('#tileTitleMessage');
+  const btnRow = $('#titleBtnRow');
   const btn = $('#tileTitleSave');
   if (display) display.hidden = true;
+  if (message) message.hidden = true;
   if (input) {
     input.hidden = false;
     if (preset !== null && preset !== undefined) input.value = preset;
   }
+  if (btnRow) btnRow.hidden = false;
   if (btn) btn.textContent = 'Save';
 }
-function renderTitleField(name) {
+function showTitleMessage(text) {
+  const input = $('#tileTitleInput');
+  const display = $('#tileTitleDisplay');
+  const message = $('#tileTitleMessage');
+  const btnRow = $('#titleBtnRow');
+  if (input) input.hidden = true;
+  if (display) display.hidden = true;
+  if (message) { message.hidden = false; message.textContent = text; }
+  if (btnRow) btnRow.hidden = true;
+}
+function renderTitleField(name, status) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  if (document.activeElement === input) return;
-  if (selectedCell !== lastTitleCell) {
+  const switched = selectedCell !== lastTitleCell;
+  if (switched) {
+    // New tile: drop any in-progress edit and render its truth.
     lastTitleCell = selectedCell;
-    if (name) showTitleView(name);
-    else showTitleEdit('');
-  } else if (name) {
-    // Covers fresh saves and names arriving from another device.
-    showTitleView(name);
-  } else {
-    showTitleEdit(null); // keep any typed text; just fix visibility + button
+    if (document.activeElement === input) input.blur();
+  } else if (document.activeElement === input) {
+    return; // mid-typing on the same tile — never yank
   }
+  const open = status === 'unlocked' || status === 'mastered';
+  if (!open) {
+    showTitleMessage(status === 'activated' ? "It's just a matter of Time.." : 'Activate Me..');
+    return;
+  }
+  if (name) showTitleView(name);
+  else showTitleEdit(switched ? '' : null);
 }
 
 // Per-tile media gallery: module scope so renderHud/selectCell can refresh it
@@ -785,7 +807,7 @@ function renderHud() {
   let hudStatus = 'unclaimed';
   try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
   updateCountdown(rec, hudStatus);
-  renderTitleField(snap.store.tiles[selectedCell]?.name);
+  renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);
