@@ -29,9 +29,12 @@ drop policy if exists "tortle owner delete" on storage.objects;
 create policy "tortle owner delete" on storage.objects for delete
   using (bucket_id = 'tortle-media' and auth.uid()::text = (storage.foldername(name))[1]);
 
--- 3. Move objects. Stored media_path values are bucket-relative, so app rows
--- need no changes.
-update storage.objects set bucket_id = 'tortle-media' where bucket_id = 'tourtle-media';
+-- 3. Move objects. DO NOT move them with SQL: file bytes live under
+-- bucket-keyed paths, so updating bucket_id orphans the bytes (reachable
+-- metadata, undownloadable files). Move server-side instead — Storage
+-- dashboard drag-and-drop per user folder, or the API (download+re-upload).
+-- Stored media_path values are bucket-relative within each user folder, so
+-- app rows need no changes as long as folder structure is preserved.
 
 -- 4. VERIFY FIRST, then run cleanup:
 --    select bucket_id, count(*) from storage.objects group by bucket_id;
