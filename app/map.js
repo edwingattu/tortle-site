@@ -18,7 +18,7 @@ import {
   isUnlocked,
 } from './engine.js';
 
-export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture }) {
+export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, onUserDotTap }) {
   const map = new maplibregl.Map({
     container: 'liveMap',
     style: CONFIG.mapStyle,
@@ -851,9 +851,23 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture })
     // User-driven camera moves (pan/zoom/rotate) enter browse mode.
     // Programmatic moves carry no originalEvent, so follow never trips.
     map.on('movestart', (e) => {
-      if (e?.originalEvent) enterBrowse();
+      if (!e?.originalEvent) return;
+      enterBrowse();
+      onUserGesture?.();
     });
+    // The puck is pointer-transparent, so dot taps arrive as map clicks:
+    // anything within 18px of screen center belongs to the dot, not the tile.
+    function isDotTap(event) {
+      try {
+        const p = event?.point;
+        if (!p) return false;
+        const c = map.getContainer();
+        const dx = p.x - c.clientWidth / 2, dy = p.y - c.clientHeight / 2;
+        return dx * dx + dy * dy <= 18 * 18;
+      } catch { return false; }
+    }
     map.on('click', 'hex-fills', (event) => {
+      if (isDotTap(event)) { onUserDotTap?.(); return; }
       const feature = event.features?.[0];
       if (!feature) return;
       selectedCell = feature.properties.h3;
@@ -873,6 +887,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture })
 
     for (const band of ['area', 'district', 'city', 'state', 'country', 'continent']) {
       map.on('click', `${band}-tiles`, (event) => {
+        if (isDotTap(event)) { onUserDotTap?.(); return; }
         const feature = event.features?.[0];
         if (!feature) return;
         onLevelSelect?.(band, feature.properties);
@@ -982,18 +997,12 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture })
     setPuckDimmed(dimmed) {
       setPuckDimmed(dimmed);
     },
-    // Snap the camera to a target (live location or pinned tile center):
-    // eases over 750ms, resumes follow at full opacity.
-    snapTo(target, { zoom } = {}) {
-      const to = Array.isArray(target) ? target : [target.lng, target.lat];
-      following = true;
-      setPuckDimmed(false);
-      map.easeTo({
-        center: to,
-        ...(zoom ? { zoom: Math.max(map.getZoom(), zoom) } : {}),
-        duration: 750,
-      });
+    // Attention-loop animation hooks: '' clears, 'bouncing'/'pulsing' play.
+    setPuckAnim(name) {
+      puck.classList.remove('bouncing', 'pulsing');
+      if (name) puck.classList.add(name);
     },
+
     getUserLocation() {
       return { lng: userLngLat[0], lat: userLngLat[1] };
     },

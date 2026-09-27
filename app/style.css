@@ -1469,6 +1469,21 @@ button {
 
 #userPuck.dimmed { opacity: 0.3; }
 
+/* Attention loop: 2s bounce then 2s pulse at full visibility */
+#userPuck.bouncing { animation: puck-bounce 0.5s ease-in-out 4; }
+
+#userPuck.pulsing { animation: puck-pulse 1s ease-in-out 2; }
+
+@keyframes puck-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes puck-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 1px 6px rgba(0,0,0,0.45); }
+  50% { transform: scale(1.3); box-shadow: 0 0 0 8px rgba(74,168,221,0.35); }
+}
+
 /* Sheet arrow: top-right of the card. Up = collapsed, down = open. */
 .sheet-arrow {
   position: absolute;

@@ -48,11 +48,20 @@ const mapView = createMap({
   onHexSelect: (cell) => {
     selectionPinned = cell !== lastLiveCell;
     selectCell(cell, { toastOnSelect: true, src: 'tap' });
-    resetIdleTimer(); // taps count as activity for the snap-back clock
   },
-  // Map gesture (pan/zoom/rotate) already dropped to browse mode inside the
-  // map — here just restart the idle snap-back clock.
-  onUserGesture: () => resetIdleTimer(),
+  // Every map gesture restarts the dot attention clock (browse mode only —
+  // the map already dropped out of follow before this fires).
+  onUserGesture: () => {
+    stopDotSequence();
+    try { if (mapView && !mapView.isFollowing()) scheduleDotAttention(); } catch {}
+  },
+  // Dot tap centers the live location (same as recenter, silent).
+  onUserDotTap: () => {
+    stopDotSequence();
+    mapView.recenter();
+    selectionPinned = false;
+    try { selectCell(mapView.cellUnderUser(), { src: 'dottap' }); } catch {}
+  },
   onMove: () => mapView.paint(engine.getSnapshot().store),
   onLevelSelect: (band, props) => {
     const detail = props.status === 'unclaimed' ? '' : ` · ${props.frac}% explored`;
@@ -900,11 +909,11 @@ function bindUi() {
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
   $('#recenterButton').addEventListener('click', () => {
+    stopDotSequence();
     mapView.recenter();
     // Explicit "take me home": unpin and show the live tile's card.
     selectionPinned = false;
     try { selectCell(mapView.cellUnderUser(), { src: 'recenter' }); } catch {}
-    resetIdleTimer();
     toast('Centered on your current tile.');
   });
   // Area-name tap logs debug info AND expands (no stopPropagation — swallowing
@@ -1422,20 +1431,47 @@ function bindUi() {
   });
 }
 
-// Idle snap-back: 30s with no map/tap activity while browsed snaps home —
-// live tile only, mirroring the recenter button (unpin + live card).
-const IDLE_SNAP_MS = 30 * 1000;
-let idleTimer = 0;
-function resetIdleTimer() {
-  clearTimeout(idleTimer);
-  idleTimer = window.setTimeout(autoSnapBack, IDLE_SNAP_MS);
+// Dot attention loop (browse mode only): 30s dimmed-wait → 100% visible →
+// 1s hold → 2s bounce → 2s pulse → 3s solid → fade to 30% → loop.
+// Any map gesture or dot tap destroys the run (new wait starts on gestures);
+// follow mode never runs it.
+const DOT_WAIT_MS = 30 * 1000;
+let dotSeq = 0;
+let dotTimer = 0;
+function stopDotSequence() {
+  dotSeq++;
+  clearTimeout(dotTimer);
+  try { mapView.setPuckAnim(''); } catch {}
 }
-function autoSnapBack() {
-  if (!mapView || mapView.isFollowing()) { resetIdleTimer(); return; }
-  mapView.recenter();
-  selectionPinned = false;
-  try { selectCell(mapView.cellUnderUser(), { src: 'autosnap' }); } catch {}
-  resetIdleTimer();
+function scheduleDotAttention() {
+  clearTimeout(dotTimer);
+  const g = ++dotSeq;
+  try { mapView.setPuckAnim(''); } catch {}
+  dotTimer = window.setTimeout(() => runDotAttention(g), DOT_WAIT_MS);
+}
+function runDotAttention(g) {
+  if (g !== dotSeq) return;
+  try {
+    if (!mapView || mapView.isFollowing()) return;
+    mapView.setPuckDimmed(false);
+  } catch { return; }
+  dotTimer = window.setTimeout(() => {
+    if (g !== dotSeq) return;
+    try { mapView.setPuckAnim('bouncing'); } catch {}
+    dotTimer = window.setTimeout(() => {
+      if (g !== dotSeq) return;
+      try { mapView.setPuckAnim('pulsing'); } catch {}
+      dotTimer = window.setTimeout(() => {
+        if (g !== dotSeq) return;
+        try { mapView.setPuckAnim(''); } catch {}
+        dotTimer = window.setTimeout(() => {
+          if (g !== dotSeq) return;
+          try { mapView.setPuckDimmed(true); } catch {}
+          scheduleDotAttention();
+        }, 3000);
+      }, 2000);
+    }, 2000);
+  }, 1000);
 }
 
 function tick() {
@@ -1633,7 +1669,7 @@ async function postGateSetup(region, opts = {}) {
   // Push the fresh grant/city base to the cloud NOW (don't wait 30s — a
   // quick close used to leave a stale cloud row behind).
   flush(engine).catch(() => {});
-  resetIdleTimer();
+  stopDotSequence();
 }
 /** Swap the active region's packs and repaint. Districts lazy-load on zoom. */
 let regionSwitching = false;
@@ -1654,7 +1690,9 @@ async function switchRegion(next) {
     selectCell(mapView.cellUnderUser(), { src: 'region' });
     const credit = $('#dataCredit');
     if (credit) credit.textContent = areasDbg.regionCredit();
-    resetIdleTimer();
+    // New map context: restart the attention clock if still browsed.
+    stopDotSequence();
+    try { if (!mapView.isFollowing()) scheduleDotAttention(); } catch {}
     console.log(`[region] switched to ${next}`);
   } finally {
     regionSwitching = false;
@@ -1739,7 +1777,6 @@ setupJoystick({
 }
 renderHud();
 mapView.paint(engine.getSnapshot().store);
-resetIdleTimer();
 setInterval(tick, 1000);
 // Push the delta outbox on a cadence + whenever the app hides. Pulls stay
 // launch-only per V0 scope. Failed media uploads retry on the same cadence.
