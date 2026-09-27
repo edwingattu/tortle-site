@@ -76,14 +76,13 @@
           </button>
         </div>
         <div class="bottom-card" id="bottomCard">
+        <button class="sheet-arrow" id="sheetArrow" type="button" aria-label="Expand details" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg>
+        </button>
         <div class="card-handle" aria-hidden="true"><span></span></div>
-        <div class="map-summary" id="summaryToggle" role="button" tabindex="0" aria-expanded="false" aria-controls="detailContent" aria-label="Expand details">
+        <div class="map-summary" id="summaryToggle">
           <div class="summary-text">
             <div class="city-header">
-              <div class="title-stack">
-                <p class="area-name" id="areaName">Locating area…</p>
-                <p class="hex-line" id="hexLine">H3 · —</p>
-              </div>
               <div class="capture-rail">
                 <span class="outing-chip" id="outingBadge" hidden>Outing live</span>
                 <div class="activity-choices">
@@ -112,6 +111,10 @@
                     <b>Outing</b>
                   </span>
                 </div>
+              </div>
+              <div class="title-stack">
+                <p class="area-name" id="areaName">Locating area…</p>
+                <p class="hex-line" id="hexLine">H3 · —</p>
               </div>
             </div>
             <div class="countdown-row" id="countdownRow">

@@ -1469,14 +1469,40 @@ button {
 
 #userPuck.dimmed { opacity: 0.3; }
 
-/* Capture rail: compact buttons stacked right of the tile title */
+/* Sheet arrow: top-right of the card. Up = collapsed, down = open. */
+.sheet-arrow {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.sheet-arrow svg { transition: transform 0.2s ease; }
+
+.bottom-card.expanded .sheet-arrow svg { transform: rotate(180deg); }
+
+/* Capture rail: compact buttons left of the tile info */
 .capture-rail {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 6px;
   flex: none;
+}
+
+.city-header .title-stack {
   margin-left: auto;
+  text-align: right;
+  align-items: flex-end;
 }
 
 .capture-rail .outing-chip { margin-left: 0; }
@@ -1512,12 +1538,19 @@ button {
   display: grid;
   place-items: center;
   border-radius: 13px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
+/* White containers, blue glyphs */
 .capture-rail .choice-icon {
   width: 44px;
   height: 44px;
   border-radius: 13px;
+  background: #fff;
+  border: 1px solid var(--line);
+  color: #2a69aa;
 }
 
 .capture-rail .choice-icon svg {

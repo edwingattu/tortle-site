@@ -846,12 +846,16 @@ function openDialog(type) {
 function bindUi() {
   const bottomCard = $('#bottomCard');
   const summaryToggle = $('#summaryToggle');
+  // Sheet toggles ONLY via the arrow (up = collapsed, down = open).
+  // Tile taps and summary taps never expand it — the card stays put.
+  const sheetArrow = $('#sheetArrow');
   const setExpanded = (on) => {
     bottomCard?.classList.toggle('expanded', on);
-    summaryToggle?.setAttribute('aria-expanded', String(on));
-    summaryToggle?.setAttribute('aria-label', on ? 'Collapse details' : 'Expand details');
+    sheetArrow?.setAttribute('aria-expanded', String(on));
+    sheetArrow?.setAttribute('aria-label', on ? 'Collapse details' : 'Expand details');
   };
-  summaryToggle?.addEventListener('click', () => {
+  sheetArrow?.addEventListener('click', (e) => {
+    e.stopPropagation();
     setExpanded(!bottomCard?.classList.contains('expanded'));
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
@@ -859,12 +863,6 @@ function bindUi() {
   const memoryBlock = $('#memoryBlock');
   memoryBlock?.addEventListener('click', (e) => e.stopPropagation());
   memoryBlock?.addEventListener('keydown', (e) => e.stopPropagation());
-  summaryToggle?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      setExpanded(!bottomCard?.classList.contains('expanded'));
-    }
-  });
 
   // PWA install prompt (deferred) — show banner when ready
   let deferredPrompt = null;
