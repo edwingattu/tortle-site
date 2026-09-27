@@ -607,6 +607,23 @@ button {
   font-weight: 800;
 }
 
+/* Saved title: title font in place of the field. */
+.tile-title-display {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 9px 2px;
+  font: 800 17px Manrope, sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile-title-display[hidden],
+.title-row input[hidden] { display: none !important; }
+
 /* Persistent small-caps label over the state pill. */
 .tile-status-block {
   display: flex;

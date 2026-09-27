@@ -232,22 +232,46 @@ function updateCountdown(rec, status) {
   bar.style.width = `${pct}%`;
 }
 
-// Tile naming: the field follows the selected tile, never the 1s HUD
-// refresh. Refills only on tile switch (or when unfocused and diverged),
-// so typing is never clobbered while tracking ticks.
+// Tile naming: view mode (title + Edit Title) vs edit mode (field + Save).
+// The field follows the selected tile, never the 1s HUD refresh: while the
+// user is typing, nothing yanks mode or text.
 let lastTitleCell = undefined;
-function syncTitleField(name) {
+function showTitleView(name) {
+  const input = $('#tileTitleInput');
+  const display = $('#tileTitleDisplay');
+  const btn = $('#tileTitleSave');
+  if (input) input.hidden = true;
+  if (display) { display.hidden = false; display.textContent = name || ''; }
+  if (btn) btn.textContent = 'Edit Title';
+}
+function showTitleEdit(preset) {
+  const input = $('#tileTitleInput');
+  const display = $('#tileTitleDisplay');
+  const btn = $('#tileTitleSave');
+  if (display) display.hidden = true;
+  if (input) {
+    input.hidden = false;
+    if (preset !== null && preset !== undefined) input.value = preset;
+  }
+  if (btn) btn.textContent = 'Save';
+}
+function renderTitleField(name) {
   const input = $('#tileTitleInput');
   if (!input) return;
   try {
     const city = areasDbg.regionLabel();
     if (input.placeholder !== city) input.placeholder = city;
   } catch {}
+  if (document.activeElement === input) return;
   if (selectedCell !== lastTitleCell) {
     lastTitleCell = selectedCell;
-    input.value = name || '';
-  } else if (document.activeElement !== input && (input.value || '') !== (name || '')) {
-    input.value = name || '';
+    if (name) showTitleView(name);
+    else showTitleEdit('');
+  } else if (name) {
+    // Covers fresh saves and names arriving from another device.
+    showTitleView(name);
+  } else {
+    showTitleEdit(null); // keep any typed text; just fix visibility + button
   }
 }
 
@@ -765,7 +789,7 @@ function renderHud() {
   let hudStatus = 'unclaimed';
   try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
   updateCountdown(rec, hudStatus);
-  syncTitleField(snap.store.tiles[selectedCell]?.name);
+  renderTitleField(snap.store.tiles[selectedCell]?.name);
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);
@@ -1480,12 +1504,19 @@ function bindUi() {
     if (!selectedCell) return;
     engine.setTileName(selectedCell, name);
     lastTitleCell = selectedCell;
-    const input = $('#tileTitleInput');
-    if (input) { input.value = name; input.blur(); }
+    showTitleView(name);
+    $('#tileTitleInput')?.blur();
   };
   $('#tileTitleSave')?.addEventListener('click', () => {
     const input = $('#tileTitleInput');
     if (!input || !selectedCell) return;
+    // View mode: the button reads Edit Title — reopen the field instead.
+    if (input.hidden) {
+      showTitleEdit($('#tileTitleDisplay')?.textContent || '');
+      input.focus();
+      try { input.select(); } catch {}
+      return;
+    }
     const val = (input.value || '').trim();
     if (val) { saveTileTitle(val); return; }
     const city = areasDbg.regionLabel();
@@ -1503,8 +1534,9 @@ function bindUi() {
   });
   $('#titleChangeBtn')?.addEventListener('click', () => {
     try { $('#titleDialog').close(); } catch {}
+    showTitleEdit('');
     const input = $('#tileTitleInput');
-    if (input) { input.value = ''; input.focus(); }
+    if (input) input.focus();
   });
 }
 
