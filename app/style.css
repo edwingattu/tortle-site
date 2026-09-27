@@ -1483,17 +1483,16 @@ button {
 
 .capture-rail .activity-choices {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 6px;
 }
 
 .capture-rail .activity-choice {
-  flex-direction: row;
+  flex-direction: column;
   aspect-ratio: auto;
-  justify-content: flex-start;
-  min-width: 118px;
-  padding: 7px 10px;
-  gap: 7px;
+  align-items: center;
+  padding: 7px 8px;
+  gap: 4px;
   border-radius: 11px;
 }
 
