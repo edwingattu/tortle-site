@@ -211,6 +211,14 @@ button {
   letter-spacing: 0.02em;
 }
 
+/* Superadmin only (tilt pill exists): the diagnostics button stacks under
+ * the zoom + tilt pills on the left instead of the right edge. */
+.map-panel:has(#tiltLevel) .map-controls {
+  left: 24px;
+  right: auto;
+  top: 152px;
+}
+
 /* Live Explore pill: lives in the toolbar, above the card. */
 .map-tracking {
   box-shadow: 0 4px 16px rgba(21, 73, 60, 0.12);
