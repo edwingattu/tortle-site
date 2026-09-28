@@ -48,6 +48,20 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     onUserGesture?.();
   }
   let selectedCell = null;
+  // Selection pulse: loops until another tile is tapped. Green for open
+  // (unlocked/mastered) taps, white for active/locked. Runs on the
+  // selected-outline layer only — the mastered border schematic is untouched.
+  let pulseTimer = 0;
+  let pulsePhase = 0;
+  function pulseTick() {
+    try {
+      if (!map.getLayer('selected-outline') || !selectedCell) return;
+      pulsePhase += 0.35;
+      const k = 0.5 + 0.5 * Math.sin(pulsePhase);
+      map.setPaintProperty('selected-outline', 'line-opacity', 0.3 + 0.55 * k);
+      map.setPaintProperty('selected-outline', 'line-width', 3 + 2 * k);
+    } catch {}
+  }
   // No silent user position: null until a real fix lands via the gate,
   // tracking, or the sandbox joystick. Nothing defaults to any street.
   let userLngLat = null;
@@ -971,13 +985,17 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       window.clearTimeout(pinFadeTimer);
       setPinsOpacity(0, 300);
     },
-    setSelected(cell) {
+    setSelected(cell, status = null) {
       selectedCell = cell;
       try {
         if (map.getLayer('selected-outline')) {
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
+          const open = status === 'unlocked' || status === 'mastered';
+          map.setPaintProperty('selected-outline', 'line-color', open ? '#2ed67c' : '#ffffff');
         }
       } catch {}
+      // Start the loop on first selection; every later tap just retargets it.
+      if (cell && !pulseTimer) pulseTimer = window.setInterval(pulseTick, 120);
     },
     setUserLocation(lng, lat, { fly = false } = {}) {
       userLngLat = [lng, lat];
