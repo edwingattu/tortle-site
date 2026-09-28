@@ -211,7 +211,7 @@ button {
   letter-spacing: 0.02em;
 }
 
-/* Explore Live pill: lives in the card float stack, above the card. */
+/* Live Explore pill: lives in the toolbar, above the card. */
 .map-tracking {
   box-shadow: 0 4px 16px rgba(21, 73, 60, 0.12);
 }
@@ -314,28 +314,36 @@ button {
 
 .card-dock > * { pointer-events: auto; }
 
-.card-float-stack {
-  align-self: flex-end;
+/* Toolbar: media + Live Explore + recenter in one transparent container,
+ * pinned above the collapsed card. The card layers above it, so an
+ * expanding card slides over and covers it. */
+.tool-bar {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 9px;
-  margin-bottom: 10px;
-}
-
-/* Capture dock: Voice/Photo/Outing row floating over the map,
- * centered above the card (moved out of the bottom-card). */
-.capture-dock {
-  align-self: center;
-  margin-bottom: 10px;
-}
-
-.capture-dock .capture-rail {
   align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.tool-bar > * { pointer-events: auto; }
+
+.tool-bar .capture-rail {
+  align-items: flex-start;
+}
+
+.tool-bar .tool-recenter {
+  margin-left: auto;
 }
 
 .bottom-card {
   position: relative;
+  z-index: 2;
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(248, 247, 242, 0.94);
   border-radius: 18px;
@@ -854,12 +862,12 @@ button {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #347bc2;
+  background: #1f8a4c;
 }
 
 .status-pill.live i {
-  background: #1f8a4c;
-  box-shadow: 0 0 0 4px rgba(31, 138, 76, 0.18);
+  background: #2ed67c;
+  box-shadow: 0 0 10px 2px rgba(46, 214, 124, 0.9);
 }
 
 .stat-grid {
@@ -1754,12 +1762,13 @@ button {
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
-  color: var(--ink);
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
 }
 
 .capture-rail .activity-choice {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   aspect-ratio: auto;
   padding: 0;
   display: grid;
@@ -1772,8 +1781,8 @@ button {
 
 /* White containers, blue glyphs */
 .capture-rail .choice-icon {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: 13px;
   background: #fff;
   border: 1px solid var(--line);
@@ -1781,8 +1790,8 @@ button {
 }
 
 .capture-rail .choice-icon svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 /* Voice + gallery fill the collapsed card under the title row */

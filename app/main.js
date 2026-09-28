@@ -755,6 +755,17 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
   renderHud();
 }
 
+// Toolbar pinning: the bar rides above the collapsed card's top. While
+// expanded it stays pinned, so the growing card slides over and covers it.
+function layoutToolbar() {
+  const bar = $('#toolBar');
+  const card = $('#bottomCard');
+  if (!bar || !card) return;
+  if (!card.classList.contains('expanded')) {
+    bar.style.bottom = `${card.offsetHeight + 10}px`;
+  }
+}
+
 function renderHud() {
   const snap = engine.getSnapshot();
   const rec = snap.store.tiles[selectedCell];
@@ -805,6 +816,7 @@ function renderHud() {
   try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
   updateCountdown(rec, hudStatus);
   renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
+  layoutToolbar();
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);
@@ -909,16 +921,24 @@ function setTracking(on) {
   $('#trackingButton').classList.toggle('live', tracking);
   $('#trackingButton').setAttribute('aria-pressed', String(tracking));
   const tl = $('#trackingLabel');
-  if (tl) tl.textContent = tracking ? 'Explore Live on' : 'Explore Live off';
+  if (tl) tl.textContent = 'Live Explore';
   if (tracking) {
     lastDwellAt = performance.now();
     stopWatch(); // re-share while live must not leak the old watch
     startWatch();
     requestWakeLock();
+    try { mapView.recenter(); } catch {}
     toast('Live fog clearing is on. Hexes follow your real coordinates.');
   } else {
     stopWatch();
     releaseWakeLock();
+    // Off: settle the camera on the selected tile's default view.
+    try {
+      if (selectedCell) {
+        const c = cellCenter(selectedCell);
+        mapView.recenter({ lng: c.lng, lat: c.lat });
+      }
+    } catch {}
     toast('Fog clearing paused.');
   }
 }
@@ -949,6 +969,7 @@ function bindUi() {
   sheetArrow?.addEventListener('click', (e) => {
     e.stopPropagation();
     setExpanded(!bottomCard?.classList.contains('expanded'));
+    layoutToolbar();
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
   // never expand/collapse the sheet.
@@ -1923,6 +1944,9 @@ setInterval(() => {
 }, CONFIG.syncIntervalMs);
 window.addEventListener('pagehide', () => {
   flush(engine);
+});
+window.addEventListener('resize', () => {
+  try { layoutToolbar(); } catch {}
 });
 try {
   window.__tortleBoot = {
