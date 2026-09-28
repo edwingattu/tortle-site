@@ -840,10 +840,24 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       };
       tapRaf = requestAnimationFrame(frame);
     }
+    // Selected tile edge: steady static binding between the tapped tile
+    // and its card (the fill below does the pulsing; this just holds).
+    // Sits above every fill so it reads at all bands.
+    // Filter-matched on the hex id — no geometry work per tap.
+    map.addLayer({
+      id: 'selected-outline',
+      type: 'line',
+      source: 'hex-fog',
+      filter: ['==', ['get', 'h3'], ''],
+      paint: {
+        'line-color': '#ffffff',
+        'line-width': 3,
+        'line-opacity': 0.95,
+      },
+    });
     // Selected tile fill: the looping pulse lives here (green for open
-    // taps, white for active/locked). Filter-matched on the hex id — no
-    // geometry work per tap. Sits above the base fills (and below the
-    // selected edge + mastered border, which both draw on top untouched).
+    // taps, white for active/locked). Sits above the base fills (and below
+    // the selected edge + mastered border, which both draw on top untouched).
     map.addLayer(
       {
         id: 'selected-fill',
@@ -857,20 +871,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       },
       'selected-outline',
     );
-    // Selected tile edge: steady static binding between the tapped tile
-    // and its card (the fill above does the pulsing; this just holds).
-    // Sits above every fill so it reads at all bands.
-    map.addLayer({
-      id: 'selected-outline',
-      type: 'line',
-      source: 'hex-fog',
-      filter: ['==', ['get', 'h3'], ''],
-      paint: {
-        'line-color': '#ffffff',
-        'line-width': 3,
-        'line-opacity': 0.95,
-      },
-    });
     // Tap-gated pins: show for the tapped mastered tile, then fade over 60s.
     let pinFadeTimer = 0;
     function setPinsOpacity(v, transitionMs) {

@@ -1,5 +1,5 @@
 // Tortle PWA — shell precache + network-first for HTML, network-only for tiles/supabase
-const CACHE = 'tortle-shell-v2';
+const CACHE = 'tortle-shell-v3';
 const SHELL = [
   '/',
   '/index.html',
@@ -59,7 +59,14 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cached) => {
       const fetched = fetch(e.request).then((r) => {
-        if (r.ok) caches.open(CACHE).then((c) => c.put(e.request, r.clone()));
+        // Guard: a raced/consumed response throws on clone — skip caching it,
+        // the network response itself still serves the page.
+        if (r && r.ok && !r.bodyUsed) {
+          try {
+            const copy = r.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+          } catch {}
+        }
         return r;
       }).catch(() => null);
       return cached || fetched;
