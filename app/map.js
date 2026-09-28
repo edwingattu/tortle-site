@@ -59,6 +59,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
+      // Mastered border breathes with the same phase (grow + shrink).
+      if (map.getLayer('hex-mastered-borders')) {
+        map.setPaintProperty('hex-mastered-borders', 'line-opacity', 0.35 + 0.65 * k);
+        map.setPaintProperty('hex-mastered-borders', 'line-width', 3 + 3 * k);
+      }
     } catch {}
   }
   // No silent user position: null until a real fix lands via the gate,
@@ -652,27 +657,20 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       },
     });
     // Mastered border: true line layer over the clear fill — no double-draw.
-    // Thick fluorescent green, pulsing via opacity loop below.
+    // Thinner base width; the selection pulse tick below grows/shrinks it
+    // in sync with the fill pulse (same phase). Progress-bar green.
     map.addLayer({
       id: 'hex-mastered-borders',
       type: 'line',
       source: 'hex-fog',
       filter: ['==', ['get', 'status'], 'mastered'],
       paint: {
-        'line-color': '#2ed67c',
-        'line-width': 7,
+        'line-color': '#5cc581',
+        'line-width': 4,
         'line-opacity': 1,
         'line-opacity-transition': { duration: 1800, delay: 0 },
       },
     });
-    let masterPulseOn = false;
-    setInterval(() => {
-      if (!map.getLayer('hex-mastered-borders')) return;
-      masterPulseOn = !masterPulseOn;
-      try {
-        map.setPaintProperty('hex-mastered-borders', 'line-opacity', masterPulseOn ? 1 : 0.35);
-      } catch {}
-    }, 2000);
     // Area labels overlay the street hexes for orientation (their window
     // runs open-top); polygon fills hard-switch per FILL_WINDOW.
     for (const [band, vis] of Object.entries(BAND_VIS)) {
@@ -1003,16 +1001,17 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     setSelected(cell, status = null) {
       selectedCell = cell;
       try {
+        // Selection edge stays white except on mastered taps (green echoes
+        // the mastered border); unlocked taps keep the white edge.
+        const mastered = status === 'mastered';
         if (map.getLayer('selected-outline')) {
-          const open = status === 'unlocked' || status === 'mastered';
-          const color = open ? '#2ed67c' : '#ffffff';
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-outline', 'line-color', color);
+          map.setPaintProperty('selected-outline', 'line-color', mastered ? '#5cc581' : '#ffffff');
           map.setPaintProperty('selected-outline', 'line-width', 3);
           map.setPaintProperty('selected-outline', 'line-opacity', 0.95);
         }
         if (map.getLayer('selected-fill')) {
-          const open = status === 'unlocked' || status === 'mastered';
+          const open = mastered || status === 'unlocked';
           map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
           map.setPaintProperty('selected-fill', 'fill-color', open ? '#2ed67c' : '#ffffff');
         }

@@ -725,7 +725,8 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
   const snap = engine.getSnapshot();
   mapView.paint(snap.store);
   const info = mapView.inspectCell(snap.store, cell);
-  mapView.setSelected(cell, info.status);
+  const selStatus = info.status === 'unlocked' && isMasteredCell(snap.store, cell) ? 'mastered' : info.status;
+  mapView.setSelected(cell, selStatus);
   const pct = progressPercent(info.rec);
   updateAreaName(cell);
   updateCityTitle();
