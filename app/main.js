@@ -722,10 +722,10 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
   gallerySig = null;
   selectedCell = cell;
   noteSel(src, cell);
-  mapView.setSelected(cell, info.status);
   const snap = engine.getSnapshot();
   mapView.paint(snap.store);
   const info = mapView.inspectCell(snap.store, cell);
+  mapView.setSelected(cell, info.status);
   const pct = progressPercent(info.rec);
   updateAreaName(cell);
   updateCityTitle();
