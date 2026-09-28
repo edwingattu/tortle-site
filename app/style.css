@@ -76,7 +76,7 @@ button {
 }
 
 .map-topbar {
-  padding: 28px 30px;
+  padding: calc(28px + env(safe-area-inset-top, 0px)) 30px 28px;
 }
 
 /* Top-right cluster: Areas -> Tiles -> User, pinned right of the map */
@@ -151,7 +151,7 @@ button {
   position: absolute;
   z-index: 3;
   right: 24px;
-  top: 140px;
+  top: calc(140px + env(safe-area-inset-top, 0px));
   display: grid;
   gap: 9px;
 }
@@ -185,7 +185,7 @@ button {
   position: absolute;
   z-index: 3;
   left: 24px;
-  top: 88px;
+  top: calc(88px + env(safe-area-inset-top, 0px));
   background: rgba(23, 54, 104, 0.85);
   color: #fff;
   border-radius: 999px;
@@ -200,7 +200,7 @@ button {
   position: absolute;
   z-index: 3;
   left: 24px;
-  top: 118px;
+  top: calc(118px + env(safe-area-inset-top, 0px));
   background: rgba(23, 54, 104, 0.85);
   color: #fff;
   border-radius: 999px;
@@ -216,7 +216,7 @@ button {
 .map-panel:has(#tiltLevel) .map-controls {
   left: 24px;
   right: auto;
-  top: 152px;
+  top: calc(152px + env(safe-area-inset-top, 0px));
 }
 
 /* Live Explore pill: lives in the toolbar, above the card. */
