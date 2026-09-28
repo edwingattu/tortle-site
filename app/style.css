@@ -333,6 +333,23 @@ button {
 
 .tool-bar > * { pointer-events: auto; }
 
+/* Floating voice recorder: pinned above the toolbar, never inside or
+ * under the card. The card neither opens nor covers it. */
+.voice-panel {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  pointer-events: auto;
+}
+
+.voice-panel[hidden] { display: none !important; }
+
+.voice-panel .capture-area {
+  margin-top: 0;
+  box-shadow: 0 10px 30px rgba(15, 64, 54, 0.22);
+}
+
 .tool-bar .capture-rail {
   align-items: flex-start;
 }
@@ -582,7 +599,7 @@ button {
   padding-right: 48px;
 }
 
-/* Row 2: status + info, full width below the chevron zone. */
+/* Row 2: info left (aligned to the name above), status hard right. */
 .tile-sub-row {
   display: flex;
   align-items: center;
@@ -595,6 +612,16 @@ button {
 .tile-sub-row .title-stack {
   min-width: 0;
   flex: 1;
+}
+
+/* Status rides the card's right edge: label right-aligned over the pill. */
+.tile-sub-row .tile-status-block {
+  margin-left: auto;
+  align-items: flex-end;
+}
+
+.tile-sub-row .status-label {
+  text-align: right;
 }
 
 .title-save[hidden] { display: none !important; }
@@ -622,17 +649,18 @@ button {
   flex: none;
   border: 1px solid var(--navy);
   border-radius: 10px;
-  padding: 9px 16px;
+  padding: 6px 12px;
   background: var(--navy);
   color: #fff;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
 }
 
-/* Edit variant: white button, navy border, navy text. */
+/* Edit variant: sky blue border and text. */
 .title-save.is-edit {
   background: #fff;
-  color: var(--navy);
+  border-color: #8fd0f2;
+  color: #8fd0f2;
 }
 
 /* Saved title: title font in place of the field. */
@@ -1901,6 +1929,176 @@ button {
 .gallery-delete.armed {
   background: #c0392b;
   color: #fff;
+}
+
+/* Voice gallery: one long slab per note with its waveform on it. */
+.voice-gallery {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.voice-gallery[hidden] { display: none !important; }
+
+.vsec-head {
+  font: 700 9px "DM Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6e8278;
+  line-height: 1;
+  padding: 2px 2px 0;
+}
+
+.vslab {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.vslab-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 12px 40px 12px 12px;
+  text-align: left;
+}
+
+.vslab-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 13px;
+  background: #e2effb;
+  color: #2a69aa;
+}
+
+.vslab-meta {
+  flex: none;
+  min-width: 0;
+  max-width: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vslab-meta b {
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vslab-meta small {
+  font: 500 10px "DM Mono", monospace;
+  color: #8a9aa8;
+}
+
+.vslab-wave {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.vslab-wave span {
+  width: 3px;
+  min-height: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: #2a69aa;
+  opacity: 0.55;
+  flex: none;
+}
+
+.vslab-dur {
+  flex: none;
+  font: 700 11px "DM Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  color: #5b6b7a;
+}
+
+.vslab-del {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  padding: 0 0 2px;
+}
+
+.vslab-del.armed { background: #c0392b; }
+
+/* Inline player: attached right under its slab. */
+.vslab-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  background: #f7f9fd;
+}
+
+.vslab-player[hidden] { display: none !important; }
+
+.vslab-pbtn {
+  flex: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.vslab-pbtn.primary {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.vslab-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: #e4ece5;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.vslab-track span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--deep-mint);
+  border-radius: inherit;
+}
+
+.vslab-time {
+  flex: none;
+  font: 700 11px "DM Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  color: #5b6b7a;
 }
 
 /* Media viewer */

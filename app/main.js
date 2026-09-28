@@ -555,10 +555,195 @@ function deleteGalleryItems(ids) {
   renderHud();
 }
 
+// Voice slabs: one shared audio element, one open inline player at a time.
+let slabAudio = null;
+let openSlabId = null;
+let openSlabUi = null;
+let lastGridCount = 0;
+function slabEnsureAudio() {
+  if (!slabAudio) {
+    slabAudio = new Audio();
+    slabAudio.preload = 'auto';
+    slabAudio.addEventListener('loadedmetadata', () => {
+      if (openSlabUi && slabAudio.duration && slabAudio.currentTime === 0) {
+        openSlabUi.time.textContent = fmtClock(slabAudio.duration);
+      }
+    });
+    slabAudio.addEventListener('timeupdate', () => {
+      if (!openSlabUi || !slabAudio.duration) return;
+      openSlabUi.fill.style.width = `${(slabAudio.currentTime / slabAudio.duration) * 100}%`;
+      openSlabUi.time.textContent = fmtClock(slabAudio.duration - slabAudio.currentTime);
+    });
+    slabAudio.addEventListener('ended', () => {
+      if (!openSlabUi) return;
+      openSlabUi.fill.style.width = '0%';
+      if (slabAudio.duration) openSlabUi.time.textContent = fmtClock(slabAudio.duration);
+      if (openSlabUi.play) openSlabUi.play.hidden = false;
+      if (openSlabUi.pause) openSlabUi.pause.hidden = true;
+    });
+  }
+  return slabAudio;
+}
+function closeSlabPlayer() {
+  try { slabAudio?.pause(); } catch {}
+  if (openSlabUi?.player) openSlabUi.player.hidden = true;
+  openSlabId = null;
+  openSlabUi = null;
+}
+function fmtDateShort(ts) {
+  try {
+    return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  } catch {
+    return '';
+  }
+}
+function armTwoTap(btn, onFire) {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!btn.dataset.armed) {
+      btn.dataset.armed = '1';
+      btn.classList.add('armed');
+      const prev = btn.textContent;
+      btn.textContent = '!';
+      setTimeout(() => {
+        if (!btn.isConnected) return;
+        delete btn.dataset.armed;
+        btn.classList.remove('armed');
+        btn.textContent = prev === '!' ? '×' : prev;
+      }, 3000);
+      return;
+    }
+    onFire();
+  });
+}
+function buildVoiceSlab(v, forCell) {
+  const slab = document.createElement('div');
+  slab.className = 'vslab';
+  const main = document.createElement('button');
+  main.type = 'button';
+  main.className = 'vslab-main';
+  main.setAttribute('aria-label', 'Open voice note player');
+  const icon = document.createElement('span');
+  icon.className = 'vslab-icon';
+  icon.innerHTML = VOICE_SVG;
+  const meta = document.createElement('span');
+  meta.className = 'vslab-meta';
+  const title = document.createElement('b');
+  title.textContent = v.title || 'Voice note';
+  const date = document.createElement('small');
+  date.textContent = fmtDateShort(v.createdAt);
+  meta.append(title, date);
+  const wave = document.createElement('span');
+  wave.className = 'vslab-wave';
+  const bars = [];
+  for (let i = 0; i < 36; i++) {
+    const s = document.createElement('span');
+    wave.appendChild(s);
+    bars.push(s);
+  }
+  paintPeaks(bars, null, 24);
+  const dur = document.createElement('span');
+  dur.className = 'vslab-dur';
+  dur.textContent = '0:00';
+  main.append(icon, meta, wave, dur);
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'vslab-del';
+  del.setAttribute('aria-label', 'Delete voice note');
+  del.textContent = '×';
+  armTwoTap(del, () => deleteGalleryItems([v.id]));
+  const player = document.createElement('div');
+  player.className = 'vslab-player';
+  player.hidden = true;
+  const mkBtn = (label, cls, hidden) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = cls;
+    b.textContent = label;
+    b.hidden = !!hidden;
+    return b;
+  };
+  const playB = mkBtn('Play', 'vslab-pbtn primary', false);
+  const pauseB = mkBtn('Pause', 'vslab-pbtn', true);
+  const stopB = mkBtn('Stop', 'vslab-pbtn', false);
+  const track = document.createElement('div');
+  track.className = 'vslab-track';
+  const fill = document.createElement('span');
+  track.appendChild(fill);
+  const time = document.createElement('span');
+  time.className = 'vslab-time';
+  time.textContent = '0:00';
+  player.append(playB, pauseB, stopB, track, time);
+  const ui = { player, fill, time, play: playB, pause: pauseB };
+  const audio = slabEnsureAudio();
+  const setPlaying = (playing) => {
+    playB.hidden = playing;
+    pauseB.hidden = !playing;
+  };
+  main.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (openSlabId && openSlabId !== v.id) closeSlabPlayer();
+    if (openSlabId === v.id) { closeSlabPlayer(); return; }
+    openSlabId = v.id;
+    openSlabUi = ui;
+    if (audio.src !== v.url) {
+      try { audio.src = v.url; } catch {}
+    }
+    player.hidden = false;
+    setPlaying(true);
+    audio.play().catch(() => setPlaying(false));
+  });
+  playB.addEventListener('click', (e) => {
+    e.stopPropagation();
+    audio.play().catch(() => {});
+    setPlaying(true);
+  });
+  pauseB.addEventListener('click', (e) => {
+    e.stopPropagation();
+    try { audio.pause(); } catch {}
+    setPlaying(false);
+  });
+  stopB.addEventListener('click', (e) => {
+    e.stopPropagation();
+    try { audio.pause(); audio.currentTime = 0; } catch {}
+    fill.style.width = '0%';
+    if (audio.duration) time.textContent = fmtClock(audio.duration);
+    setPlaying(false);
+  });
+  track.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!audio.duration) return;
+    const r = track.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    try { audio.currentTime = ratio * audio.duration; } catch {}
+  });
+  slab.append(main, del, player);
+  // Duration + true waveform resolve in background; stale renders die here.
+  try {
+    const tmp = new Audio();
+    tmp.preload = 'metadata';
+    tmp.src = v.url;
+    tmp.onloadedmetadata = () => {
+      if (!slab.isConnected || forCell !== selectedCell) return;
+      if (tmp.duration) dur.textContent = fmtClock(tmp.duration);
+    };
+  } catch {}
+  decodePeaks(v.url, bars.length).then((peaks) => {
+    if (!slab.isConnected || forCell !== selectedCell) return;
+    if (peaks) paintPeaks(bars, peaks, 24);
+  });
+  return slab;
+}
+
 async function renderTileGallery() {
   const gal = $('#tileGallery');
+  const vgal = $('#voiceGallery');
   if (!gal) return;
-  if (voiceCaptureOpen) { gal.hidden = true; return; }
+  if (voiceCaptureOpen) {
+    gal.hidden = true;
+    if (vgal) vgal.hidden = true;
+    return;
+  }
   const my = ++galleryToken;
   // Tile ownership: this render belongs to the tile selected at call time.
   // Re-verified after every await — a tile switch mid-resolve discards it.
@@ -568,8 +753,9 @@ async function renderTileGallery() {
     const sigIds = acts.map((a) => a.id).sort().join(',');
     // renderHud runs every second while tracking — skip the rebuild when the
     // item set is unchanged (signed URLs are re-minted hourly instead).
-    if (sigIds === gallerySig && Date.now() - galleryBuiltAt < 50 * 60 * 1000 && !gal.hidden && gal.childElementCount > 0) {
-      updateGalleryChrome(acts.length);
+    if (sigIds === gallerySig && Date.now() - galleryBuiltAt < 50 * 60 * 1000 &&
+        (gal.childElementCount > 0 || (vgal && vgal.childElementCount > 0))) {
+      updateGalleryChrome(lastGridCount);
       return;
     }
     // Resolve view URLs: same-session blob first (instant + private), else a
@@ -590,18 +776,25 @@ async function renderTileGallery() {
         }
         if (my !== galleryToken || forCell !== selectedCell) return;
       }
-      items.push({ id: a.id, url, kind: mediaKind(a, url) });
+      items.push({ id: a.id, url, kind: mediaKind(a, url), title: a.title, createdAt: a.createdAt });
     }
     if (my !== galleryToken || forCell !== selectedCell) return;
     gallerySig = sigIds;
     galleryBuiltAt = Date.now();
-    viewerItems = items;
+    // Photo/video keep the square grid (and the fullscreen viewer); voice
+    // notes get their own slab list with inline players.
+    const gridItems = items.filter((it) => it.kind !== 'audio');
+    const voiceItems = items
+      .filter((it) => it.kind === 'audio')
+      .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    viewerItems = gridItems;
+    lastGridCount = gridItems.length;
     // Prune selections that no longer exist.
-    const alive = new Set(items.map((it) => it.id));
+    const alive = new Set(gridItems.map((it) => it.id));
     for (const id of [...gallerySelected]) if (!alive.has(id)) gallerySelected.delete(id);
     gal.innerHTML = '';
-    gal.hidden = items.length === 0;
-    for (const { id, url, kind } of items) {
+    gal.hidden = gridItems.length === 0;
+    for (const { id, url, kind } of gridItems) {
       const wrap = document.createElement('div');
       wrap.className = 'g-item' + (gallerySelectMode ? ' selecting' : '') + (gallerySelected.has(id) ? ' selected' : '');
       let el;
@@ -622,13 +815,6 @@ async function renderTileGallery() {
         badge.innerHTML = PLAY_BADGE;
         wrap.appendChild(badge);
       }
-      else if (kind === 'audio') {
-        el = document.createElement('button');
-        el.type = 'button';
-        el.setAttribute('aria-label', 'Play voice note');
-        el.innerHTML = VOICE_SVG;
-        el.className = 'g-thumb voice-thumb';
-      }
       else {
         el = document.createElement('img'); el.alt = 'memory';
         el.addEventListener('error', () => {
@@ -637,7 +823,7 @@ async function renderTileGallery() {
         });
         el.src = url;
       }
-      if (kind !== 'audio') el.className = 'g-thumb';
+      el.className = 'g-thumb';
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         if (gallerySelectMode) toggleGalleryItem(id, wrap);
@@ -671,7 +857,21 @@ async function renderTileGallery() {
       wrap.append(el, check, del);
       gal.appendChild(wrap);
     }
-    updateGalleryChrome(items.length);
+    updateGalleryChrome(gridItems.length);
+    if (vgal) {
+      vgal.innerHTML = '';
+      closeSlabPlayer();
+      if (!voiceItems.length) {
+        vgal.hidden = true;
+      } else {
+        vgal.hidden = false;
+        const head = document.createElement('div');
+        head.className = 'vsec-head';
+        head.textContent = `Voice notes · ${voiceItems.length}`;
+        vgal.appendChild(head);
+        for (const v of voiceItems) vgal.appendChild(buildVoiceSlab(v, forCell));
+      }
+    }
   } catch (e) { console.warn('[gallery] render failed:', e?.message || e); }
 }
 
@@ -763,6 +963,11 @@ function layoutToolbar() {
   if (!bar || !card) return;
   if (!card.classList.contains('expanded')) {
     bar.style.bottom = `${card.offsetHeight + 10}px`;
+  }
+  // Floating recorder rides above the toolbar, never under the card.
+  const panel = $('#voicePanel');
+  if (panel && !panel.hidden) {
+    panel.style.bottom = `${card.offsetHeight + bar.offsetHeight + 20}px`;
   }
 }
 
@@ -1086,7 +1291,7 @@ function bindUi() {
   }
 
   // Inline Voice capture (card itself) + fullscreen Camera + tile gallery
-  const voiceArea = $('#voiceCapture');
+  const voiceArea = $('#voicePanel');
   let camStream = null, camMode = 'photo', camFacing = 'environment', camRecorder = null, camChunks = [], camPhotoBlob = null, camVideoBlob = null;
   let voiceStream = null, voiceRecorder = null, voiceChunks = [], voiceBlob = null, voiceTimer = null, voiceSec = 0;
 
@@ -1325,11 +1530,12 @@ function bindUi() {
   });
 
   function showVoiceArea() {
-    // Voice UI lives inside the card: expand so it's visible.
-    setExpanded(true);
+    // Voice UI floats above the toolbar: the card stays exactly as it is.
     voiceCaptureOpen = true;
     const gal = $('#tileGallery'); if (gal) gal.hidden = true;
+    const vgal = $('#voiceGallery'); if (vgal) vgal.hidden = true;
     if (voiceArea) voiceArea.hidden = false;
+    layoutToolbar();
   }
   function closeVoiceArea() {
     try { stopWave(); } catch {}
@@ -1344,6 +1550,7 @@ function bindUi() {
     if (voiceArea) voiceArea.hidden = true;
     voiceCaptureOpen = false;
     try { renderTileGallery(); } catch {}
+    layoutToolbar();
   }
 
   document.querySelectorAll('[data-capture]').forEach((button) => {

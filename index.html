@@ -104,6 +104,22 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
           </button>
         </div>
+        <div class="voice-panel" id="voicePanel" hidden>
+          <div class="capture-area" id="voiceCapture">
+            <div class="voice-bar">
+              <div class="voice-wave" id="voiceWave"></div>
+              <span class="voice-timer" id="voiceTimer">0:00</span>
+            </div>
+            <div class="capture-actions">
+              <button class="capture-btn" id="voiceRec" type="button">● Record</button>
+              <button class="capture-btn" id="voiceStop" type="button" hidden>■ Stop</button>
+              <button class="capture-btn" id="voicePlay" type="button" hidden>Play</button>
+              <button class="capture-btn primary" id="voiceSave" type="button" hidden>Save</button>
+              <button class="capture-btn" id="voiceClose" type="button">Close</button>
+            </div>
+            <audio id="voiceAudio" hidden></audio>
+          </div>
+        </div>
         <div class="bottom-card" id="bottomCard">
         <button class="sheet-arrow" id="sheetArrow" type="button" aria-label="Expand details" aria-expanded="false">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg>
@@ -118,13 +134,13 @@
               <button class="title-save" id="tileTitleSave" type="button">Save</button>
             </div>
             <div class="tile-sub-row">
-              <div class="tile-status-block">
-                <span class="status-label">Tile Status</span>
-                <span class="tile-state-pill is-locked" id="tileStatePill" hidden>Locked</span>
-              </div>
               <div class="title-stack">
                 <p class="area-name" id="areaName">Locating area…</p>
                 <p class="hex-line" id="hexLine">H3 · —</p>
+              </div>
+              <div class="tile-status-block">
+                <span class="status-label">Tile Status</span>
+                <span class="tile-state-pill is-locked" id="tileStatePill" hidden>Locked</span>
               </div>
             </div>
             <div class="countdown-row" id="countdownRow">
@@ -138,20 +154,6 @@
 
         <div class="detail-content" id="detailContent">
           <div class="memory-block" id="memoryBlock">
-            <div class="capture-area" id="voiceCapture" hidden>
-              <div class="voice-bar">
-                <div class="voice-wave" id="voiceWave"></div>
-                <span class="voice-timer" id="voiceTimer">0:00</span>
-              </div>
-              <div class="capture-actions">
-                <button class="capture-btn" id="voiceRec" type="button">● Record</button>
-                <button class="capture-btn" id="voiceStop" type="button" hidden>■ Stop</button>
-                <button class="capture-btn" id="voicePlay" type="button" hidden>Play</button>
-                <button class="capture-btn primary" id="voiceSave" type="button" hidden>Save</button>
-                <button class="capture-btn" id="voiceClose" type="button">Close</button>
-              </div>
-              <audio id="voiceAudio" hidden></audio>
-            </div>
             <div class="gallery-bar" id="galleryBar" hidden>
               <span class="gallery-count" id="galleryCount"></span>
               <button class="gallery-select" id="gallerySelect" type="button">Select</button>
@@ -161,6 +163,7 @@
               <button class="gallery-cancel" id="galleryDeleteCancel" type="button">Cancel</button>
               <button class="gallery-delete" id="galleryDeleteConfirm" type="button">Delete</button>
             </div>
+            <div class="voice-gallery" id="voiceGallery" hidden></div>
           </div>
           <div class="section-block" id="unlockingSection" hidden>
             <div class="unlocking-content" id="unlockingContent">
