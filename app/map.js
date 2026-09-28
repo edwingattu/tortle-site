@@ -55,11 +55,10 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   let pulsePhase = 0;
   function pulseTick() {
     try {
-      if (!map.getLayer('selected-outline') || !selectedCell) return;
+      if (!map.getLayer('selected-fill') || !selectedCell) return;
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
-      map.setPaintProperty('selected-outline', 'line-opacity', 0.3 + 0.55 * k);
-      map.setPaintProperty('selected-outline', 'line-width', 3 + 2 * k);
+      map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
     } catch {}
   }
   // No silent user position: null until a real fix lands via the gate,
@@ -841,10 +840,26 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       };
       tapRaf = requestAnimationFrame(frame);
     }
-    // Selected tile outline: persistent white edge binding the tapped tile
-    // to its card (the tap flash fades; this stays until another tile is
-    // picked). Sits above every fill so it reads at all bands.
-    // Filter-matched on the hex id — no geometry work per tap.
+    // Selected tile fill: the looping pulse lives here (green for open
+    // taps, white for active/locked). Filter-matched on the hex id — no
+    // geometry work per tap. Sits above the base fills (and below the
+    // selected edge + mastered border, which both draw on top untouched).
+    map.addLayer(
+      {
+        id: 'selected-fill',
+        type: 'fill',
+        source: 'hex-fog',
+        filter: ['==', ['get', 'h3'], ''],
+        paint: {
+          'fill-color': '#ffffff',
+          'fill-opacity': 0,
+        },
+      },
+      'selected-outline',
+    );
+    // Selected tile edge: steady static binding between the tapped tile
+    // and its card (the fill above does the pulsing; this just holds).
+    // Sits above every fill so it reads at all bands.
     map.addLayer({
       id: 'selected-outline',
       type: 'line',
@@ -989,9 +1004,17 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       selectedCell = cell;
       try {
         if (map.getLayer('selected-outline')) {
-          map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
           const open = status === 'unlocked' || status === 'mastered';
-          map.setPaintProperty('selected-outline', 'line-color', open ? '#2ed67c' : '#ffffff');
+          const color = open ? '#2ed67c' : '#ffffff';
+          map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
+          map.setPaintProperty('selected-outline', 'line-color', color);
+          map.setPaintProperty('selected-outline', 'line-width', 3);
+          map.setPaintProperty('selected-outline', 'line-opacity', 0.95);
+        }
+        if (map.getLayer('selected-fill')) {
+          const open = status === 'unlocked' || status === 'mastered';
+          map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
+          map.setPaintProperty('selected-fill', 'fill-color', open ? '#2ed67c' : '#ffffff');
         }
       } catch {}
       // Start the loop on first selection; every later tap just retargets it.
