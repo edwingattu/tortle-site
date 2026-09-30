@@ -50,6 +50,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   let selectedCell = null;
   // Quest marking: while armed, map taps report a point instead of selecting.
   let markingMode = false;
+  // Quest mode: street hexes render unlocked by default and selection runs
+  // amber (outline + pulse). The user dot and mastered schematic are untouched.
+  let questMode = false;
   // Selection pulse: loops until another tile is tapped. Green for open
   // (unlocked/mastered) taps, white for active/locked. Runs on the
   // selected-outline layer only — the mastered border schematic is untouched.
@@ -353,6 +356,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       }
       statuses = new Array(cells.length);
       for (let i = 0; i < cells.length; i++) {
+        if (questMode) {
+          // Quest creator map: every hex reads unlocked, no locked/activated.
+          statuses[i] = 'unlocked';
+          continue;
+        }
         const cell = cells[i];
         const rec = store.tiles[cell];
         if (isUnlocked(rec)) statuses[i] = mediaCells.has(cell) ? 'mastered' : 'unlocked';
@@ -1066,22 +1074,29 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         map.getCanvas().style.cursor = markingMode ? 'crosshair' : '';
       } catch {}
     },
+    // Quest mode: uniform unlocked street map + amber selection. Repaints
+    // from the last store so the switch applies instantly.
+    setQuestMode(on) {
+      questMode = !!on;
+      if (lastStoreRef) schedulePaint(lastStoreRef);
+    },
     setSelected(cell, status = null) {
       selectedCell = cell;
       try {
-        // Selection edge stays white except on mastered taps (green echoes
-        // the mastered border); unlocked taps keep the white edge.
+        // Selection edge: green echoes mastered taps, amber rules quest
+        // mode, otherwise steady white (unlocked keeps white too).
         const mastered = status === 'mastered';
+        const edge = questMode ? '#e8a33d' : mastered ? '#5cc581' : '#ffffff';
         if (map.getLayer('selected-outline')) {
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-outline', 'line-color', mastered ? '#5cc581' : '#ffffff');
+          map.setPaintProperty('selected-outline', 'line-color', edge);
           map.setPaintProperty('selected-outline', 'line-width', 3);
           map.setPaintProperty('selected-outline', 'line-opacity', 0.95);
         }
         if (map.getLayer('selected-fill')) {
           const open = mastered || status === 'unlocked';
           map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-fill', 'fill-color', open ? '#2ed67c' : '#ffffff');
+          map.setPaintProperty('selected-fill', 'fill-color', questMode ? '#e8a33d' : open ? '#2ed67c' : '#ffffff');
         }
       } catch {}
       // Start the loop on first selection; every later tap just retargets it.

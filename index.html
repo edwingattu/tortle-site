@@ -113,6 +113,10 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
           </button>
         </div>
+        <div class="search-bar" id="questSearchBar" hidden>
+          <input id="questSearchInput" type="text" placeholder="Name, lat,lng, or H3 id" autocomplete="off" aria-label="Search place">
+          <button id="questSearchGo" type="button">Go</button>
+        </div>
         <div class="voice-panel" id="voicePanel" hidden>
           <div class="capture-area" id="voiceCapture">
             <div class="voice-bar">
@@ -130,6 +134,7 @@
           </div>
         </div>
         <div class="bottom-card" id="bottomCard">
+        <div class="quest-caption" id="questCaption" hidden>Quest Maker</div>
         <button class="sheet-arrow" id="sheetArrow" type="button" aria-label="Expand details" aria-expanded="false">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l6-6 6 6"/></svg>
         </button>

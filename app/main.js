@@ -63,10 +63,7 @@ const mapView = createMap({
     selectionPinned = false;
     try { selectCell(mapView.cellUnderUser(), { src: 'dottap' }); } catch {}
   },
-  // Quest framework: marking taps report a point; marker taps toast.
-  onQuestMark: (pt) => {
-    handleQuestMark(pt).catch(() => {});
-  },
+  // Quest framework: marker taps toast (detail UI comes with the builder).
   onQuestSelect: (props) => {
     toast(props?.title || 'Quest');
   },
@@ -220,7 +217,7 @@ function updateCountdown(rec, status) {
   const open = status === 'unlocked' || status === 'mastered' || isUnlocked(rec);
   if (open) {
     // Open tiles: the pill is the whole story — countdown + bar hide.
-    if (pill) { pill.hidden = false; pill.textContent = 'Unlocked'; pill.className = 'tile-state-pill is-open'; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Unlocked'; pill.className = `tile-state-pill is-open${questMode ? ' muted' : ''}`; }
     if (row) row.hidden = true;
     if (track) track.hidden = true;
     return;
@@ -228,12 +225,12 @@ function updateCountdown(rec, status) {
   if (row) { row.classList.remove('unlocked'); row.hidden = false; }
   if (track) { track.classList.remove('unlocked'); track.hidden = false; }
   if (status === 'activated') {
-    if (pill) { pill.hidden = false; pill.textContent = 'Active'; pill.className = 'tile-state-pill is-active'; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Active'; pill.className = `tile-state-pill is-active${questMode ? ' muted' : ''}`; }
     const left = remainingMs(rec);
     const mmss = formatCountdown(left);
     textEl.innerHTML = `This Tile Will Open in <b id="countdown">${mmss}</b>`;
   } else {
-    if (pill) { pill.hidden = false; pill.textContent = 'Locked'; pill.className = 'tile-state-pill is-locked'; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Locked'; pill.className = `tile-state-pill is-locked${questMode ? ' muted' : ''}`; }
     textEl.textContent = 'Pass Through this Tile to Activate it';
   }
   const pct = progressPercent(rec);
@@ -280,6 +277,18 @@ function showTitleMessage(text) {
 function renderTitleField(name, status) {
   const input = $('#tileTitleInput');
   if (!input) return;
+  // Quest mode: the field is always a fresh quest-name edit — tile names
+  // never leak in, and typing is still never yanked mid-keystroke.
+  if (questMode) {
+    if (selectedCell !== lastTitleCell) {
+      lastTitleCell = selectedCell;
+      if (document.activeElement === input) input.blur();
+      showTitleEdit('');
+    } else if (document.activeElement !== input) {
+      showTitleEdit(null);
+    }
+    return;
+  }
   const switched = selectedCell !== lastTitleCell;
   if (switched) {
     // New tile: drop any in-progress edit and render its truth.
@@ -972,6 +981,11 @@ function layoutToolbar() {
   if (!card.classList.contains('expanded')) {
     bar.style.bottom = `${card.offsetHeight + 10}px`;
   }
+  // Quest search rides the quest card top the same way.
+  const search = $('#questSearchBar');
+  if (search && !search.hidden) {
+    search.style.bottom = `${card.offsetHeight + 10}px`;
+  }
   // Floating recorder rides above the toolbar, never under the card.
   const panel = $('#voicePanel');
   if (panel && !panel.hidden) {
@@ -1221,33 +1235,104 @@ function setTracking(on) {
   }
 }
 
-// Quest framework (admin+): arm the maker, tap the map to mark a point,
-// save immediately (builder UI later). Creation is presence-free — any map,
-// any city. Availability renders per active region below.
-let questMarking = false;
-function setQuestMarking(on) {
-  questMarking = on;
-  try {
-    mapView.setMarkingMode(on);
-  } catch {}
-  const btn = $('#questButton');
-  if (btn) {
-    btn.classList.toggle('armed', on);
-    btn.setAttribute('aria-pressed', String(on));
+// Quest mode (admin+): the card becomes the quest designer for the
+// selected tile. Creation stays presence-free — any map, any city.
+let questMode = false;
+function setQuestMode(on) {
+  questMode = on;
+  const card = $('#bottomCard');
+  card?.classList.toggle('quest-mode', on);
+  const cap = $('#questCaption');
+  if (cap) cap.hidden = !on;
+  const bar = $('#toolBar');
+  if (bar) bar.hidden = on;
+  const search = $('#questSearchBar');
+  if (search) search.hidden = !on;
+  const input = $('#tileTitleInput');
+  if (input) input.placeholder = on ? 'Name the Quest..' : 'Name Your Tile..';
+  const qb = $('#questButton');
+  if (qb) {
+    qb.classList.toggle('armed', on);
+    qb.setAttribute('aria-pressed', String(on));
   }
-  if (on) toast('Quest maker armed — tap the map to mark the quest point.');
-}
-async function handleQuestMark({ lng, lat }) {
-  setQuestMarking(false);
   try {
-    const q = await createQuest({ lat, lng });
-    const city = q.region === 'nyc' ? 'New York' : areasDbg.regionLabel(q.region);
-    toast(`Quest created — explorers in ${city} can take it.`);
+    mapView.setQuestMode(on);
+  } catch {}
+  if (!on) {
+    try {
+      if (card?.classList.contains('expanded')) $('#sheetArrow')?.click();
+    } catch {}
+  }
+  renderHud();
+  layoutToolbar();
+}
+// A quest is logged for the selected tile (point = tile center for now).
+async function saveQuestName(name) {
+  if (!selectedCell) return;
+  const c = cellCenter(selectedCell);
+  try {
+    await createQuest({ title: name, lat: c.lat, lng: c.lng });
+    toast('Quest logged for this tile.');
+    const card = $('#bottomCard');
+    if (card && !card.classList.contains('expanded')) $('#sheetArrow')?.click();
     await refreshQuests();
   } catch (e) {
     console.warn('[quest] save failed:', e?.message || e);
     toast('Quest save failed — try again.');
   }
+}
+function flyToPoint(lat, lng) {
+  try {
+    mapView.map.easeTo({
+      center: [lng, lat],
+      zoom: Math.max(mapView.map.getZoom(), CONFIG.defaultZoom),
+      duration: 750,
+    });
+  } catch {}
+  try {
+    selectCell(cellAt(lat, lng), { src: 'search' });
+  } catch {}
+}
+// Quest search: place name, lat,lng, or H3 id — in that order.
+async function runQuestSearch() {
+  const input = $('#questSearchInput');
+  const q = (input?.value || '').trim();
+  if (!q) return;
+  input?.blur();
+  const m = q.match(/^(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/);
+  if (m) {
+    const lat = parseFloat(m[1]);
+    const lng = parseFloat(m[2]);
+    if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+      flyToPoint(lat, lng);
+      return;
+    }
+  }
+  const hex = q.replace(/\s+/g, '').toLowerCase();
+  if (/^[0-9a-f]+$/.test(hex)) {
+    try {
+      const c = cellCenter(hex);
+      flyToPoint(c.lat, c.lng);
+      return;
+    } catch {
+      /* not a real cell — fall through to name search */
+    }
+  }
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&limit=1`,
+      { headers: { Accept: 'application/json' } },
+    );
+    if (!res.ok) throw new Error('search failed');
+    const arr = await res.json();
+    if (arr && arr.length) {
+      flyToPoint(parseFloat(arr[0].lat), parseFloat(arr[0].lon));
+      return;
+    }
+  } catch (e) {
+    console.warn('[quest] search failed:', e?.message || e);
+  }
+  toast('No place found — try a name, lat,lng, or H3 id.');
 }
 async function refreshQuests() {
   try {
@@ -1320,7 +1405,17 @@ function bindUi() {
   // iOS has no beforeinstallprompt — banner never shows; user uses Share → Add to Home Screen
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
-  $('#questButton')?.addEventListener('click', () => setQuestMarking(!questMarking));
+  $('#questButton')?.addEventListener('click', () => setQuestMode(!questMode));
+  $('#questSearchGo')?.addEventListener('click', () => {
+    runQuestSearch().catch(() => {});
+  });
+  $('#questSearchInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      runQuestSearch().catch(() => {});
+    }
+    e.stopPropagation();
+  });
   $('#recenterButton').addEventListener('click', () => {
     interruptDotSequence(true);
     mapView.recenter();
@@ -1864,6 +1959,16 @@ function bindUi() {
   $('#tileTitleSave')?.addEventListener('click', () => {
     const input = $('#tileTitleInput');
     if (!input || !selectedCell) return;
+    // Quest mode: the button logs a quest for the tile (never a tile name).
+    if (questMode) {
+      const qv = (input.value || '').trim();
+      if (!qv) {
+        input.focus();
+        return;
+      }
+      saveQuestName(qv).catch(() => {});
+      return;
+    }
     // View mode: the button reads Edit Title — reopen the field instead.
     if (input.hidden) {
       showTitleEdit($('#tileTitleDisplay')?.textContent || '');
