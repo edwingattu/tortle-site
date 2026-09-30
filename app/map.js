@@ -230,6 +230,72 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
 
   const EMPTY_COLLECTION = { type: 'FeatureCollection', features: [] };
+
+  // POI allowlist mirrors the poi-symbols layer's icon match (data side).
+  const POI_SUBCLASSES = new Set([
+    'restaurant', 'cafe', 'bar', 'pub', 'beer', 'nightclub',
+    'resort', 'hotel', 'hostel', 'motel', 'guest_house',
+    'museum', 'art_gallery', 'gallery',
+    'garden', 'park', 'police',
+    'stadium', 'pitch', 'swimming_pool', 'swimming', 'golf', 'tennis', 'cricket',
+    'spa', 'fuel', 'hospital', 'pharmacy', 'mall',
+    'bus_stop', 'bus_station', 'station', 'railway_station', 'halt', 'subway', 'metro',
+    'monument', 'attraction', 'castle', 'historic',
+  ]);
+
+  // State-filtered POIs: locked cells contribute nothing (their map stays
+  // blank and untouched). Runs only when the viewport or tile statuses move.
+  let lastPoiKey = null;
+  function refreshPois(store, memoKey) {
+    const src = map.getSource('poi-geo');
+    if (!src) return;
+    if (!store) {
+      if (lastPoiKey === 'cleared') return;
+      lastPoiKey = 'cleared';
+      try {
+        src.setData(EMPTY_COLLECTION);
+      } catch {}
+      return;
+    }
+    if (memoKey && memoKey === lastPoiKey) return;
+    lastPoiKey = memoKey || 'live';
+    const feats = [];
+    try {
+      const raw = map.querySourceFeatures('openmaptiles', { sourceLayer: 'poi', filter: ['has', 'name'] }) || [];
+      const neighborSet = questMode ? null : unlockedNeighborSet(store);
+      const seen = new Set();
+      for (const f of raw) {
+        const p = f.properties || {};
+        const sub = p.subclass;
+        if (!sub || !POI_SUBCLASSES.has(sub)) continue;
+        const coords = f.geometry?.coordinates;
+        if (!coords || coords.length < 2) continue;
+        const lng = coords[0];
+        const lat = coords[1];
+        const dedupe = `${sub}|${lng.toFixed(5)},${lat.toFixed(5)}`;
+        if (seen.has(dedupe)) continue;
+        seen.add(dedupe);
+        let st;
+        if (questMode) {
+          st = 'unlocked';
+        } else {
+          const cell = cellAt(lng, lat);
+          const rec = store.tiles[cell];
+          if (isUnlocked(rec)) st = 'unlocked';
+          else if (rec || neighborSet.has(cell)) st = 'activated';
+          else continue;
+        }
+        feats.push({
+          type: 'Feature',
+          properties: { name: p.name_en || p.name || '', subclass: sub, st },
+          geometry: { type: 'Point', coordinates: [lng, lat] },
+        });
+      }
+    } catch {}
+    try {
+      src.setData({ type: 'FeatureCollection', features: feats });
+    } catch {}
+  }
   const semSig = {};
 
   function schedulePaint(store) {
@@ -357,21 +423,12 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           if (a.cell && (a.localUrl || a.media_path || a.media_url)) mediaCells.add(a.cell);
         }
       }
-      let qset = null;
-      if (questMode) {
-        // Quest ledger: own states only — fresh maps start all grey.
-        qset = new Set();
-        for (const [c, rec] of Object.entries(store.questTiles || {})) {
-          if (!isUnlocked(rec)) continue;
-          for (const n of diskCells(c, 1)) qset.add(n);
-        }
-      }
       statuses = new Array(cells.length);
       for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
         if (questMode) {
-          const rec = (store.questTiles || {})[cell];
-          statuses[i] = isUnlocked(rec) ? 'unlocked' : rec || qset.has(cell) ? 'activated' : 'unclaimed';
+          // Quest map reads clear/unlocked everywhere — no states at all.
+          statuses[i] = 'unlocked';
           continue;
         }
         const rec = store.tiles[cell];
@@ -560,8 +617,20 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         const items = areas.getPack('areas');
         updateBandSources('area', items, areaStats, items, areaStats, null);
       }
+      // State-filtered POIs ride the street paint (memoized inside).
+      try {
+        const b = map.getBounds();
+        refreshPois(
+          store,
+          `${b.getNorth().toFixed(4)}|${b.getSouth().toFixed(4)}|${b.getEast().toFixed(4)}|${b.getWest().toFixed(4)}#${store.rev || 0}#${questMode ? 'q' : 'r'}`,
+        );
+      } catch {}
     } else {
       paintSemanticBand(store, band);
+      // Off street: no POIs (cleared + memoized inside).
+      try {
+        refreshPois(null);
+      } catch {}
     }
 
     // Activity pins are tap-driven (showTilePins/hideTilePins) — never painted here.
@@ -852,34 +921,18 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     map.on('mouseleave', 'quest-markers', () => {
       try { map.getCanvas().style.cursor = markingMode ? 'crosshair' : ''; } catch {}
     });
-    // Tortle POIs: business/amenity labels from the same vector source the
-    // basemap itself uses (Positron ships no POI layer, so this is additive,
-    // not an un-hide). Scoped to the requested set via subclass allowlist;
-    // place/city labels stay hidden so our hierarchy keeps the naming job.
-    // Exceptions: national parks (boundary relations, not POI points) and
-    // airports (already labeled by the base `airport` layer).
+    // Tortle POIs: business/amenity symbols filtered by live tile state.
+    // Locked tiles contribute nothing (blank map underneath untouched);
+    // unlocked renders full icon + dark label, activated renders the same
+    // icon with a blue label to match the tile. Quest mode reads everything
+    // unlocked. Source features come from the loaded vector tiles, so this
+    // needs no new data plumbing — just a viewport/status-memoized refresh.
+    map.addSource('poi-geo', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     map.addLayer({
-      id: 'tortle-pois',
+      id: 'poi-symbols',
       type: 'symbol',
-      source: 'openmaptiles',
-      'source-layer': 'poi',
+      source: 'poi-geo',
       minzoom: 13,
-      filter: [
-        'match',
-        ['get', 'subclass'],
-        [
-          'restaurant', 'cafe', 'bar', 'pub', 'beer', 'nightclub',
-          'resort', 'hotel', 'hostel', 'motel', 'guest_house',
-          'museum', 'art_gallery', 'gallery',
-          'garden', 'park', 'police',
-          'stadium', 'pitch', 'swimming_pool', 'swimming', 'golf', 'tennis', 'cricket',
-          'spa', 'fuel', 'hospital', 'pharmacy', 'mall',
-          'bus_stop', 'bus_station', 'station', 'railway_station', 'halt', 'subway', 'metro',
-          'monument', 'attraction', 'castle', 'historic',
-        ],
-        true,
-        false,
-      ],
       layout: {
         'icon-image': [
           'match',
@@ -935,7 +988,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'text-size': 12,
       },
       paint: {
-        'text-color': '#3d4a57',
+        'text-color': ['match', ['get', 'st'], 'activated', '#2a69aa', '#3d4a57'],
         'text-halo-color': 'rgba(255,255,255,0.9)',
         'text-halo-width': 1.2,
       },
@@ -1121,6 +1174,15 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     map.on('zoomend', refreshDiag);
     map.on('pitch', refreshDiag);
     map.on('rotate', refreshDiag);
+    // Late vector tiles change the POI pool without moving the camera —
+    // re-run the (memoized) paint so symbols arrive when their tiles do.
+    map.on('sourcedata', (e) => {
+      try {
+        if (e?.sourceId === 'openmaptiles' && e?.isSourceLoaded && lastStoreRef) {
+          schedulePaint(lastStoreRef);
+        }
+      } catch {}
+    });
     refreshDiag();
   });
 
