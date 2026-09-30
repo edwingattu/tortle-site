@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, latestQuestForCell } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -67,7 +67,12 @@ const mapView = createMap({
   onQuestSelect: (props) => {
     toast(props?.title || 'Quest');
   },
-  onMove: () => mapView.paint(engine.getSnapshot().store),
+  onMove: () => {
+    mapView.paint(engine.getSnapshot().store);
+    try {
+      layoutQuestCreate();
+    } catch {}
+  },
   onLevelSelect: (band, props) => {
     const detail = props.status === 'unclaimed' ? '' : ` · ${props.frac}% explored`;
     toast(`${props.name} · ${props.status}${detail}`);
@@ -214,10 +219,33 @@ function updateCountdown(rec, status) {
     if (pill) pill.hidden = true;
     return;
   }
+  if (questMode) {
+    // Quest tile states read quest rows only: Empty / Generating / Quests: N.
+    // Nothing here feeds from the regular map.
+    const qs = questsForCell(selectedCell);
+    const card = $('#bottomCard');
+    const expanded = !!card?.classList.contains('expanded');
+    if (pill) {
+      pill.hidden = false;
+      if (qs.length) {
+        pill.textContent = `Quests: ${qs.length}`;
+        pill.className = 'tile-state-pill is-quests';
+      } else if (expanded && selectedCell) {
+        pill.textContent = 'Generating';
+        pill.className = 'tile-state-pill is-active';
+      } else {
+        pill.textContent = 'Empty';
+        pill.className = 'tile-state-pill is-locked';
+      }
+    }
+    if (row) row.hidden = true;
+    if (track) track.hidden = true;
+    return;
+  }
   const open = status === 'unlocked' || status === 'mastered' || isUnlocked(rec);
   if (open) {
     // Open tiles: the pill is the whole story — countdown + bar hide.
-    if (pill) { pill.hidden = false; pill.textContent = 'Unlocked'; pill.className = `tile-state-pill is-open${questMode ? ' muted' : ''}`; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Unlocked'; pill.className = 'tile-state-pill is-open'; }
     if (row) row.hidden = true;
     if (track) track.hidden = true;
     return;
@@ -225,12 +253,12 @@ function updateCountdown(rec, status) {
   if (row) { row.classList.remove('unlocked'); row.hidden = false; }
   if (track) { track.classList.remove('unlocked'); track.hidden = false; }
   if (status === 'activated') {
-    if (pill) { pill.hidden = false; pill.textContent = 'Active'; pill.className = `tile-state-pill is-active${questMode ? ' muted' : ''}`; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Active'; pill.className = 'tile-state-pill is-active'; }
     const left = remainingMs(rec);
     const mmss = formatCountdown(left);
     textEl.innerHTML = `This Tile Will Open in <b id="countdown">${mmss}</b>`;
   } else {
-    if (pill) { pill.hidden = false; pill.textContent = 'Locked'; pill.className = `tile-state-pill is-locked${questMode ? ' muted' : ''}`; }
+    if (pill) { pill.hidden = false; pill.textContent = 'Locked'; pill.className = 'tile-state-pill is-locked'; }
     textEl.textContent = 'Pass Through this Tile to Activate it';
   }
   const pct = progressPercent(rec);
@@ -277,14 +305,32 @@ function showTitleMessage(text) {
 function renderTitleField(name, status) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  // Quest mode: collapsed shows only the Create entry button; expanding
-  // swaps it for a fresh quest-name edit. Tile names never leak in, and
-  // typing is still never yanked mid-keystroke.
+  // Quest mode: collapsed shows the latest quest name (or nothing) plus
+  // tile info — no field, no buttons. Expanded swaps in a fresh quest-name
+  // edit. Tile names never leak in, typing is never yanked mid-keystroke.
   if (questMode) {
     const card = $('#bottomCard');
     const expanded = !!card?.classList.contains('expanded');
-    const cbtn = $('#questCreateBtn');
     const save = $('#tileTitleSave');
+    const display = $('#tileTitleDisplay');
+    const message = $('#tileTitleMessage');
+    if (!expanded) {
+      lastTitleCell = selectedCell;
+      if (document.activeElement === input) input.blur();
+      input.hidden = true;
+      if (save) save.hidden = true;
+      if (message) message.hidden = true;
+      if (display) {
+        const latest = latestQuestForCell(selectedCell);
+        if (latest) {
+          display.hidden = false;
+          display.textContent = latest.title || 'Untitled quest';
+        } else {
+          display.hidden = true;
+        }
+      }
+      return;
+    }
     if (selectedCell !== lastTitleCell) {
       lastTitleCell = selectedCell;
       if (document.activeElement === input) input.blur();
@@ -292,8 +338,6 @@ function renderTitleField(name, status) {
     } else if (document.activeElement !== input) {
       showTitleEdit(null);
     }
-    if (save) save.hidden = !expanded;
-    if (cbtn) cbtn.hidden = expanded;
     return;
   }
   const switched = selectedCell !== lastTitleCell;
@@ -1003,6 +1047,29 @@ function layoutCardLimit() {
   card.style.maxHeight = `${maxH}px`;
 }
 
+// Floating quest entry: anchored over the tapped tile by projecting its
+// center. Visible in quest mode only, with a tile selected and the card
+// collapsed — the card open means creation UI is already up.
+function layoutQuestCreate() {
+  const btn = $('#questCreateFloat');
+  if (!btn) return;
+  const card = $('#bottomCard');
+  const show = questMode && !!selectedCell && !(card?.classList.contains('expanded'));
+  if (!show) {
+    btn.hidden = true;
+    return;
+  }
+  try {
+    const c = cellCenter(selectedCell);
+    const pt = mapView.map.project([c.lng, c.lat]);
+    btn.style.left = `${Math.round(pt.x)}px`;
+    btn.style.top = `${Math.round(pt.y)}px`;
+    btn.hidden = false;
+  } catch {
+    btn.hidden = true;
+  }
+}
+
 function layoutToolbar() {
   const bar = $('#toolBar');
   const card = $('#bottomCard');
@@ -1075,6 +1142,7 @@ function renderHud() {
   updateCountdown(rec, hudStatus);
   renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
   layoutToolbar();
+  layoutQuestCreate();
   try { renderTileGallery(); } catch {}
   updateCaptureAvailability(snap);
   mapView.paint(snap.store);
@@ -1375,6 +1443,8 @@ async function refreshQuests() {
   try {
     const pts = await fetchRegionQuests(areasDbg.getRegion());
     mapView.showQuests(pts);
+    // Quest names + counts on the card read the cache — repaint now.
+    renderHud();
   } catch (e) {
     console.warn('[quest] fetch failed:', e?.message || e);
   }
@@ -1444,7 +1514,7 @@ function bindUi() {
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
   $('#questButton')?.addEventListener('click', () => setQuestMode(!questMode));
-  $('#questCreateBtn')?.addEventListener('click', () => {
+  $('#questCreateFloat')?.addEventListener('click', () => {
     const card = $('#bottomCard');
     if (card && !card.classList.contains('expanded')) $('#sheetArrow')?.click();
   });

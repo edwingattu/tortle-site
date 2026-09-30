@@ -738,21 +738,25 @@ button {
 
 .title-save[hidden] { display: none !important; }
 
-/* Quest entry: centered pill shown on the collapsed quest card in place
- * of the name field (sole visible child, so auto margins truly center it). */
-.quest-create-btn {
-  margin: 0 auto;
+/* Floating quest entry: anchored over the tapped tile (positioned from JS
+ * by projecting the tile center). Visible in quest mode only, while the
+ * card is collapsed. */
+.quest-create-float {
+  position: absolute;
+  z-index: 4;
+  transform: translate(-50%, -130%);
   border: 0;
-  border-radius: 12px;
-  padding: 12px 28px;
+  border-radius: 999px;
+  padding: 10px 20px;
   background: var(--navy);
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
-  box-shadow: 0 4px 16px rgba(21, 73, 60, 0.12);
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(17, 47, 80, 0.35);
 }
 
-.quest-create-btn[hidden] { display: none !important; }
+.quest-create-float[hidden] { display: none !important; }
 
 /* Row 2: tile name field shares the row with the status block + button. */
 .tile-info-row input {
@@ -898,6 +902,13 @@ button {
   background: #5cc581;
   color: #fff;
   border: 1px solid #5cc581;
+}
+
+/* Quest tile states: quest count in amber. */
+.tile-state-pill.is-quests {
+  background: #e8a33d;
+  color: #3a4b5e;
+  border: 1px solid #e8a33d;
 }
 
 /* Author display rules beat the UA [hidden] style — re-assert it so

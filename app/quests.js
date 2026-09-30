@@ -42,3 +42,22 @@ export async function fetchRegionQuests(region, { force = false } = {}) {
   cache.set(region, data || []);
   return cache.get(region);
 }
+
+// Synchronous reads over the fetched cache (may lag the network —
+// refreshQuests repaints once each fetch lands).
+export function questsForCell(cell) {
+  if (!cell) return [];
+  const out = [];
+  for (const list of cache.values()) {
+    for (const q of list) {
+      if (q.h3_cell === cell) out.push(q);
+    }
+  }
+  out.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  return out;
+}
+
+export function latestQuestForCell(cell) {
+  const list = questsForCell(cell);
+  return list.length ? list[list.length - 1] : null;
+}
