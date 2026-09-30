@@ -277,9 +277,14 @@ function showTitleMessage(text) {
 function renderTitleField(name, status) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  // Quest mode: the field is always a fresh quest-name edit — tile names
-  // never leak in, and typing is still never yanked mid-keystroke.
+  // Quest mode: collapsed shows only the Create entry button; expanding
+  // swaps it for a fresh quest-name edit. Tile names never leak in, and
+  // typing is still never yanked mid-keystroke.
   if (questMode) {
+    const card = $('#bottomCard');
+    const expanded = !!card?.classList.contains('expanded');
+    const cbtn = $('#questCreateBtn');
+    const save = $('#tileTitleSave');
     if (selectedCell !== lastTitleCell) {
       lastTitleCell = selectedCell;
       if (document.activeElement === input) input.blur();
@@ -287,6 +292,8 @@ function renderTitleField(name, status) {
     } else if (document.activeElement !== input) {
       showTitleEdit(null);
     }
+    if (save) save.hidden = !expanded;
+    if (cbtn) cbtn.hidden = expanded;
     return;
   }
   const switched = selectedCell !== lastTitleCell;
@@ -1437,6 +1444,10 @@ function bindUi() {
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
   $('#questButton')?.addEventListener('click', () => setQuestMode(!questMode));
+  $('#questCreateBtn')?.addEventListener('click', () => {
+    const card = $('#bottomCard');
+    if (card && !card.classList.contains('expanded')) $('#sheetArrow')?.click();
+  });
   $('#questSearchGo')?.addEventListener('click', () => {
     runQuestSearch().catch(() => {});
   });
