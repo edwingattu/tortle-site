@@ -1526,7 +1526,7 @@ function buildQuestRow(q) {
     try {
       renderQuestList();
     } catch {}
-    if (openQuestId === q.id) renderObjectives(q.id).catch(() => {});
+    if (openQuestId === q.id) renderObjectives(q.id, q.status).catch(() => {});
   });
   row.append(main, detail);
   return row;
@@ -1579,9 +1579,10 @@ const OBJ_TOOLS = [
 ];
 const OBJ_TOOL_LABEL = { camera: 'Camera', voice: 'Voice', navigation: 'Nav' };
 
-async function renderObjectives(questId) {
+async function renderObjectives(questId, status) {
   const wrap = document.querySelector(`[data-objwrap="${questId}"]`);
   if (!wrap) return;
+  const qstatus = status || wrap.dataset.qstatus || 'draft';
   let list = [];
   try {
     list = await fetchObjectives(questId);
@@ -1594,29 +1595,38 @@ async function renderObjectives(questId) {
   if (!wrap.isConnected || openQuestId !== questId) return;
   wrap.innerHTML = '';
   wrap.dataset.editId = '';
+  wrap.dataset.qstatus = qstatus;
   const entry = buildObjectiveEntry(questId);
   const current = currentObjectiveId(questId, list);
-  if (!list.length) {
-    // First objective: a single Create entry point, card on demand.
+  const buildList = () => {
+    const ol = document.createElement('div');
+    ol.className = 'obj-list';
+    for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
+    return ol;
+  };
+  if (qstatus === 'draft') {
+    // In Progress: entry hides behind Create; the list always shows.
     entry.hidden = true;
-    const create = document.createElement('button');
-    create.type = 'button';
-    create.className = 'obj-create-btn';
-    create.textContent = '+ Create objective';
-    create.addEventListener('click', (e) => {
-      e.stopPropagation();
-      create.hidden = true;
-      entry.hidden = false;
-      entry.querySelector('input')?.focus();
-    });
-    wrap.append(create, entry);
+    wrap.append(buildObjectiveCreate(entry), entry);
+    if (list.length) wrap.appendChild(buildList());
     return;
   }
   wrap.appendChild(entry);
-  const ol = document.createElement('div');
-  ol.className = 'obj-list';
-  for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
-  wrap.appendChild(ol);
+  if (list.length) wrap.appendChild(buildList());
+}
+
+function buildObjectiveCreate(entry) {
+  const create = document.createElement('button');
+  create.type = 'button';
+  create.className = 'obj-create-btn';
+  create.textContent = '+ Create objective';
+  create.addEventListener('click', (e) => {
+    e.stopPropagation();
+    create.hidden = true;
+    entry.hidden = false;
+    entry.querySelector('input')?.focus();
+  });
+  return create;
 }
 
 function buildObjectiveEntry(questId) {
@@ -1662,14 +1672,8 @@ function buildObjectiveEntry(questId) {
   const wrap = { editId: null };
   cancel.addEventListener('click', (e) => {
     e.stopPropagation();
-    input.value = '';
-    picked = null;
-    for (const x of toolBtns) x.classList.remove('selected');
-    wrap.editId = null;
-    const w = entry.closest('[data-objwrap]');
-    if (w) w.dataset.editId = '';
-    cancel.hidden = true;
-    input.focus();
+    // Bail out to a clean render (drafts collapse back behind Create).
+    renderObjectives(questId).catch(() => {});
   });
   save.addEventListener('click', async (e) => {
     e.stopPropagation();
@@ -1735,8 +1739,13 @@ function buildObjectiveRow(questId, o, isCurrent) {
   edit.textContent = 'Edit';
   edit.addEventListener('click', (e) => {
     e.stopPropagation();
-    const entry = row.closest('.qrow-detail')?.querySelector('.obj-entry');
-    if (entry?._loadForEdit) entry._loadForEdit(o);
+    const wrapEl = row.closest('[data-objwrap]');
+    const ent = wrapEl?.querySelector('.obj-entry');
+    // Drafts hide the entry behind Create — reveal it first.
+    if (ent) ent.hidden = false;
+    const cbtn = wrapEl?.querySelector('.obj-create-btn');
+    if (cbtn) cbtn.hidden = true;
+    if (ent?._loadForEdit) ent._loadForEdit(o);
   });
   row.appendChild(edit);
   return row;

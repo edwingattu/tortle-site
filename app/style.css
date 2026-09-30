@@ -388,6 +388,8 @@ button {
   padding: 10px;
 }
 
+.obj-entry[hidden] { display: none !important; }
+
 .obj-create-btn {
   width: 100%;
   border: 1px dashed var(--navy);
