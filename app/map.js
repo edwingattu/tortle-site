@@ -852,6 +852,94 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     map.on('mouseleave', 'quest-markers', () => {
       try { map.getCanvas().style.cursor = markingMode ? 'crosshair' : ''; } catch {}
     });
+    // Tortle POIs: business/amenity labels from the same vector source the
+    // basemap itself uses (Positron ships no POI layer, so this is additive,
+    // not an un-hide). Scoped to the requested set via subclass allowlist;
+    // place/city labels stay hidden so our hierarchy keeps the naming job.
+    // Exceptions: national parks (boundary relations, not POI points) and
+    // airports (already labeled by the base `airport` layer).
+    map.addLayer({
+      id: 'tortle-pois',
+      type: 'symbol',
+      source: 'openmaptiles',
+      'source-layer': 'poi',
+      minzoom: 13,
+      filter: [
+        'match',
+        ['get', 'subclass'],
+        [
+          'restaurant', 'cafe', 'bar', 'pub', 'beer', 'nightclub',
+          'resort', 'hotel', 'hostel', 'motel', 'guest_house',
+          'museum', 'art_gallery', 'gallery',
+          'garden', 'park', 'police',
+          'stadium', 'pitch', 'swimming_pool', 'swimming', 'golf', 'tennis', 'cricket',
+          'spa', 'fuel', 'hospital', 'pharmacy', 'mall',
+          'bus_stop', 'bus_station', 'station', 'railway_station', 'halt', 'subway', 'metro',
+          'monument', 'attraction', 'castle', 'historic',
+        ],
+        true,
+        false,
+      ],
+      layout: {
+        'icon-image': [
+          'match',
+          ['get', 'subclass'],
+          'restaurant', 'restaurant_11',
+          'cafe', 'cafe_11',
+          'bar', 'bar_11',
+          'pub', 'beer_11',
+          'beer', 'beer_11',
+          'nightclub', 'music_11',
+          'resort', 'lodging_11',
+          'hotel', 'lodging_11',
+          'hostel', 'lodging_11',
+          'motel', 'lodging_11',
+          'guest_house', 'lodging_11',
+          'museum', 'museum_11',
+          'art_gallery', 'art_gallery_11',
+          'gallery', 'art_gallery_11',
+          'garden', 'garden_11',
+          'park', 'park_11',
+          'police', 'police_11',
+          'stadium', 'stadium_11',
+          'pitch', 'pitch_11',
+          'swimming_pool', 'swimming_11',
+          'swimming', 'swimming_11',
+          'golf', 'golf_11',
+          'tennis', 'tennis_11',
+          'cricket', 'cricket_11',
+          'fuel', 'fuel_11',
+          'hospital', 'hospital_11',
+          'pharmacy', 'pharmacy_11',
+          'mall', 'shop_11',
+          'bus_stop', 'bus_11',
+          'bus_station', 'bus_11',
+          'station', 'railway_11',
+          'railway_station', 'railway_11',
+          'halt', 'railway_11',
+          'subway', 'railway_metro_11',
+          'metro', 'railway_metro_11',
+          'monument', 'monument_11',
+          'attraction', 'attraction_11',
+          'castle', 'castle_11',
+          'historic', 'monument_11',
+          'marker_11',
+        ],
+        'icon-size': 1,
+        'text-anchor': 'top',
+        'text-field': ['coalesce', ['get', 'name_en'], ['get', 'name']],
+        'text-font': ['Noto Sans Regular'],
+        'text-max-width': 8,
+        'text-offset': [0, 0.6],
+        'text-optional': true,
+        'text-size': 12,
+      },
+      paint: {
+        'text-color': '#3d4a57',
+        'text-halo-color': 'rgba(255,255,255,0.9)',
+        'text-halo-width': 1.2,
+      },
+    });
     // Tap feedback: the tapped hex flashes white, then its edge echoes
     // outward and fades — the six-edge trace is what sells "tile". One
     // rAF timeline on single-feature sources; retaps restart it.

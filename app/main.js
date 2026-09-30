@@ -945,7 +945,9 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
   // Quest mode reads the quest ledger only — regular rec, status, pins,
   // and mastered context stay invisible there.
   const hudRec = questMode ? snap.store.questTiles?.[cell] : info.rec;
-  const hudStatus = questMode ? engine.questStatus(cell) : info.status;
+  // Quest mode is forward-only: static open state here, nothing — states,
+  // card data, progress — reads back from the regular map.
+  const hudStatus = questMode ? 'unlocked' : info.status;
   const selStatus =
     !questMode && info.status === 'unlocked' && isMasteredCell(snap.store, cell) ? 'mastered' : hudStatus;
   mapView.setSelected(cell, selStatus);
@@ -1059,7 +1061,7 @@ function renderHud() {
   updateAreaName(selectedCell);
   let hudStatus = 'unclaimed';
   try {
-    hudStatus = questMode ? engine.questStatus(selectedCell) : mapView.inspectCell(snap.store, selectedCell).status;
+    hudStatus = questMode ? 'unlocked' : mapView.inspectCell(snap.store, selectedCell).status;
   } catch {}
   updateCountdown(rec, hudStatus);
   renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
