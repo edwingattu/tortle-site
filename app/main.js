@@ -1087,6 +1087,7 @@ function startWatch() {
   }
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
+      watchRetries = 0; // a real fix resets the retry budget
       const fix = smoothFix(pos.coords);
       if (!fix) return;
       applyPosition(fix.lat, fix.lng, { fly: false });
@@ -1095,9 +1096,7 @@ function startWatch() {
       // the joystick manages its own region).
       if (!engine.isSandbox()) autoRegion(fix.lat, fix.lng);
     },
-    () => {
-      toast('Location permission denied. Simulator still walks real tiles.');
-    },
+    (err) => handleGeoError(err),
     { enableHighAccuracy: true, maximumAge: 4000, timeout: 12000 },
   );
 }
@@ -1105,6 +1104,50 @@ function startWatch() {
 function stopWatch() {
   if (watchId != null) navigator.geolocation.clearWatch(watchId);
   watchId = null;
+}
+
+// Geolocation failures, honestly separated. iOS cold-starts routinely time
+// out the first call, and PWA contexts often never show a prompt at all —
+// neither is a denial, and a dead watch must never strand tracking ON.
+let watchRetries = 0;
+const WATCH_MAX_RETRIES = 3;
+function isStandalonePwa() {
+  try {
+    return window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
+  } catch {
+    return false;
+  }
+}
+function locationGuidance() {
+  // iOS PWA quirk: grant once in the Safari tab — the installed app follows.
+  if (isStandalonePwa()) {
+    return 'Location is blocked with no prompt. Open gruffy.in in Safari, Allow location there, then return here and tap Live Explore again — tap this message to dismiss.';
+  }
+  return 'Location is blocked. Allow location for this site, then tap Live Explore again — tap this message to dismiss.';
+}
+function handleGeoError(err) {
+  const code = err && typeof err.code === 'number' ? err.code : -1;
+  if (code === 1) {
+    // Truly denied (or PWA-silenced): this watch is dead — flip the toggle
+    // off so a re-tap after granting starts a fresh watch, and say so.
+    stopWatch();
+    if (tracking) setTracking(false);
+    toastDiag(locationGuidance());
+    return;
+  }
+  // Transient (timeout / unavailable / unknown): cold starts recover — retry
+  // with backoff while tracking is still wanted, then say so plainly.
+  if (tracking && watchRetries < WATCH_MAX_RETRIES) {
+    watchRetries += 1;
+    toast(`Locating… retry ${watchRetries} of ${WATCH_MAX_RETRIES} (cold-start GPS can take a while).`);
+    window.setTimeout(() => {
+      if (!tracking) return;
+      stopWatch();
+      startWatch();
+    }, 2500 * watchRetries);
+  } else if (tracking) {
+    toastDiag('Still no GPS fix. Check Location Services and sky view, then toggle Live Explore off and on — tap this message to dismiss.');
+  }
 }
 
 let wakeLock = null;
@@ -1129,6 +1172,7 @@ function setTracking(on) {
   if (tl) tl.textContent = 'Live Explore';
   if (tracking) {
     lastDwellAt = performance.now();
+    watchRetries = 0;
     stopWatch(); // re-share while live must not leak the old watch
     startWatch();
     requestWakeLock();
@@ -1931,29 +1975,58 @@ async function showLocationGate() {
     dlg.dataset.bound = '1';
     $('#gateShareBtn')?.addEventListener('click', async () => {
       showGateState('loading');
+      const gateErr = $('#gateError');
+      if (gateErr) gateErr.hidden = true;
       if (!navigator.geolocation) {
         renderCityCards(guessCountry());
         showGateState('picker');
         return;
       }
+      const grantFromFix = async (lat, lng) => {
+        const region = regionForPoint(lat, lng);
+        setLocationChoice('granted');
+        setRegion(region, { persist: true });
+        activeRegion = region;
+        engine.setBase(lat, lng);
+        locationFilter.lastGood = { lat, lng };
+        hideGate();
+        await postGateSetup(region, { lat, lng, fly: true });
+        setTracking(true);
+      };
+      const fallToPicker = () => {
+        renderCityCards(guessCountry());
+        showGateState('picker');
+      };
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
-          const lat = pos.coords.latitude, lng = pos.coords.longitude;
-          const region = regionForPoint(lat, lng);
-          setLocationChoice('granted');
-          setRegion(region, { persist: true });
-          activeRegion = region;
-          engine.setBase(lat, lng);
-          locationFilter.lastGood = { lat, lng };
-          hideGate();
-          await postGateSetup(region, { lat, lng, fly: true });
-          setTracking(true);
+          await grantFromFix(pos.coords.latitude, pos.coords.longitude);
         },
-        () => {
-          renderCityCards(guessCountry());
-          showGateState('picker');
+        (err) => {
+          const code = err && typeof err.code === 'number' ? err.code : -1;
+          if (code === 1) {
+            // Denied (or PWA-silenced): stay on the prompt with guidance —
+            // never silently dump to the picker.
+            showGateState('prompt');
+            if (gateErr) {
+              gateErr.textContent = locationGuidance();
+              gateErr.hidden = false;
+            }
+            return;
+          }
+          // Transient: one relaxed retry (coarse fix, generous timeout),
+          // then the picker with an honest note.
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              await grantFromFix(pos.coords.latitude, pos.coords.longitude);
+            },
+            () => {
+              // Still nothing: the picker is the honest fallback.
+              fallToPicker();
+            },
+            { enableHighAccuracy: false, timeout: 30000, maximumAge: 60000 },
+          );
         },
-        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 },
       );
     });
     $('#gatePickBtn')?.addEventListener('click', () => {
