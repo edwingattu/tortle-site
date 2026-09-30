@@ -347,10 +347,10 @@ button {
   color: #5b6b7a;
 }
 
-.qbottombar {
+.qactions {
   display: flex;
   gap: 8px;
-  margin-top: 2px;
+  margin-top: 10px;
 }
 
 .qact {
@@ -2149,6 +2149,122 @@ button {
 #userPuck.bouncing { animation: puck-bounce 0.5s ease-in-out 4; }
 
 #userPuck.pulsing { animation: puck-pulse 1s ease-in-out 2; }
+
+/* Drop-blip mode: amber dot, rapid pulse while the maker pans the map. */
+#userPuck.dropping {
+  background: #e8a33d;
+  animation: puck-drop 0.45s ease-in-out infinite;
+}
+
+@keyframes puck-drop {
+  0%, 100% { transform: scale(1); box-shadow: 0 1px 6px rgba(0,0,0,0.45); }
+  50% { transform: scale(1.45); box-shadow: 0 0 0 10px rgba(232,163,61,0.4); }
+}
+
+/* Drop Blip overlay: floats over the pulsing dot at screen center. */
+#dropBlipWrap {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  z-index: 60;
+}
+
+#dropBlipWrap[hidden] { display: none !important; }
+
+#dropBlipBtn {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 26px;
+  background: #e8a33d;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+
+#dropBlipCancel {
+  border: 0;
+  background: rgba(20,30,45,0.65);
+  color: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Navigation pin block inside the objective entry. */
+.obj-navblock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  background: #fdf6ea;
+  border: 1px dashed #e8a33d;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.obj-navblock[hidden] { display: none !important; }
+
+.obj-navhint {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a6a2b;
+}
+
+.obj-markbtn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #e8a33d;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.obj-pinchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: #e8a33d;
+  color: #fff;
+  border-radius: 999px;
+  padding: 5px 6px 5px 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.obj-pinchip[hidden] { display: none !important; }
+
+.obj-pinclear {
+  border: 0;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Amber blip marker on objective rows carrying an exact location. */
+.obj-pin {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e8a33d;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
 
 @keyframes puck-bounce {
   0%, 100% { transform: translateY(0); }

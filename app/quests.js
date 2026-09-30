@@ -96,13 +96,16 @@ export function objectivesForQuest(questId) {
   return objectiveCache.get(questId) || [];
 }
 
-export async function createObjective(questId, { text, tool }) {
+export async function createObjective(questId, { text, tool, lat, lng }) {
   const existing = await fetchObjectives(questId);
   const row = {
     quest_id: questId,
     position: existing.length ? Math.max(...existing.map((o) => o.position || 0)) + 1 : 0,
     text: (text || '').trim() || 'Untitled objective',
     tool: tool || null,
+    // Exact blip location (navigation objectives); null when unpinned.
+    lat: lat ?? null,
+    lng: lng ?? null,
   };
   const { data, error } = await supabase.from('quest_objectives').insert(row).select().single();
   if (error) throw error;

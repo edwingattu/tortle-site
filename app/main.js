@@ -1455,6 +1455,95 @@ async function transitionQuest(id, to, btn) {
     if (btn) btn.disabled = false;
   }
 }
+// ---- Exact-location blips (navigation objectives) ----
+// pendingPins survives entry rebuilds: questId -> { lat, lng } dropped but
+// not yet saved with the objective.
+const pendingPins = new Map();
+let dropBlip = null; // { questId, entry, prevFollow } while placing a blip
+function dropBlipOverlay() {
+  let ov = document.getElementById('dropBlipWrap');
+  if (ov) return ov;
+  ov = document.createElement('div');
+  ov.id = 'dropBlipWrap';
+  ov.hidden = true;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.id = 'dropBlipBtn';
+  btn.textContent = 'Drop Blip';
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    confirmDropBlip();
+  });
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.id = 'dropBlipCancel';
+  cancel.textContent = 'Cancel';
+  cancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    exitDropBlip();
+  });
+  ov.append(btn, cancel);
+  document.body.appendChild(ov);
+  return ov;
+}
+function startDropBlip(questId, entry) {
+  if (dropBlip) exitDropBlip();
+  // The dot needs a clear stage: collapse the sheet (DOM survives, sig-guard
+  // skips the rebuild, so typed text and the picked tool stay put).
+  try {
+    const card = $('#bottomCard');
+    if (card?.classList.contains('expanded')) $('#sheetArrow')?.click();
+  } catch {}
+  // Center the tile being edited with the amber dot at default center.
+  try {
+    const q = questById(questId);
+    const cell = q?.h3_cell || selectedCell;
+    if (cell) {
+      const c = cellCenter(cell);
+      mapView.map.easeTo({ center: [c.lng, c.lat], zoom: 15.3, duration: 750 });
+    } else {
+      mapView.map.easeTo({ zoom: 15.3, duration: 750 });
+    }
+  } catch {}
+  let prevFollow = true;
+  try {
+    prevFollow = mapView.isFollowing();
+    mapView.setFollowing(false); // GPS ticks must not yank the camera mid-pan
+    mapView.setPuckAnim('');
+    mapView.setPuckDimmed(false);
+    document.getElementById('userPuck')?.classList.add('dropping');
+  } catch {}
+  dropBlip = { questId, entry, prevFollow };
+  dropBlipOverlay().hidden = false;
+}
+function exitDropBlip() {
+  try { document.getElementById('userPuck')?.classList.remove('dropping'); } catch {}
+  try { if (dropBlip) mapView.setFollowing(dropBlip.prevFollow); } catch {}
+  const ov = document.getElementById('dropBlipWrap');
+  if (ov) ov.hidden = true;
+  dropBlip = null;
+}
+function confirmDropBlip() {
+  if (!dropBlip) return;
+  // The puck is screen-fixed at map center: the drop point is the center.
+  let pt = null;
+  try {
+    const c = mapView.map.getCenter();
+    pt = { lat: c.lat, lng: c.lng };
+  } catch {}
+  const { questId, entry } = dropBlip;
+  exitDropBlip();
+  if (!pt) return;
+  try {
+    if (entry?.isConnected && entry._setPin) entry._setPin(pt);
+    else pendingPins.set(questId, pt);
+  } catch {}
+  // Re-expand so the maker sees the Pinned chip on the entry.
+  try {
+    const card = $('#bottomCard');
+    if (card && !card.classList.contains('expanded')) $('#sheetArrow')?.click();
+  } catch {}
+}
 function buildQuestRow(q) {
   const meta = QUEST_PROGRESS[q.status] || QUEST_PROGRESS.draft;
   const row = document.createElement('div');
@@ -1513,8 +1602,41 @@ function buildQuestRow(q) {
   const objWrap = document.createElement('div');
   objWrap.dataset.objwrap = q.id;
   detail.append(objLabel, objWrap);
-  // Actions live in the card bottom bar (built in renderQuestList) —
-  // the open row keeps meaning + objectives only.
+  // Per-quest actions live inside the open row itself: drafts finish here,
+  // finished deploy or edit, deployed undeploy or edit.
+  if (openQuestId === q.id) {
+    const acts = document.createElement('div');
+    acts.className = 'qactions';
+    const add = (label, primary, fn) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'qact' + (primary ? ' primary' : '');
+      b.textContent = label;
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fn(b).catch(() => {});
+      });
+      acts.appendChild(b);
+    };
+    if (q.status === 'draft') {
+      add('Mark Finished', true, (b) => transitionQuest(q.id, 'finished', b));
+    } else if (q.status === 'finished') {
+      add('Deploy', true, (b) => transitionQuest(q.id, 'deployed', b));
+      add(editQuestId === q.id ? 'Done' : 'Edit', false, async () => {
+        editQuestId = editQuestId === q.id ? null : q.id;
+        lastQuestListSig = null;
+        renderQuestList();
+      });
+    } else if (q.status === 'deployed') {
+      add('Undeploy', true, (b) => transitionQuest(q.id, 'finished', b));
+      add(editQuestId === q.id ? 'Done' : 'Edit', false, async () => {
+        editQuestId = editQuestId === q.id ? null : q.id;
+        lastQuestListSig = null;
+        renderQuestList();
+      });
+    }
+    if (acts.childElementCount) detail.appendChild(acts);
+  }
   main.addEventListener('click', (e) => {
     e.stopPropagation();
     openQuestId = openQuestId === q.id ? null : q.id;
@@ -1548,40 +1670,16 @@ function renderQuestList() {
   if (!qs.length) {
     const empty = document.createElement('div');
     empty.className = 'qempty';
-    empty.textContent = 'No quests on this tile yet — name one above to begin.';
+    empty.textContent = 'No quests on this tile yet — tap + Create to begin.';
     list.appendChild(empty);
     return;
   }
   for (const q of qs) list.appendChild(buildQuestRow(q));
-  // Open quest's transitions ride the card bottom: draft finishes here,
-  // finished deploys or edits, deployed undeploys.
-  const open = qs.find((q) => q.id === openQuestId);
-  if (open) {
-    const bar = document.createElement('div');
-    bar.className = 'qbottombar';
-    const add = (label, primary, fn) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'qact' + (primary ? ' primary' : '');
-      b.textContent = label;
-      b.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fn(b).catch(() => {});
-      });
-      bar.appendChild(b);
-    };
-    if (open.status === 'draft') {
-      add('Mark Finished', true, (b) => transitionQuest(open.id, 'finished', b));
-    } else if (open.status === 'finished') {
-      add('Deploy', true, (b) => transitionQuest(open.id, 'deployed', b));
-      add(editQuestId === open.id ? 'Done' : 'Edit', false, async () => {
-        editQuestId = editQuestId === open.id ? null : open.id;
-        lastQuestListSig = null;
-        renderQuestList();
-      });
-    } else if (open.status === 'deployed') {
-      add('Undeploy', false, (b) => transitionQuest(open.id, 'finished', b));
-    }
+  // Pins belong to the open quest: closing every row clears them.
+  if (!openQuestId) {
+    try { mapView.showObjectivePins([]); } catch {}
+  }
+}
     if (bar.childElementCount) list.appendChild(bar);
   }
 }
@@ -1634,6 +1732,11 @@ async function renderObjectives(questId) {
     for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
     wrap.appendChild(ol);
   }
+  // Amber blips for the open quest's pinned objectives (quest map only).
+  try {
+    const pins = (list || []).filter((o) => o.lat != null && o.lng != null);
+    mapView.showObjectivePins(questMode ? pins : []);
+  } catch {}
 }
 
 function buildObjectiveEntry(questId) {
@@ -1649,6 +1752,11 @@ function buildObjectiveEntry(questId) {
   tools.className = 'obj-tools';
   let picked = null;
   const toolBtns = [];
+  // Exact blip stashed by Drop Blip (survives entry rebuilds via pendingPins).
+  let pin = pendingPins.get(questId) || null;
+  const syncNav = () => {
+    navBlock.hidden = picked !== 'navigation';
+  };
   for (const t of OBJ_TOOLS) {
     const b = document.createElement('button');
     b.type = 'button';
@@ -1659,10 +1767,60 @@ function buildObjectiveEntry(questId) {
       e.stopPropagation();
       picked = picked === t.id ? null : t.id;
       for (const x of toolBtns) x.classList.toggle('selected', x.dataset.tool === picked);
+      syncNav();
     });
     toolBtns.push(b);
     tools.appendChild(b);
   }
+  // Navigation pin block: hint + Mark Exact Location + Pinned chip.
+  const navBlock = document.createElement('div');
+  navBlock.className = 'obj-navblock';
+  navBlock.hidden = true;
+  const navHint = document.createElement('p');
+  navHint.className = 'obj-navhint';
+  navHint.textContent = 'To mark a location just drop a blip..';
+  const markBtn = document.createElement('button');
+  markBtn.type = 'button';
+  markBtn.className = 'obj-markbtn';
+  markBtn.textContent = 'Mark Exact Location';
+  markBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    startDropBlip(questId, entry);
+  });
+  const pinChip = document.createElement('span');
+  pinChip.className = 'obj-pinchip';
+  pinChip.hidden = true;
+  const renderChip = () => {
+    pinChip.hidden = !pin;
+    pinChip.textContent = '';
+    if (!pin) return;
+    const label = document.createElement('span');
+    label.textContent = 'Pinned ✓';
+    const clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'obj-pinclear';
+    clear.textContent = '✕';
+    clear.setAttribute('aria-label', 'Remove pin');
+    clear.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      pin = null;
+      entry._pin = null;
+      pendingPins.delete(questId);
+      renderChip();
+    });
+    pinChip.append(label, clear);
+  };
+  renderChip();
+  // Drop Blip writes back through here (entry may rebuild mid-drop).
+  entry._setPin = (p) => {
+    pin = p;
+    entry._pin = p;
+    if (p) pendingPins.set(questId, p);
+    else pendingPins.delete(questId);
+    renderChip();
+  };
+  entry._pin = pin;
+  navBlock.append(navHint, markBtn, pinChip);
   const foot = document.createElement('div');
   foot.className = 'obj-entry-foot';
   const cancel = document.createElement('button');
@@ -1675,7 +1833,7 @@ function buildObjectiveEntry(questId) {
   save.className = 'obj-save';
   save.textContent = 'Save objective';
   foot.append(cancel, save);
-  entry.append(input, tools, foot);
+  entry.append(input, tools, navBlock, foot);
   const wrap = { editId: null };
   cancel.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1689,11 +1847,23 @@ function buildObjectiveEntry(questId) {
     try {
       const w = entry.closest('[data-objwrap]');
       const editId = (w?.dataset.editId || '') || null;
+      const at = entry._pin || null;
       if (editId) {
-        await updateObjective(editId, questId, { text: text || 'Untitled objective', tool: picked });
+        await updateObjective(editId, questId, {
+          text: text || 'Untitled objective',
+          tool: picked,
+          lat: at ? at.lat : null,
+          lng: at ? at.lng : null,
+        });
       } else {
-        await createObjective(questId, { text, tool: picked });
+        await createObjective(questId, {
+          text,
+          tool: picked,
+          lat: at ? at.lat : null,
+          lng: at ? at.lng : null,
+        });
       }
+      pendingPins.delete(questId);
       await renderObjectives(questId);
     } catch (err) {
       console.warn('[objectives] save failed:', err?.message || err);
@@ -1707,6 +1877,14 @@ function buildObjectiveEntry(questId) {
     input.value = o.text || '';
     picked = o.tool || null;
     for (const x of toolBtns) x.classList.toggle('selected', x.dataset.tool === picked);
+    syncNav();
+    const p = o.lat != null && o.lng != null ? { lat: o.lat, lng: o.lng } : pendingPins.get(questId) || null;
+    if (entry._setPin) entry._setPin(p);
+    else {
+      pin = p;
+      entry._pin = p;
+      renderChip();
+    }
     wrap.editId = o.id;
     const w = entry.closest('[data-objwrap]');
     if (w) w.dataset.editId = o.id;
@@ -1739,6 +1917,13 @@ function buildObjectiveRow(questId, o, isCurrent) {
     tag.className = 'obj-tool-tag';
     tag.textContent = OBJ_TOOL_LABEL[o.tool];
     row.appendChild(tag);
+  }
+  // Amber blip marker: this objective carries an exact location.
+  if (o.lat != null && o.lng != null) {
+    const pinDot = document.createElement('span');
+    pinDot.className = 'obj-pin';
+    pinDot.title = 'Pinned location';
+    row.appendChild(pinDot);
   }
   const edit = document.createElement('button');
   edit.type = 'button';

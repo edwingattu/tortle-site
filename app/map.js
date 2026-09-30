@@ -910,6 +910,20 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     map.on('mouseleave', 'quest-markers', () => {
       try { map.getCanvas().style.cursor = markingMode ? 'crosshair' : ''; } catch {}
     });
+    map.addSource('objective-pins', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+    // Objective pins: exact blip locations dropped per objective (amber).
+    map.addLayer({
+      id: 'objective-pins',
+      type: 'circle',
+      source: 'objective-pins',
+      paint: {
+        'circle-radius': 7,
+        'circle-color': '#e8a33d',
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#fff',
+        'circle-pitch-alignment': 'map',
+      },
+    });
     // Tortle POIs: business/amenity symbols filtered by live tile state.
     // Locked tiles contribute nothing (blank map underneath untouched);
     // unlocked renders full icon + dark label, activated renders the same
@@ -1227,6 +1241,21 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
             type: 'Feature',
             properties: { id: q.id, title: q.title },
             geometry: { type: 'Point', coordinates: [q.lng, q.lat] },
+          })),
+        });
+      } catch {}
+    },
+    // Objective pins: repaint the open quest's dropped blips (amber).
+    showObjectivePins(points) {
+      const src = map.getSource('objective-pins');
+      if (!src) return;
+      try {
+        src.setData({
+          type: 'FeatureCollection',
+          features: (points || []).map((p) => ({
+            type: 'Feature',
+            properties: {},
+            geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
           })),
         });
       } catch {}
