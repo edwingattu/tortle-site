@@ -59,11 +59,35 @@ export async function signOut() {
 /** Call at the top of protected pages. Redirects to auth.html when signed out. */
 export async function requireSessionOrRedirect() {
   const session = await getSession();
-  if (session) return session;
+  if (!session) {
+    redirectToAuth();
+    // Never resolves after redirect; throw to halt callers that awaited us.
+    throw new Error('redirecting to auth');
+  }
+  // Server-validate: a locally present session may be a zombie (stale or
+  // rotated refresh token — "session_id claim does not exist"). 401/403
+  // specifically means dead credentials: clear them and re-login. Anything
+  // else (offline, timeout) passes through — offline-first keeps working.
+  try {
+    const { error } = await supabase.auth.getUser();
+    if (error) throw error;
+  } catch (err) {
+    const status = err?.status;
+    if (status === 401 || status === 403) {
+      try {
+        await supabase.auth.signOut();
+      } catch {}
+      redirectToAuth();
+      throw new Error('redirecting to auth');
+    }
+    // Network failure — stay in, sync retries later.
+  }
+  return session;
+}
+
+function redirectToAuth() {
   const url = new URL('./auth.html', window.location.href);
   // Preserve where they were trying to go.
   url.searchParams.set('next', window.location.pathname);
   window.location.replace(url.toString());
-  // Never resolves after redirect; throw to halt callers that awaited us.
-  throw new Error('redirecting to auth');
 }
