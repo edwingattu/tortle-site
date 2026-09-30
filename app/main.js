@@ -1411,6 +1411,10 @@ async function refreshQuests(force = false) {
     mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
+    // Card quest list reads the same cache — repaint it too, otherwise
+    // transitions (finish/deploy/undeploy) and creates leave a stale list
+    // with a dead disabled button behind them.
+    renderQuestList();
   } catch (e) {
     console.warn('[quest] fetch failed:', e?.message || e);
   }
@@ -1429,13 +1433,25 @@ let editQuestId = null;
 async function transitionQuest(id, to, btn) {
   if (btn) btn.disabled = true;
   try {
+    // Mark Finished means "save the state": flush any typed-but-unsaved
+    // quest name from the open row before flipping status.
+    const nameInput = $('#questList .qname-row input');
+    const pending = (nameInput?.value || '').trim();
+    const cur = questById(id);
+    if (pending && cur && pending !== cur.title) {
+      try {
+        await updateQuestTitle(id, pending);
+      } catch (e) {
+        console.warn('[quest] name flush failed:', e?.message || e);
+      }
+    }
     await updateQuestStatus(id, to);
     openQuestId = id;
     editQuestId = null;
     await refreshQuests(true);
   } catch (err) {
     console.warn('[quest] transition failed:', err?.message || err);
-    toast('Quest update failed — try again.');
+    toastDiag(`Quest update failed: ${err?.message || err}`);
     if (btn) btn.disabled = false;
   }
 }
