@@ -1680,9 +1680,6 @@ function renderQuestList() {
     try { mapView.showObjectivePins([]); } catch {}
   }
 }
-    if (bar.childElementCount) list.appendChild(bar);
-  }
-}
 
 // ---- Quest objectives (builder): entry card + radio list, per open quest ----
 const OBJ_TOOLS = [
