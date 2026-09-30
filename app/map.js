@@ -56,6 +56,14 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   // Tap-gated pin fade: showTilePins/hideTilePins (API, below) live outside
   // the load callback, so the timer lives here at createMap scope.
   let pinFadeTimer = 0;
+  // Same-scope rule for the opacity driver: the API methods call it, so it
+  // lives here — `map` is in closure either way.
+  function setPinsOpacity(v, transitionMs) {
+    try {
+      map.setPaintProperty('activity-pins', 'circle-opacity-transition', { duration: transitionMs, delay: 0 });
+      map.setPaintProperty('activity-pins', 'circle-opacity', v);
+    } catch {}
+  }
   function pulseTick() {
     try {
       if (!map.getLayer('selected-fill') || !selectedCell) return;
@@ -872,13 +880,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       },
       'selected-outline',
     );
-    // Tap-gated pins: show for the tapped mastered tile, then fade over 60s.
-    function setPinsOpacity(v, transitionMs) {
-      try {
-        map.setPaintProperty('activity-pins', 'circle-opacity-transition', { duration: transitionMs, delay: 0 });
-        map.setPaintProperty('activity-pins', 'circle-opacity', v);
-      } catch {}
-    }
+    // (Pin opacity driver lives at createMap scope — see setPinsOpacity above.)
 
     // User-driven camera moves (pan/zoom/rotate) enter browse mode.
     // Programmatic moves carry no originalEvent, so follow never trips.
