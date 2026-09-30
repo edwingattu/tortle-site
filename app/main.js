@@ -313,6 +313,8 @@ let viewerIndex = 0;
 let navTimer = 0;
 // While the voice recorder is open the gallery stays hidden (returns on save/close)
 let voiceCaptureOpen = false;
+// Assigned in bindUi: closes the floating recorder with full cleanup.
+let closeVoiceFn = null;
 // Assigned in bindUi: closes the recorder, reports whether audio existed.
 let dismissVoiceCapture = null;
 const VOICE_SVG = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>';
@@ -1264,6 +1266,12 @@ function setQuestMode(on) {
   questMode = on;
   const card = $('#bottomCard');
   card?.classList.toggle('quest-mode', on);
+  // The floating recorder is regular-context capture — it dies on entry.
+  if (on && voiceCaptureOpen) {
+    try {
+      closeVoiceFn?.();
+    } catch {}
+  }
   const cap = $('#questCaption');
   if (cap) cap.hidden = !on;
   const bar = $('#toolBar');
@@ -1781,6 +1789,7 @@ function bindUi() {
     try { renderTileGallery(); } catch {}
     layoutToolbar();
   }
+  closeVoiceFn = closeVoiceArea;
 
   document.querySelectorAll('[data-capture]').forEach((button) => {
     button.addEventListener('click', () => {

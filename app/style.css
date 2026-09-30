@@ -266,7 +266,7 @@ button {
   filter: grayscale(0.6);
 }
 
-.bottom-card.quest-mode .detail-content {
+.bottom-card.quest-mode.expanded .detail-content {
   display: none;
 }
 
@@ -442,6 +442,8 @@ button {
 }
 
 .tool-bar > * { pointer-events: auto; }
+
+.tool-bar[hidden] { display: none !important; }
 
 /* Floating voice recorder: pinned above the toolbar, never inside or
  * under the card. The card neither opens nor covers it. */
