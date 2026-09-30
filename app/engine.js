@@ -150,6 +150,10 @@ function emptyStore() {
     // Cloud outbox: per-cell deltas not yet pushed (cleared only after the
     // server confirms). Survives reloads and crashes inside localStorage.
     pending: {},
+    // Quest context: a fully separate tile ledger for quest mode. Regular
+    // progress is invisible there (and vice versa) — own states, own outbox.
+    questTiles: {},
+    questPending: {},
     // Tile-name outbox: {cell: {name, updatedAt}} not yet pushed. Names are
     // last-write-wins by updatedAt (server column tile_progress.name).
     pendingNames: {},
@@ -175,6 +179,14 @@ function ensureTile(store, cell) {
     store.tiles[cell] = { dwellMs: 0, boostMs: 0, firstSeenAt: Date.now(), unlockedAt: null };
   }
   return store.tiles[cell];
+}
+
+function ensureQuestTile(store, cell) {
+  store.questTiles = store.questTiles || {};
+  if (!store.questTiles[cell]) {
+    store.questTiles[cell] = { dwellMs: 0, boostMs: 0, firstSeenAt: Date.now(), unlockedAt: null };
+  }
+  return store.questTiles[cell];
 }
 
 export function tileProgress(rec) {
@@ -340,6 +352,79 @@ export function createEngine(userId = null) {
       const result = touchCell(cell, { dwellMs: ms });
       emit({ type: 'dwell', ...result });
       return result;
+    },
+    // ---- Quest context: own ledger, own rules, own cloud ----
+    // Quest touches accrue locally only: no streak, no outing, no home base,
+    // no regular outbox. Same thresholds, fully separate states.
+    dwellQuest(cell, ms) {
+      if (!cell || !(ms > 0)) return null;
+      const rec = ensureQuestTile(store, cell);
+      rec.dwellMs += ms;
+      store.questPending = store.questPending || {};
+      const p = store.questPending[cell] || (store.questPending[cell] = { dwell: 0, boost: 0 });
+      p.dwell += ms;
+      if (maybeUnlock(rec)) {
+        /* crossed on the quest map — stamped now */
+      }
+      store.rev = (store.rev || 0) + 1;
+      emit({ type: 'quest-dwell', cell });
+      return rec;
+    },
+    // Quest status for a cell: unlocked by its own quest progress,
+    // activated as a 1-ring neighbor of a quest-opened tile, else locked.
+    questStatus(cell) {
+      if (!cell) return 'unclaimed';
+      const qtiles = store.questTiles || {};
+      const set = new Set();
+      for (const [c, rec] of Object.entries(qtiles)) {
+        if (!isUnlocked(rec)) continue;
+        for (const n of h3.gridDisk(c, 1)) set.add(n);
+      }
+      return tileStatus(cell, { tiles: qtiles }, set);
+    },
+    getPendingQuests() {
+      return store.questPending || {};
+    },
+    markQuestPushed(cells, amounts = {}) {
+      if (!store.questPending) return;
+      for (const cell of cells) {
+        const p = store.questPending[cell];
+        if (!p) continue;
+        p.dwell = Math.max(0, p.dwell - (amounts[cell]?.dwell || 0));
+        p.boost = Math.max(0, p.boost - (amounts[cell]?.boost || 0));
+        if (p.dwell < 1 && p.boost < 1) delete store.questPending[cell];
+      }
+      emit();
+    },
+    // Adopt server quest totals + still-unsent quest deltas. Mirrors
+    // applyServerTiles without names (quest tiles carry no titles).
+    applyServerQuestTiles(rows) {
+      const next = {};
+      for (const r of rows) {
+        const p = (store.questPending || {})[r.h3_cell] || { dwell: 0, boost: 0 };
+        const local = (store.questTiles || {})[r.h3_cell];
+        const firstStamps = [local?.firstSeenAt, r.first_seen_at ? Date.parse(r.first_seen_at) : null].filter(
+          (v) => v != null,
+        );
+        const unlockStamps = [local?.unlockedAt, r.unlocked_at ? Date.parse(r.unlocked_at) : null].filter(
+          (v) => v != null,
+        );
+        next[r.h3_cell] = {
+          dwellMs: (r.dwell_ms || 0) + p.dwell,
+          boostMs: (r.boost_ms || 0) + p.boost,
+          firstSeenAt: firstStamps.length ? Math.min(...firstStamps) : Date.now(),
+          unlockedAt: unlockStamps.length ? Math.min(...unlockStamps) : null,
+        };
+        if (!next[r.h3_cell].unlockedAt && maybeUnlock(next[r.h3_cell])) {
+          /* crossed via another device's deltas — stamped now */
+        }
+      }
+      for (const [cell, rec] of Object.entries(store.questTiles || {})) {
+        if (!next[cell]) next[cell] = rec;
+      }
+      store.questTiles = next;
+      store.rev = (store.rev || 0) + 1;
+      emit();
     },
     boostCells(cells, ms = CONFIG.activityBoostMs) {
       const unlocked = [];

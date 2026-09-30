@@ -942,16 +942,21 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
   const snap = engine.getSnapshot();
   mapView.paint(snap.store);
   const info = mapView.inspectCell(snap.store, cell);
-  const selStatus = info.status === 'unlocked' && isMasteredCell(snap.store, cell) ? 'mastered' : info.status;
+  // Quest mode reads the quest ledger only — regular rec, status, pins,
+  // and mastered context stay invisible there.
+  const hudRec = questMode ? snap.store.questTiles?.[cell] : info.rec;
+  const hudStatus = questMode ? engine.questStatus(cell) : info.status;
+  const selStatus =
+    !questMode && info.status === 'unlocked' && isMasteredCell(snap.store, cell) ? 'mastered' : hudStatus;
   mapView.setSelected(cell, selStatus);
-  const pct = progressPercent(info.rec);
+  const pct = progressPercent(hudRec);
   updateAreaName(cell);
   updateCityTitle();
-  updateCountdown(info.rec, info.status);
-  // Activity dots: only for tapped mastered tiles, fading over 60s.
+  updateCountdown(hudRec, hudStatus);
+  // Activity dots: regular-context only — never on the quest map.
   // Guarded so a pins failure can never break selection/boot.
   try {
-    if (isMasteredCell(snap.store, cell)) mapView.showTilePins(snap.store, cell);
+    if (!questMode && isMasteredCell(snap.store, cell)) mapView.showTilePins(snap.store, cell);
     else mapView.hideTilePins();
   } catch (e) { console.warn('[pins] failed:', e?.message || e); }
   // Animate bar 0 → current on every tap (progress already reflects tile)
@@ -964,8 +969,8 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
     bar.style.width = `${pct}%`;
   }
   if (toastOnSelect) {
-    if (info.status === 'unlocked') toast('This tile is already part of your story.');
-    else if (info.status === 'activated')
+    if (hudStatus === 'unlocked') toast('This tile is already part of your story.');
+    else if (hudStatus === 'activated')
       toast(`Activated tile ${cell.slice(0, 8)} — dwell progress is ${pct}%.`);
     else toast('Unclaimed tile. Move through it to activate.');
   }
@@ -974,6 +979,19 @@ function selectCell(cell, { toastOnSelect = false, src = '?' } = {}) {
 
 // Toolbar pinning: the bar rides above the collapsed card's top. While
 // expanded it stays pinned, so the growing card slides over and covers it.
+// Expansion cap: the open card never passes the top stats cluster.
+// Measured at runtime (notch + cluster height vary) on every expand/resize.
+function layoutCardLimit() {
+  const card = $('#bottomCard');
+  const stats = document.querySelector('.map-topbar .header-counts');
+  const dock = $('#cardDock');
+  if (!card || !stats || !dock) return;
+  const statsBottom = stats.getBoundingClientRect().bottom;
+  const dockBottomGap = window.innerHeight - dock.getBoundingClientRect().bottom;
+  const maxH = Math.max(160, Math.round(window.innerHeight - statsBottom - dockBottomGap - 8));
+  card.style.maxHeight = `${maxH}px`;
+}
+
 function layoutToolbar() {
   const bar = $('#toolBar');
   const card = $('#bottomCard');
@@ -995,7 +1013,7 @@ function layoutToolbar() {
 
 function renderHud() {
   const snap = engine.getSnapshot();
-  const rec = snap.store.tiles[selectedCell];
+  const rec = questMode ? snap.store.questTiles?.[selectedCell] : snap.store.tiles[selectedCell];
   const coverage = snap.coverage;
   const unlockedEl = $('#unlockedCount');
   if (unlockedEl) unlockedEl.textContent = snap.unlockedCount;
@@ -1040,7 +1058,9 @@ function renderHud() {
   updateCityTitle();
   updateAreaName(selectedCell);
   let hudStatus = 'unclaimed';
-  try { hudStatus = mapView.inspectCell(snap.store, selectedCell).status; } catch {}
+  try {
+    hudStatus = questMode ? engine.questStatus(selectedCell) : mapView.inspectCell(snap.store, selectedCell).status;
+  } catch {}
   updateCountdown(rec, hudStatus);
   renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
   layoutToolbar();
@@ -1370,6 +1390,7 @@ function bindUi() {
     e.stopPropagation();
     setExpanded(!bottomCard?.classList.contains('expanded'));
     layoutToolbar();
+    layoutCardLimit();
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
   // never expand/collapse the sheet.
@@ -2054,7 +2075,11 @@ function tick() {
     lastDwellAt = now;
     const pos = mapView.getUserLocation();
     if (!pos) return;
-    engine.dwell(cellAt(pos.lat, pos.lng), dt);
+    const cell = cellAt(pos.lat, pos.lng);
+    // Quest mode accrues to the quest ledger only — regular tiles, streak,
+    // and base stay untouched.
+    if (questMode) engine.dwellQuest(cell, dt);
+    else engine.dwell(cell, dt);
     renderHud();
   } else {
     lastDwellAt = performance.now();
@@ -2409,6 +2434,7 @@ window.addEventListener('pagehide', () => {
 });
 window.addEventListener('resize', () => {
   try { layoutToolbar(); } catch {}
+  try { layoutCardLimit(); } catch {}
 });
 try {
   window.__tortleBoot = {

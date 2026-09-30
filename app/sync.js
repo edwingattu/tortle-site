@@ -32,16 +32,18 @@ export async function pullAll(engine) {
     console.warn('[sync] pull skipped: no user');
     return false;
   }
-  const [tiles, acts, prof] = await Promise.all([
+  const [tiles, acts, prof, questTiles] = await Promise.all([
     supabase.from('tile_progress').select('*').eq('user_id', uid),
     supabase.from('activities').select('*').eq('user_id', uid).order('created_at'),
     supabase.from('tortle_profiles').select('*').eq('user_id', uid).limit(1),
+    supabase.from('quest_tiles').select('*').eq('user_id', uid),
   ]);
-  if (tiles.error || acts.error || prof.error) {
-    console.warn('[sync] pull failed:', tiles.error?.message, acts.error?.message, prof.error?.message);
+  if (tiles.error || acts.error || prof.error || questTiles.error) {
+    console.warn('[sync] pull failed:', tiles.error?.message, acts.error?.message, prof.error?.message, questTiles.error?.message);
     return false;
   }
   engine.applyServerTiles(tiles.data || []);
+  engine.applyServerQuestTiles(questTiles.data || []);
   engine.mergeActivities(acts.data || []);
   // Diagnostic footprint: what the cloud profile claimed (base fills local
   // only when local never located — see adoptProfile). Readable via
@@ -58,7 +60,7 @@ export async function pullAll(engine) {
     if (prof.data?.[0]) engine.adoptProfile(prof.data[0]);
   }
   console.log(
-    `[sync] pull ok: ${tiles.data?.length || 0} tiles, ${acts.data?.length || 0} activities, profile ${prof.data?.[0] ? 'found' : 'none'}`,
+    `[sync] pull ok: ${tiles.data?.length || 0} tiles, ${questTiles.data?.length || 0} quest tiles, ${acts.data?.length || 0} activities, profile ${prof.data?.[0] ? 'found' : 'none'}`,
   );
   return true;
 }
@@ -98,6 +100,31 @@ export async function flush(engine) {
         sent[cell] = { dwell: deltas[i].dwell_ms, boost: deltas[i].boost_ms };
       });
       engine.markPushed(batch, sent);
+    }
+
+    // 1b. Quest-tile deltas: same additive merge, separate table.
+    // Failures stay queued in questPending and retry on the next flush.
+    const pendingQ = engine.getPendingQuests();
+    const qCells = Object.keys(pendingQ);
+    if (qCells.length) {
+      const batch = qCells.slice(0, CONFIG.syncBatchCells);
+      const deltas = batch.map((cell) => {
+        const rec = (snap.store.questTiles || {})[cell] || {};
+        return {
+          h3_cell: cell,
+          dwell_ms: Math.round(pendingQ[cell].dwell || 0),
+          boost_ms: Math.round(pendingQ[cell].boost || 0),
+          first_seen_at: rec.firstSeenAt ? new Date(rec.firstSeenAt).toISOString() : null,
+          unlocked_at: rec.unlockedAt ? new Date(rec.unlockedAt).toISOString() : null,
+        };
+      });
+      const { error } = await supabase.rpc('apply_quest_deltas', { deltas });
+      if (error) throw error;
+      const sent = {};
+      batch.forEach((cell, i) => {
+        sent[cell] = { dwell: deltas[i].dwell_ms, boost: deltas[i].boost_ms };
+      });
+      engine.markQuestPushed(batch, sent);
     }
 
     // 1b. Tile names (last-write-wins by name_updated_at). Only the name

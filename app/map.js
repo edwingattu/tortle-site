@@ -349,19 +349,31 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       statuses = new Array(cells.length).fill('unclaimed');
     } else if (res === CONFIG.h3Resolution) {
       const neighborSet = unlockedNeighborSet(store);
-      // Mastered = unlocked + stored media (blob, path, or legacy url)
+      // Mastered = unlocked + stored media (blob, path, or legacy url).
+      // Quest mode skips both (regular context is invisible there).
       const mediaCells = new Set();
-      for (const a of store.activities || []) {
-        if (a.cell && (a.localUrl || a.media_path || a.media_url)) mediaCells.add(a.cell);
+      if (!questMode) {
+        for (const a of store.activities || []) {
+          if (a.cell && (a.localUrl || a.media_path || a.media_url)) mediaCells.add(a.cell);
+        }
+      }
+      let qset = null;
+      if (questMode) {
+        // Quest ledger: own states only — fresh maps start all grey.
+        qset = new Set();
+        for (const [c, rec] of Object.entries(store.questTiles || {})) {
+          if (!isUnlocked(rec)) continue;
+          for (const n of diskCells(c, 1)) qset.add(n);
+        }
       }
       statuses = new Array(cells.length);
       for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
         if (questMode) {
-          // Quest creator map: every hex reads unlocked, no locked/activated.
-          statuses[i] = 'unlocked';
+          const rec = (store.questTiles || {})[cell];
+          statuses[i] = isUnlocked(rec) ? 'unlocked' : rec || qset.has(cell) ? 'activated' : 'unclaimed';
           continue;
         }
-        const cell = cells[i];
         const rec = store.tiles[cell];
         if (isUnlocked(rec)) statuses[i] = mediaCells.has(cell) ? 'mastered' : 'unlocked';
         else if (rec || neighborSet.has(cell)) statuses[i] = 'activated';
@@ -416,10 +428,13 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     let extraLabel = null;
     if (band === 'area') {
       // Area band: uniform locked hex base (ladder) + ward polygons, whose
-      // fills/labels carry every state.
+      // fills/labels carry every state. Quest mode skips the overlay —
+      // regular area states must not render on the quest map.
       paintHexFog(store);
-      const areaItems = areas.getPack('areas');
-      updateBandSources('area', areaItems, areaStats, areaItems, areaStats, null);
+      if (!questMode) {
+        const areaItems = areas.getPack('areas');
+        updateBandSources('area', areaItems, areaStats, areaItems, areaStats, null);
+      }
       return;
     } else if (band === 'district') {
       // If exploration has begun inside the city's districts, the city tile
@@ -496,10 +511,18 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       labels = (meta?.continents || []).map((k) => ({ id: k.name, name: k.name, c: k.c }));
       labelStats = rollup.continents;
     }
-    updateBandSources(band, items, stats, labels, labelStats, extraLabel);
+    updateBandSources(
+      band,
+      items,
+      questMode ? new Map() : stats,
+      labels,
+      questMode ? new Map() : labelStats,
+      extraLabel,
+    );
     // Hex base under every polygon band (uniform locked — statuses reveal
     // at street only). The ladder auto-degrades resolution to stay in
-    // budget, so the base never blanks.
+    // budget, so the base never blanks. Quest mode keeps shapes + names
+    // neutral: no regular states above either.
     paintHexFog(store);
   }
 
@@ -531,8 +554,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       // Street base = H9 hex fog with full per-hex exploration; ward
       // fills + labels overlay it for orientation (no ward borders).
       paintHexFog(store, { forceRes9: true, reveal: true });
-      // Area fills + labels overlay the street hexes for orientation.
-      if (areaStats) {
+      // Area fills + labels overlay the street hexes for orientation —
+      // skipped in quest mode (regular context stays off the quest map).
+      if (areaStats && !questMode) {
         const items = areas.getPack('areas');
         updateBandSources('area', items, areaStats, items, areaStats, null);
       }
