@@ -305,9 +305,9 @@ function showTitleMessage(text) {
 function renderTitleField(name, status) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  // Quest mode: collapsed shows the latest quest name (or nothing) plus
-  // tile info — no field, no buttons. Expanded swaps in a fresh quest-name
-  // edit. Tile names never leak in, typing is never yanked mid-keystroke.
+  // Quest mode: collapsed shows area info + status only — no title, no
+  // quest name. Expanded swaps in a fresh quest-name edit. Tile names never
+  // leak in, typing is never yanked mid-keystroke.
   if (questMode) {
     const card = $('#bottomCard');
     const expanded = !!card?.classList.contains('expanded');
@@ -320,15 +320,7 @@ function renderTitleField(name, status) {
       input.hidden = true;
       if (save) save.hidden = true;
       if (message) message.hidden = true;
-      if (display) {
-        const latest = latestQuestForCell(selectedCell);
-        if (latest) {
-          display.hidden = false;
-          display.textContent = latest.title || 'Untitled quest';
-        } else {
-          display.hidden = true;
-        }
-      }
+      if (display) display.hidden = true;
       return;
     }
     if (selectedCell !== lastTitleCell) {
@@ -1502,6 +1494,13 @@ function buildQuestRow(q) {
   mean.className = 'qmean';
   mean.textContent = meta.meaning;
   detail.appendChild(mean);
+  // Objectives live inside the open row (rendered by renderObjectives).
+  const objLabel = document.createElement('div');
+  objLabel.className = 'obj-sec-label';
+  objLabel.textContent = 'Objectives';
+  const objWrap = document.createElement('div');
+  objWrap.dataset.objwrap = q.id;
+  detail.append(objLabel, objWrap);
   // Actions live in the card bottom bar (built in renderQuestList) —
   // the open row keeps meaning + objectives only.
   main.addEventListener('click', (e) => {
