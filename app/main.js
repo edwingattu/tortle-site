@@ -1123,7 +1123,27 @@ function locationGuidance() {
   if (isStandalonePwa()) {
     return 'Location is blocked with no prompt. Open gruffy.in in Safari, Allow location there, then return here and tap Live Explore again — tap this message to dismiss.';
   }
-  return 'Location is blocked. Allow location for this site, then tap Live Explore again — tap this message to dismiss.';
+  // Dismissed prompts never re-appear on the same page load — reload first.
+  return 'Location is blocked. Reload the page, tap Live Explore, and answer Allow (Precise on). If it still fails, check Settings → Apps → Safari → Location — tap this message to dismiss.';
+}
+// One-shot probe: what does the browser believe the permission is?
+// Distinguishes a stored denial from the dismissed-prompt trap (which
+// reports 'prompt' yet never re-prompts without a reload). Logged for
+// Safari triage — quote the [geo] lines back with any failure report.
+async function probeGeoPermission(tag) {
+  try {
+    console.log(`[geo:${tag}] secureContext:`, window.isSecureContext);
+  } catch {}
+  try {
+    if (!navigator.permissions?.query) {
+      console.log(`[geo:${tag}] permissions API unavailable`);
+      return;
+    }
+    const st = await navigator.permissions.query({ name: 'geolocation' });
+    console.log(`[geo:${tag}] permission state:`, st?.state);
+  } catch (e) {
+    console.log(`[geo:${tag}] probe failed:`, e?.message || e);
+  }
 }
 function handleGeoError(err) {
   const code = err && typeof err.code === 'number' ? err.code : -1;
@@ -1131,6 +1151,7 @@ function handleGeoError(err) {
     // Truly denied (or PWA-silenced): this watch is dead — flip the toggle
     // off so a re-tap after granting starts a fresh watch, and say so.
     stopWatch();
+    probeGeoPermission('watch-denied');
     if (tracking) setTracking(false);
     toastDiag(locationGuidance());
     return;
@@ -2007,6 +2028,7 @@ async function showLocationGate() {
             // Denied (or PWA-silenced): stay on the prompt with guidance —
             // never silently dump to the picker.
             showGateState('prompt');
+            probeGeoPermission('gate-denied');
             if (gateErr) {
               gateErr.textContent = locationGuidance();
               gateErr.hidden = false;

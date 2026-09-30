@@ -53,6 +53,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   // selected-outline layer only — the mastered border schematic is untouched.
   let pulseTimer = 0;
   let pulsePhase = 0;
+  // Tap-gated pin fade: showTilePins/hideTilePins (API, below) live outside
+  // the load callback, so the timer lives here at createMap scope.
+  let pinFadeTimer = 0;
   function pulseTick() {
     try {
       if (!map.getLayer('selected-fill') || !selectedCell) return;
@@ -870,7 +873,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       'selected-outline',
     );
     // Tap-gated pins: show for the tapped mastered tile, then fade over 60s.
-    let pinFadeTimer = 0;
     function setPinsOpacity(v, transitionMs) {
       try {
         map.setPaintProperty('activity-pins', 'circle-opacity-transition', { duration: transitionMs, delay: 0 });
