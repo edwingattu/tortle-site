@@ -1468,6 +1468,18 @@ const QUEST_ACTIONS = {
 };
 let openQuestId = null;
 let lastQuestListSig = null;
+async function transitionQuest(id, to, btn) {
+  if (btn) btn.disabled = true;
+  try {
+    await updateQuestStatus(id, to);
+    openQuestId = id;
+    await refreshQuests(true);
+  } catch (err) {
+    console.warn('[quest] transition failed:', err?.message || err);
+    toast('Quest update failed — try again.');
+    if (btn) btn.disabled = false;
+  }
+}
 function buildQuestRow(q) {
   const meta = QUEST_PROGRESS[q.status] || QUEST_PROGRESS.draft;
   const row = document.createElement('div');
@@ -1490,35 +1502,8 @@ function buildQuestRow(q) {
   mean.className = 'qmean';
   mean.textContent = meta.meaning;
   detail.appendChild(mean);
-  const actions = document.createElement('div');
-  actions.className = 'qactions';
-  for (const a of QUEST_ACTIONS[q.status] || []) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'qact' + (a.primary ? ' primary' : '');
-    b.textContent = a.label;
-    b.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      b.disabled = true;
-      try {
-        await updateQuestStatus(q.id, a.to);
-        openQuestId = q.id;
-        await refreshQuests(true);
-      } catch (err) {
-        console.warn('[quest] transition failed:', err?.message || err);
-        toast('Quest update failed — try again.');
-        b.disabled = false;
-      }
-    });
-    actions.appendChild(b);
-  }
-  if (actions.childElementCount) detail.appendChild(actions);
-  const objLabel = document.createElement('div');
-  objLabel.className = 'obj-sec-label';
-  objLabel.textContent = 'Objectives';
-  const objWrap = document.createElement('div');
-  objWrap.dataset.objwrap = q.id;
-  detail.append(objLabel, objWrap);
+  // Actions live in the card bottom bar (built in renderQuestList) —
+  // the open row keeps meaning + objectives only.
   main.addEventListener('click', (e) => {
     e.stopPropagation();
     openQuestId = openQuestId === q.id ? null : q.id;
@@ -1557,6 +1542,25 @@ function renderQuestList() {
     return;
   }
   for (const q of qs) list.appendChild(buildQuestRow(q));
+  // Open quest's actions ride the card bottom (all its transitions).
+  const open = qs.find((q) => q.id === openQuestId);
+  const acts = open ? QUEST_ACTIONS[open.status] || [] : [];
+  if (open && acts.length) {
+    const bar = document.createElement('div');
+    bar.className = 'qbottombar';
+    for (const a of acts) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'qact' + (a.primary ? ' primary' : '');
+      b.textContent = a.label;
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        transitionQuest(open.id, a.to, b).catch(() => {});
+      });
+      bar.appendChild(b);
+    }
+    list.appendChild(bar);
+  }
 }
 
 // ---- Quest objectives (builder): entry card + radio list, per open quest ----
