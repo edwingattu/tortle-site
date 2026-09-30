@@ -1594,14 +1594,29 @@ async function renderObjectives(questId) {
   if (!wrap.isConnected || openQuestId !== questId) return;
   wrap.innerHTML = '';
   wrap.dataset.editId = '';
-  wrap.appendChild(buildObjectiveEntry(questId));
+  const entry = buildObjectiveEntry(questId);
   const current = currentObjectiveId(questId, list);
-  if (list.length) {
-    const ol = document.createElement('div');
-    ol.className = 'obj-list';
-    for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
-    wrap.appendChild(ol);
+  if (!list.length) {
+    // First objective: a single Create entry point, card on demand.
+    entry.hidden = true;
+    const create = document.createElement('button');
+    create.type = 'button';
+    create.className = 'obj-create-btn';
+    create.textContent = '+ Create objective';
+    create.addEventListener('click', (e) => {
+      e.stopPropagation();
+      create.hidden = true;
+      entry.hidden = false;
+      entry.querySelector('input')?.focus();
+    });
+    wrap.append(create, entry);
+    return;
   }
+  wrap.appendChild(entry);
+  const ol = document.createElement('div');
+  ol.className = 'obj-list';
+  for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
+  wrap.appendChild(ol);
 }
 
 function buildObjectiveEntry(questId) {

@@ -388,6 +388,19 @@ button {
   padding: 10px;
 }
 
+.obj-create-btn {
+  width: 100%;
+  border: 1px dashed var(--navy);
+  background: #fff;
+  color: var(--navy);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.obj-create-btn[hidden] { display: none !important; }
+
 .obj-entry input {
   width: 100%;
   border: 1px solid #d8e3ee;
