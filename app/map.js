@@ -981,7 +981,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'text-halo-color': 'rgba(255,255,255,0.9)',
         'text-halo-width': 1.2,
       },
-    });
+    },
+    'hex-fills');
     // Tap feedback: the tapped hex flashes white, then its edge echoes
     // outward and fades — the six-edge trace is what sells "tile". One
     // rAF timeline on single-feature sources; retaps restart it.
