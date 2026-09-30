@@ -243,8 +243,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     'monument', 'attraction', 'castle', 'historic',
   ]);
 
-  // State-filtered POIs: locked cells contribute nothing (their map stays
-  // blank and untouched). Runs only when the viewport or tile statuses move.
+  // POIs render unfiltered on both maps: every in-scope symbol shows with
+  // full icon + dark label, whatever the tile beneath reads.
   let lastPoiKey = null;
   function refreshPois(store, memoKey) {
     const src = map.getSource('poi-geo');
@@ -262,7 +262,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     const feats = [];
     try {
       const raw = map.querySourceFeatures('openmaptiles', { sourceLayer: 'poi', filter: ['has', 'name'] }) || [];
-      const neighborSet = questMode ? null : unlockedNeighborSet(store);
       const seen = new Set();
       for (const f of raw) {
         const p = f.properties || {};
@@ -275,19 +274,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         const dedupe = `${sub}|${lng.toFixed(5)},${lat.toFixed(5)}`;
         if (seen.has(dedupe)) continue;
         seen.add(dedupe);
-        let st;
-        if (questMode) {
-          st = 'unlocked';
-        } else {
-          const cell = cellAt(lng, lat);
-          const rec = store.tiles[cell];
-          if (isUnlocked(rec)) st = 'unlocked';
-          else if (rec || neighborSet.has(cell)) st = 'activated';
-          else continue;
-        }
         feats.push({
           type: 'Feature',
-          properties: { name: p.name_en || p.name || '', subclass: sub, st },
+          properties: { name: p.name_en || p.name || '', subclass: sub, st: 'unlocked' },
           geometry: { type: 'Point', coordinates: [lng, lat] },
         });
       }
