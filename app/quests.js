@@ -20,7 +20,8 @@ export async function createQuest({ title, lat, lng }) {
     lat,
     lng,
     title: (title || '').trim() || 'Untitled quest',
-    status: 'active',
+    // New quests start In Progress (draft); Deploy makes them Main-Map live.
+    status: 'draft',
   };
   const { data, error } = await supabase.from('quests').insert(row).select().single();
   if (error) throw error;
@@ -36,11 +37,23 @@ export async function fetchRegionQuests(region, { force = false } = {}) {
     .from('quests')
     .select('*')
     .eq('region', region)
-    .eq('status', 'active')
+    .in('status', ['draft', 'finished', 'deployed'])
     .order('created_at');
   if (error) throw error;
   cache.set(region, data || []);
   return cache.get(region);
+}
+
+// Progress transition (Finish / Deploy / Reopen / Undeploy). Patches the
+// local cache row in place so counts and lists update instantly.
+export async function updateQuestStatus(id, status) {
+  const { data, error } = await supabase.from('quests').update({ status }).eq('id', id).select().single();
+  if (error) throw error;
+  for (const list of cache.values()) {
+    const i = list.findIndex((q) => q.id === id);
+    if (i !== -1) list[i] = data;
+  }
+  return data;
 }
 
 // Synchronous reads over the fetched cache (may lag the network —

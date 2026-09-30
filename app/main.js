@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests, questsForCell, latestQuestForCell } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, latestQuestForCell, updateQuestStatus } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -1141,6 +1141,7 @@ function renderHud() {
   } catch {}
   updateCountdown(rec, hudStatus);
   renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
+  renderQuestList();
   layoutToolbar();
   layoutQuestCreate();
   try { renderTileGallery(); } catch {}
@@ -1439,15 +1440,116 @@ async function runQuestSearch() {
   }
   toast('No place found — try a name, lat,lng, or H3 id.');
 }
-async function refreshQuests() {
+async function refreshQuests(force = false) {
   try {
-    const pts = await fetchRegionQuests(areasDbg.getRegion());
-    mapView.showQuests(pts);
+    const pts = await fetchRegionQuests(areasDbg.getRegion(), { force });
+    // Deployed quests live on the Main Map; everything renders on the quest map.
+    mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
   } catch (e) {
     console.warn('[quest] fetch failed:', e?.message || e);
   }
+}
+
+// Quest progress states (per-quest — distinct from the tile's quest count).
+const QUEST_PROGRESS = {
+  deployed: { label: 'Deployed', cls: 'deployed', meaning: 'Live on the Main Map.' },
+  draft: { label: 'In Progress', cls: 'draft', meaning: 'Still being made — showing last saved.' },
+  finished: { label: 'Finished', cls: 'finished', meaning: 'Complete but not deployed.' },
+};
+const QUEST_ACTIONS = {
+  draft: [{ id: 'finish', label: 'Mark Finished', to: 'finished', primary: true }],
+  finished: [
+    { id: 'deploy', label: 'Deploy', to: 'deployed', primary: true },
+    { id: 'reopen', label: 'Reopen', to: 'draft', primary: false },
+  ],
+  deployed: [{ id: 'undeploy', label: 'Undeploy', to: 'finished', primary: false }],
+};
+let openQuestId = null;
+let lastQuestListSig = null;
+function buildQuestRow(q) {
+  const meta = QUEST_PROGRESS[q.status] || QUEST_PROGRESS.draft;
+  const row = document.createElement('div');
+  row.className = 'qrow';
+  const main = document.createElement('button');
+  main.type = 'button';
+  main.className = 'qrow-main';
+  main.setAttribute('aria-label', `Open quest ${q.title}`);
+  const title = document.createElement('span');
+  title.className = 'qrow-title';
+  title.textContent = q.title || 'Untitled quest';
+  const pill = document.createElement('span');
+  pill.className = `qpill ${meta.cls}`;
+  pill.textContent = meta.label;
+  main.append(title, pill);
+  const detail = document.createElement('div');
+  detail.className = 'qrow-detail';
+  detail.hidden = openQuestId !== q.id;
+  const mean = document.createElement('p');
+  mean.className = 'qmean';
+  mean.textContent = meta.meaning;
+  detail.appendChild(mean);
+  const actions = document.createElement('div');
+  actions.className = 'qactions';
+  for (const a of QUEST_ACTIONS[q.status] || []) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'qact' + (a.primary ? ' primary' : '');
+    b.textContent = a.label;
+    b.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      b.disabled = true;
+      try {
+        await updateQuestStatus(q.id, a.to);
+        openQuestId = q.id;
+        await refreshQuests(true);
+      } catch (err) {
+        console.warn('[quest] transition failed:', err?.message || err);
+        toast('Quest update failed — try again.');
+        b.disabled = false;
+      }
+    });
+    actions.appendChild(b);
+  }
+  if (actions.childElementCount) detail.appendChild(actions);
+  main.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openQuestId = openQuestId === q.id ? null : q.id;
+    lastQuestListSig = null; // force rebuild for the expand/collapse
+    try {
+      renderQuestList();
+    } catch {}
+  });
+  row.append(main, detail);
+  return row;
+}
+function renderQuestList() {
+  const block = $('#questBuildBlock');
+  const list = $('#questList');
+  if (!block || !list) return;
+  if (!questMode) {
+    if (!block.hidden) {
+      block.hidden = true;
+      list.innerHTML = '';
+    }
+    lastQuestListSig = null;
+    return;
+  }
+  block.hidden = false;
+  const qs = questsForCell(selectedCell);
+  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${q.status}`).join(',')}|${openQuestId || ''}`;
+  if (sig === lastQuestListSig) return;
+  lastQuestListSig = sig;
+  list.innerHTML = '';
+  if (!qs.length) {
+    const empty = document.createElement('div');
+    empty.className = 'qempty';
+    empty.textContent = 'No quests on this tile yet — name one above to begin.';
+    list.appendChild(empty);
+    return;
+  }
+  for (const q of qs) list.appendChild(buildQuestRow(q));
 }
 
 function openDialog(type) {

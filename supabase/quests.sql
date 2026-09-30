@@ -11,7 +11,7 @@ create table if not exists public.quests (
   lat double precision not null,
   lng double precision not null,
   title text not null default 'Untitled quest',
-  status text not null default 'active' check (status in ('draft', 'active', 'archived')),
+  status text not null default 'draft' check (status in ('draft', 'finished', 'deployed')),
   created_at timestamptz not null default now()
 );
 

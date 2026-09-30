@@ -266,8 +266,106 @@ button {
   filter: grayscale(0.6);
 }
 
+/* Quest builder: the expanded quest card shows only the quest list —
+ * every regular section stays buried no matter the rule order. */
 .bottom-card.quest-mode.expanded .detail-content {
-  display: none;
+  display: block;
+}
+
+.bottom-card.quest-mode.expanded .detail-content > :not(.quest-build-block) {
+  display: none !important;
+}
+
+.quest-build-block[hidden] { display: none !important; }
+
+.quest-list {
+  display: grid;
+  gap: 8px;
+}
+
+.qempty {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a9aa8;
+  padding: 4px 2px;
+}
+
+.qrow {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.qrow-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 12px;
+  text-align: left;
+}
+
+.qrow-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink);
+}
+
+.qpill {
+  flex: none;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.qpill.deployed { background: #5cc581; color: #fff; }
+.qpill.draft { background: #8fd0f2; color: #3a4b5e; }
+.qpill.finished { background: #e8a33d; color: #3a4b5e; }
+
+.qrow-detail {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--line);
+}
+
+.qrow-detail[hidden] { display: none !important; }
+
+.qmean {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #5b6b7a;
+}
+
+.qactions {
+  display: flex;
+  gap: 8px;
+}
+
+.qact {
+  flex: 1;
+  border-radius: 10px;
+  padding: 9px 8px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid var(--navy);
+  background: #fff;
+  color: var(--navy);
+}
+
+.qact.primary {
+  background: var(--navy);
+  color: #fff;
 }
 
 /* Quest search: separate floating container riding the quest card top. */
