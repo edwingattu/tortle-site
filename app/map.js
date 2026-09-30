@@ -57,11 +57,14 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   // the load callback, so the timer lives here at createMap scope.
   let pinFadeTimer = 0;
   // Same-scope rule for the opacity driver: the API methods call it, so it
-  // lives here — `map` is in closure either way.
+  // lives here — `map` is in closure either way. Fill AND ring fade as one:
+  // the stroke has its own opacity channel that would otherwise survive.
   function setPinsOpacity(v, transitionMs) {
     try {
       map.setPaintProperty('activity-pins', 'circle-opacity-transition', { duration: transitionMs, delay: 0 });
       map.setPaintProperty('activity-pins', 'circle-opacity', v);
+      map.setPaintProperty('activity-pins', 'circle-stroke-opacity-transition', { duration: transitionMs, delay: 0 });
+      map.setPaintProperty('activity-pins', 'circle-stroke-opacity', v);
     } catch {}
   }
   function pulseTick() {
