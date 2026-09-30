@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests, questsForCell, latestQuestForCell, updateQuestStatus, fetchObjectives, createObjective, updateObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, fetchObjectives, createObjective, updateObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -305,31 +305,18 @@ function showTitleMessage(text) {
 function renderTitleField(name, status) {
   const input = $('#tileTitleInput');
   if (!input) return;
-  // Quest mode: collapsed shows area info + status only — no title, no
-  // quest name. Expanded swaps in a fresh quest-name edit. Tile names never
-  // leak in, typing is never yanked mid-keystroke.
+  // Quest mode: the summary field is retired — creation lives in the open
+  // quest row. Collapsed and expanded alike show info + status only here.
   if (questMode) {
-    const card = $('#bottomCard');
-    const expanded = !!card?.classList.contains('expanded');
+    lastTitleCell = selectedCell;
+    if (document.activeElement === input) input.blur();
+    input.hidden = true;
     const save = $('#tileTitleSave');
+    if (save) save.hidden = true;
     const display = $('#tileTitleDisplay');
+    if (display) display.hidden = true;
     const message = $('#tileTitleMessage');
-    if (!expanded) {
-      lastTitleCell = selectedCell;
-      if (document.activeElement === input) input.blur();
-      input.hidden = true;
-      if (save) save.hidden = true;
-      if (message) message.hidden = true;
-      if (display) display.hidden = true;
-      return;
-    }
-    if (selectedCell !== lastTitleCell) {
-      lastTitleCell = selectedCell;
-      if (document.activeElement === input) input.blur();
-      showTitleEdit('');
-    } else if (document.activeElement !== input) {
-      showTitleEdit(null);
-    }
+    if (message) message.hidden = true;
     return;
   }
   const switched = selectedCell !== lastTitleCell;
@@ -1364,21 +1351,6 @@ function setQuestMode(on) {
   renderHud();
   layoutToolbar();
 }
-// A quest is logged for the selected tile (point = tile center for now).
-async function saveQuestName(name) {
-  if (!selectedCell) return;
-  const c = cellCenter(selectedCell);
-  try {
-    await createQuest({ title: name, lat: c.lat, lng: c.lng });
-    toast('Quest logged for this tile.');
-    const card = $('#bottomCard');
-    if (card && !card.classList.contains('expanded')) $('#sheetArrow')?.click();
-    await refreshQuests();
-  } catch (e) {
-    console.warn('[quest] save failed:', e?.message || e);
-    toast('Quest save failed — try again.');
-  }
-}
 function flyToPoint(lat, lng) {
   try {
     mapView.map.easeTo({
@@ -1450,21 +1422,16 @@ const QUEST_PROGRESS = {
   draft: { label: 'In Progress', cls: 'draft', meaning: 'Still being made — showing last saved.' },
   finished: { label: 'Finished', cls: 'finished', meaning: 'Complete but not deployed.' },
 };
-const QUEST_ACTIONS = {
-  draft: [{ id: 'finish', label: 'Mark Finished', to: 'finished', primary: true }],
-  finished: [
-    { id: 'deploy', label: 'Deploy', to: 'deployed', primary: true },
-    { id: 'reopen', label: 'Reopen', to: 'draft', primary: false },
-  ],
-  deployed: [{ id: 'undeploy', label: 'Undeploy', to: 'finished', primary: false }],
-};
 let openQuestId = null;
 let lastQuestListSig = null;
+// editQuestId: finished/deployed row opened for editing (drafts always edit).
+let editQuestId = null;
 async function transitionQuest(id, to, btn) {
   if (btn) btn.disabled = true;
   try {
     await updateQuestStatus(id, to);
     openQuestId = id;
+    editQuestId = null;
     await refreshQuests(true);
   } catch (err) {
     console.warn('[quest] transition failed:', err?.message || err);
@@ -1495,6 +1462,35 @@ function buildQuestRow(q) {
   mean.textContent = meta.meaning;
   detail.appendChild(mean);
   // Objectives live inside the open row (rendered by renderObjectives).
+  // Drafts and Edit-toggled rows also get an inline name editor.
+  const editing = q.status === 'draft' || editQuestId === q.id;
+  if (editing) {
+    const qname = document.createElement('div');
+    qname.className = 'qname-row';
+    const qinput = document.createElement('input');
+    qinput.type = 'text';
+    qinput.maxLength = 50;
+    qinput.value = q.title || '';
+    qinput.setAttribute('aria-label', 'Quest name');
+    const qsave = document.createElement('button');
+    qsave.type = 'button';
+    qsave.className = 'qname-save';
+    qsave.textContent = 'Save';
+    qsave.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      qsave.disabled = true;
+      try {
+        await updateQuestTitle(q.id, qinput.value);
+        await refreshQuests(true);
+      } catch (err) {
+        console.warn('[quest] rename failed:', err?.message || err);
+        toast('Quest rename failed — try again.');
+        qsave.disabled = false;
+      }
+    });
+    qname.append(qinput, qsave);
+    detail.appendChild(qname);
+  }
   const objLabel = document.createElement('div');
   objLabel.className = 'obj-sec-label';
   objLabel.textContent = 'Objectives';
@@ -1510,7 +1506,7 @@ function buildQuestRow(q) {
     try {
       renderQuestList();
     } catch {}
-    if (openQuestId === q.id) renderObjectives(q.id, q.status).catch(() => {});
+    if (openQuestId === q.id) renderObjectives(q.id).catch(() => {});
   });
   row.append(main, detail);
   return row;
@@ -1529,7 +1525,7 @@ function renderQuestList() {
   }
   block.hidden = false;
   const qs = questsForCell(selectedCell);
-  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${q.status}`).join(',')}|${openQuestId || ''}`;
+  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${q.status}:${q.title}`).join(',')}|${openQuestId || ''}|${editQuestId || ''}`;
   if (sig === lastQuestListSig) return;
   lastQuestListSig = sig;
   list.innerHTML = '';
@@ -1541,24 +1537,36 @@ function renderQuestList() {
     return;
   }
   for (const q of qs) list.appendChild(buildQuestRow(q));
-  // Open quest's actions ride the card bottom (all its transitions).
+  // Open quest's transitions ride the card bottom: draft finishes here,
+  // finished deploys or edits, deployed undeploys.
   const open = qs.find((q) => q.id === openQuestId);
-  const acts = open ? QUEST_ACTIONS[open.status] || [] : [];
-  if (open && acts.length) {
+  if (open) {
     const bar = document.createElement('div');
     bar.className = 'qbottombar';
-    for (const a of acts) {
+    const add = (label, primary, fn) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'qact' + (a.primary ? ' primary' : '');
-      b.textContent = a.label;
+      b.className = 'qact' + (primary ? ' primary' : '');
+      b.textContent = label;
       b.addEventListener('click', (e) => {
         e.stopPropagation();
-        transitionQuest(open.id, a.to, b).catch(() => {});
+        fn(b).catch(() => {});
       });
       bar.appendChild(b);
+    };
+    if (open.status === 'draft') {
+      add('Mark Finished', true, (b) => transitionQuest(open.id, 'finished', b));
+    } else if (open.status === 'finished') {
+      add('Deploy', true, (b) => transitionQuest(open.id, 'deployed', b));
+      add(editQuestId === open.id ? 'Done' : 'Edit', false, async () => {
+        editQuestId = editQuestId === open.id ? null : open.id;
+        lastQuestListSig = null;
+        renderQuestList();
+      });
+    } else if (open.status === 'deployed') {
+      add('Undeploy', false, (b) => transitionQuest(open.id, 'finished', b));
     }
-    list.appendChild(bar);
+    if (bar.childElementCount) list.appendChild(bar);
   }
 }
 
@@ -1582,10 +1590,12 @@ const OBJ_TOOLS = [
 ];
 const OBJ_TOOL_LABEL = { camera: 'Camera', voice: 'Voice', navigation: 'Nav' };
 
-async function renderObjectives(questId, status) {
+async function renderObjectives(questId) {
   const wrap = document.querySelector(`[data-objwrap="${questId}"]`);
   if (!wrap) return;
-  const qstatus = status || wrap.dataset.qstatus || 'draft';
+  // Drafts always edit; finished/deployed edit only via the row's Edit toggle.
+  const q = questById(questId);
+  const editable = !q || q.status === 'draft' || editQuestId === questId;
   let list = [];
   try {
     list = await fetchObjectives(questId);
@@ -1598,38 +1608,16 @@ async function renderObjectives(questId, status) {
   if (!wrap.isConnected || openQuestId !== questId) return;
   wrap.innerHTML = '';
   wrap.dataset.editId = '';
-  wrap.dataset.qstatus = qstatus;
+  wrap.classList.toggle('obj-locked', !editable);
   const entry = buildObjectiveEntry(questId);
   const current = currentObjectiveId(questId, list);
-  const buildList = () => {
+  wrap.appendChild(entry);
+  if (list.length) {
     const ol = document.createElement('div');
     ol.className = 'obj-list';
     for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
-    return ol;
-  };
-  if (qstatus === 'draft') {
-    // In Progress: entry hides behind Create; the list always shows.
-    entry.hidden = true;
-    wrap.append(buildObjectiveCreate(entry), entry);
-    if (list.length) wrap.appendChild(buildList());
-    return;
+    wrap.appendChild(ol);
   }
-  wrap.appendChild(entry);
-  if (list.length) wrap.appendChild(buildList());
-}
-
-function buildObjectiveCreate(entry) {
-  const create = document.createElement('button');
-  create.type = 'button';
-  create.className = 'obj-create-btn';
-  create.textContent = '+ Create objective';
-  create.addEventListener('click', (e) => {
-    e.stopPropagation();
-    create.hidden = true;
-    entry.hidden = false;
-    entry.querySelector('input')?.focus();
-  });
-  return create;
 }
 
 function buildObjectiveEntry(questId) {
@@ -1742,12 +1730,7 @@ function buildObjectiveRow(questId, o, isCurrent) {
   edit.textContent = 'Edit';
   edit.addEventListener('click', (e) => {
     e.stopPropagation();
-    const wrapEl = row.closest('[data-objwrap]');
-    const ent = wrapEl?.querySelector('.obj-entry');
-    // Drafts hide the entry behind Create — reveal it first.
-    if (ent) ent.hidden = false;
-    const cbtn = wrapEl?.querySelector('.obj-create-btn');
-    if (cbtn) cbtn.hidden = true;
+    const ent = row.closest('[data-objwrap]')?.querySelector('.obj-entry');
     if (ent?._loadForEdit) ent._loadForEdit(o);
   });
   row.appendChild(edit);
@@ -1818,9 +1801,20 @@ function bindUi() {
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
   $('#questButton')?.addEventListener('click', () => setQuestMode(!questMode));
-  $('#questCreateFloat')?.addEventListener('click', () => {
+  $('#questCreateFloat')?.addEventListener('click', async () => {
     const card = $('#bottomCard');
     if (card && !card.classList.contains('expanded')) $('#sheetArrow')?.click();
+    if (!selectedCell) return;
+    // A fresh draft IS the creation card: open its row for naming.
+    try {
+      const c = cellCenter(selectedCell);
+      const q = await createQuest({ title: 'Untitled quest', lat: c.lat, lng: c.lng });
+      openQuestId = q.id;
+      await refreshQuests(true);
+    } catch (e) {
+      console.warn('[quest] create failed:', e?.message || e);
+      toast('Quest create failed — try again.');
+    }
   });
   $('#questSearchGo')?.addEventListener('click', () => {
     runQuestSearch().catch(() => {});
@@ -2376,16 +2370,8 @@ function bindUi() {
   $('#tileTitleSave')?.addEventListener('click', () => {
     const input = $('#tileTitleInput');
     if (!input || !selectedCell) return;
-    // Quest mode: the button logs a quest for the tile (never a tile name).
-    if (questMode) {
-      const qv = (input.value || '').trim();
-      if (!qv) {
-        input.focus();
-        return;
-      }
-      saveQuestName(qv).catch(() => {});
-      return;
-    }
+    // Quest mode has no summary field anymore (creation lives in the row).
+    if (questMode) return;
     // View mode: the button reads Edit Title — reopen the field instead.
     if (input.hidden) {
       showTitleEdit($('#tileTitleDisplay')?.textContent || '');

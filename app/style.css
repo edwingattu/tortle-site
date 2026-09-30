@@ -391,18 +391,46 @@ button {
 
 .obj-entry[hidden] { display: none !important; }
 
-.obj-create-btn {
-  width: 100%;
-  border: 1px dashed var(--navy);
+/* Quest row name editor (drafts + Edit-toggled rows). */
+.qname-row {
+  display: flex;
+  gap: 8px;
+}
+
+.qname-row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d8e3ee;
   background: #fff;
-  color: var(--navy);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  outline-color: #4c8fcf;
+}
+
+.qname-save {
+  flex: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 16px;
+  background: var(--navy);
+  color: #fff;
   font-size: 12px;
   font-weight: 800;
 }
 
-.obj-create-btn[hidden] { display: none !important; }
+.qname-save:disabled { opacity: 0.5; }
+
+/* Read-only objective lists: entry + row edits hide, radios stay live. */
+.obj-locked .obj-entry,
+.obj-locked .obj-edit { display: none !important; }
+
+/* Quest card breathing room: status clears the chevron corner. */
+.bottom-card.quest-mode .tile-sub-row {
+  padding-right: 48px;
+}
 
 .obj-entry input {
   width: 100%;

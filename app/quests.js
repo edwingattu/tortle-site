@@ -148,3 +148,28 @@ export function setCurrentObjectiveId(questId, objectiveId) {
     localStorage.setItem(CURRENT_KEY, JSON.stringify(map));
   } catch {}
 }
+
+export function questById(id) {
+  if (!id) return null;
+  for (const list of cache.values()) {
+    const hit = list.find((q) => q.id === id);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+// Rename (creator/superadmin per RLS). Patches the cache row in place.
+export async function updateQuestTitle(id, title) {
+  const { data, error } = await supabase
+    .from('quests')
+    .update({ title: (title || '').trim() || 'Untitled quest' })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  for (const list of cache.values()) {
+    const i = list.findIndex((q) => q.id === id);
+    if (i !== -1) list[i] = data;
+  }
+  return data;
+}
