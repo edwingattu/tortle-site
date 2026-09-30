@@ -74,3 +74,77 @@ export function latestQuestForCell(cell) {
   const list = questsForCell(cell);
   return list.length ? list[list.length - 1] : null;
 }
+
+// ---- Objectives: ordered todo steps, one capture tool each ----
+const objectiveCache = new Map(); // questId -> rows (position order)
+
+export async function fetchObjectives(questId, { force = false } = {}) {
+  if (!questId) return [];
+  if (!force && objectiveCache.has(questId)) return objectiveCache.get(questId);
+  const { data, error } = await supabase
+    .from('quest_objectives')
+    .select('*')
+    .eq('quest_id', questId)
+    .order('position')
+    .order('created_at');
+  if (error) throw error;
+  objectiveCache.set(questId, data || []);
+  return objectiveCache.get(questId);
+}
+
+export function objectivesForQuest(questId) {
+  return objectiveCache.get(questId) || [];
+}
+
+export async function createObjective(questId, { text, tool }) {
+  const existing = await fetchObjectives(questId);
+  const row = {
+    quest_id: questId,
+    position: existing.length ? Math.max(...existing.map((o) => o.position || 0)) + 1 : 0,
+    text: (text || '').trim() || 'Untitled objective',
+    tool: tool || null,
+  };
+  const { data, error } = await supabase.from('quest_objectives').insert(row).select().single();
+  if (error) throw error;
+  objectiveCache.set(questId, [...existing, data]);
+  return data;
+}
+
+export async function updateObjective(id, questId, patch) {
+  const { data, error } = await supabase
+    .from('quest_objectives')
+    .update(patch)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  const list = objectiveCache.get(questId) || [];
+  objectiveCache.set(
+    questId,
+    list.map((o) => (o.id === id ? data : o)),
+  );
+  return data;
+}
+
+// Current-objective pointer: per-device local state for now (player-side
+// server sync comes with the playing build). First objective is the default.
+const CURRENT_KEY = 'tortle.v0.quest-current';
+function readCurrentMap() {
+  try {
+    return JSON.parse(localStorage.getItem(CURRENT_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+export function currentObjectiveId(questId, list = []) {
+  const saved = readCurrentMap()[questId];
+  if (saved && list.some((o) => o.id === saved)) return saved;
+  return list.length ? list[0].id : null;
+}
+export function setCurrentObjectiveId(questId, objectiveId) {
+  try {
+    const map = readCurrentMap();
+    map[questId] = objectiveId;
+    localStorage.setItem(CURRENT_KEY, JSON.stringify(map));
+  } catch {}
+}

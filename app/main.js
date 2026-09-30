@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests, questsForCell, latestQuestForCell, updateQuestStatus } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, latestQuestForCell, updateQuestStatus, fetchObjectives, createObjective, updateObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -1513,6 +1513,12 @@ function buildQuestRow(q) {
     actions.appendChild(b);
   }
   if (actions.childElementCount) detail.appendChild(actions);
+  const objLabel = document.createElement('div');
+  objLabel.className = 'obj-sec-label';
+  objLabel.textContent = 'Objectives';
+  const objWrap = document.createElement('div');
+  objWrap.dataset.objwrap = q.id;
+  detail.append(objLabel, objWrap);
   main.addEventListener('click', (e) => {
     e.stopPropagation();
     openQuestId = openQuestId === q.id ? null : q.id;
@@ -1520,6 +1526,7 @@ function buildQuestRow(q) {
     try {
       renderQuestList();
     } catch {}
+    if (openQuestId === q.id) renderObjectives(q.id).catch(() => {});
   });
   row.append(main, detail);
   return row;
@@ -1550,6 +1557,174 @@ function renderQuestList() {
     return;
   }
   for (const q of qs) list.appendChild(buildQuestRow(q));
+}
+
+// ---- Quest objectives (builder): entry card + radio list, per open quest ----
+const OBJ_TOOLS = [
+  {
+    id: 'camera',
+    label: 'Camera',
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg>',
+  },
+  {
+    id: 'voice',
+    label: 'Voice',
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>',
+  },
+  {
+    id: 'navigation',
+    label: 'Nav',
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
+  },
+];
+const OBJ_TOOL_LABEL = { camera: 'Camera', voice: 'Voice', navigation: 'Nav' };
+
+async function renderObjectives(questId) {
+  const wrap = document.querySelector(`[data-objwrap="${questId}"]`);
+  if (!wrap) return;
+  let list = [];
+  try {
+    list = await fetchObjectives(questId);
+  } catch (e) {
+    console.warn('[objectives] load failed:', e?.message || e);
+    wrap.innerHTML = '<div class="qempty">Objectives failed to load.</div>';
+    return;
+  }
+  // Stale guard: another quest opened (or closed) mid-fetch.
+  if (!wrap.isConnected || openQuestId !== questId) return;
+  wrap.innerHTML = '';
+  wrap.dataset.editId = '';
+  wrap.appendChild(buildObjectiveEntry(questId));
+  const current = currentObjectiveId(questId, list);
+  if (list.length) {
+    const ol = document.createElement('div');
+    ol.className = 'obj-list';
+    for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
+    wrap.appendChild(ol);
+  }
+}
+
+function buildObjectiveEntry(questId) {
+  const entry = document.createElement('div');
+  entry.className = 'obj-entry';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.maxLength = 140;
+  input.placeholder = 'Describe the objective..';
+  input.autocomplete = 'off';
+  input.setAttribute('aria-label', 'Objective text');
+  const tools = document.createElement('div');
+  tools.className = 'obj-tools';
+  let picked = null;
+  const toolBtns = [];
+  for (const t of OBJ_TOOLS) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'obj-tool';
+    b.dataset.tool = t.id;
+    b.innerHTML = `${t.icon}<span>${t.label}</span>`;
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      picked = picked === t.id ? null : t.id;
+      for (const x of toolBtns) x.classList.toggle('selected', x.dataset.tool === picked);
+    });
+    toolBtns.push(b);
+    tools.appendChild(b);
+  }
+  const foot = document.createElement('div');
+  foot.className = 'obj-entry-foot';
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'obj-cancel';
+  cancel.textContent = 'Cancel';
+  cancel.hidden = true;
+  const save = document.createElement('button');
+  save.type = 'button';
+  save.className = 'obj-save';
+  save.textContent = 'Save objective';
+  foot.append(cancel, save);
+  entry.append(input, tools, foot);
+  const wrap = { editId: null };
+  cancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    input.value = '';
+    picked = null;
+    for (const x of toolBtns) x.classList.remove('selected');
+    wrap.editId = null;
+    const w = entry.closest('[data-objwrap]');
+    if (w) w.dataset.editId = '';
+    cancel.hidden = true;
+    input.focus();
+  });
+  save.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const text = (input.value || '').trim();
+    save.disabled = true;
+    try {
+      const w = entry.closest('[data-objwrap]');
+      const editId = (w?.dataset.editId || '') || null;
+      if (editId) {
+        await updateObjective(editId, questId, { text: text || 'Untitled objective', tool: picked });
+      } else {
+        await createObjective(questId, { text, tool: picked });
+      }
+      await renderObjectives(questId);
+    } catch (err) {
+      console.warn('[objectives] save failed:', err?.message || err);
+      toast('Objective save failed — try again.');
+      save.disabled = false;
+    }
+  });
+  // Edit loader (called from a row's Edit button).
+  entry.dataset.loader = '1';
+  entry._loadForEdit = (o) => {
+    input.value = o.text || '';
+    picked = o.tool || null;
+    for (const x of toolBtns) x.classList.toggle('selected', x.dataset.tool === picked);
+    wrap.editId = o.id;
+    const w = entry.closest('[data-objwrap]');
+    if (w) w.dataset.editId = o.id;
+    cancel.hidden = false;
+    input.focus();
+  };
+  return entry;
+}
+
+function buildObjectiveRow(questId, o, isCurrent) {
+  const row = document.createElement('div');
+  row.className = 'obj-row';
+  const radio = document.createElement('button');
+  radio.type = 'button';
+  radio.className = 'obj-radio' + (isCurrent ? ' on' : '');
+  radio.setAttribute('aria-label', isCurrent ? 'Current objective' : 'Set current objective');
+  radio.setAttribute('aria-pressed', String(!!isCurrent));
+  radio.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setCurrentObjectiveId(questId, o.id);
+    renderObjectives(questId).catch(() => {});
+  });
+  const text = document.createElement('span');
+  text.className = 'obj-text';
+  text.textContent = o.text || 'Untitled objective';
+  row.appendChild(radio);
+  row.appendChild(text);
+  if (o.tool && OBJ_TOOL_LABEL[o.tool]) {
+    const tag = document.createElement('span');
+    tag.className = 'obj-tool-tag';
+    tag.textContent = OBJ_TOOL_LABEL[o.tool];
+    row.appendChild(tag);
+  }
+  const edit = document.createElement('button');
+  edit.type = 'button';
+  edit.className = 'obj-edit';
+  edit.textContent = 'Edit';
+  edit.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const entry = row.closest('.qrow-detail')?.querySelector('.obj-entry');
+    if (entry?._loadForEdit) entry._loadForEdit(o);
+  });
+  row.appendChild(edit);
+  return row;
 }
 
 function openDialog(type) {

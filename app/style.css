@@ -368,6 +368,162 @@ button {
   color: #fff;
 }
 
+/* Quest objectives: entry card (field + tool pick + save), then the
+ * radio list of saved objective cards. */
+.obj-sec-label {
+  margin-top: 4px;
+  font: 700 9px "DM Mono", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6e8278;
+  line-height: 1;
+}
+
+.obj-entry {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  background: #f7f9fd;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.obj-entry input {
+  width: 100%;
+  border: 1px solid #d8e3ee;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  outline-color: #4c8fcf;
+}
+
+.obj-entry input::placeholder {
+  color: #9fb0c3;
+  font-weight: 600;
+}
+
+.obj-tools {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.obj-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 4px;
+  color: #2a69aa;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.obj-tool.selected {
+  border-color: var(--navy);
+  background: #e0effd;
+  color: var(--navy);
+}
+
+.obj-entry-foot {
+  display: flex;
+  gap: 8px;
+}
+
+.obj-cancel {
+  flex: 1;
+  border: 1px solid #cfd8de;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.obj-cancel[hidden] { display: none !important; }
+
+.obj-save {
+  flex: 2;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--navy);
+  color: #fff;
+}
+
+.obj-save:disabled { opacity: 0.5; }
+
+.obj-list {
+  display: grid;
+  gap: 8px;
+}
+
+.obj-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.obj-radio {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--navy);
+  background: #fff;
+  padding: 0;
+}
+
+.obj-radio.on {
+  background: var(--navy);
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+.obj-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink);
+}
+
+.obj-tool-tag {
+  flex: none;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: #e2effb;
+  color: #2a69aa;
+}
+
+.obj-edit {
+  flex: none;
+  border: 1px solid #8fd0f2;
+  background: #fff;
+  color: #2a69aa;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
 /* Quest search: separate floating container riding the quest card top. */
 .search-bar {
   position: absolute;
