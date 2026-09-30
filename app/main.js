@@ -14,6 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
+import { createQuest, fetchRegionQuests } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -61,6 +62,13 @@ const mapView = createMap({
     mapView.recenter();
     selectionPinned = false;
     try { selectCell(mapView.cellUnderUser(), { src: 'dottap' }); } catch {}
+  },
+  // Quest framework: marking taps report a point; marker taps toast.
+  onQuestMark: (pt) => {
+    handleQuestMark(pt).catch(() => {});
+  },
+  onQuestSelect: (props) => {
+    toast(props?.title || 'Quest');
   },
   onMove: () => mapView.paint(engine.getSnapshot().store),
   onLevelSelect: (band, props) => {
@@ -1213,6 +1221,43 @@ function setTracking(on) {
   }
 }
 
+// Quest framework (admin+): arm the maker, tap the map to mark a point,
+// save immediately (builder UI later). Creation is presence-free — any map,
+// any city. Availability renders per active region below.
+let questMarking = false;
+function setQuestMarking(on) {
+  questMarking = on;
+  try {
+    mapView.setMarkingMode(on);
+  } catch {}
+  const btn = $('#questButton');
+  if (btn) {
+    btn.classList.toggle('armed', on);
+    btn.setAttribute('aria-pressed', String(on));
+  }
+  if (on) toast('Quest maker armed — tap the map to mark the quest point.');
+}
+async function handleQuestMark({ lng, lat }) {
+  setQuestMarking(false);
+  try {
+    const q = await createQuest({ lat, lng });
+    const city = q.region === 'nyc' ? 'New York' : areasDbg.regionLabel(q.region);
+    toast(`Quest created — explorers in ${city} can take it.`);
+    await refreshQuests();
+  } catch (e) {
+    console.warn('[quest] save failed:', e?.message || e);
+    toast('Quest save failed — try again.');
+  }
+}
+async function refreshQuests() {
+  try {
+    const pts = await fetchRegionQuests(areasDbg.getRegion());
+    mapView.showQuests(pts);
+  } catch (e) {
+    console.warn('[quest] fetch failed:', e?.message || e);
+  }
+}
+
 function openDialog(type) {
   captureType = type;
   const copy = {
@@ -1275,6 +1320,7 @@ function bindUi() {
   // iOS has no beforeinstallprompt — banner never shows; user uses Share → Add to Home Screen
 
   $('#trackingButton').addEventListener('click', () => setTracking(!tracking));
+  $('#questButton')?.addEventListener('click', () => setQuestMarking(!questMarking));
   $('#recenterButton').addEventListener('click', () => {
     interruptDotSequence(true);
     mapView.recenter();
@@ -2136,6 +2182,8 @@ async function switchRegion(next) {
     activeRegion = next;
     updateCityTitle();
     mapView.paint(engine.getSnapshot().store);
+    // Quest availability follows the region.
+    refreshQuests().catch(() => {});
     // New region, new live context: drop any pinned selection.
     selectionPinned = false;
     lastLiveCell = null;
@@ -2231,12 +2279,19 @@ setupJoystick({
   switchRegion,
   enabled: adminUser,
 });
+// Quest maker dock: admin+ only (everyone else never sees the button).
+if (adminUser) {
+  const qd = $('#questDock');
+  if (qd) qd.hidden = false;
+}
 {
   const credit = $('#dataCredit');
   if (credit) credit.textContent = regionCredit();
 }
 renderHud();
 mapView.paint(engine.getSnapshot().store);
+// Quest availability for the active region (framework cut).
+refreshQuests().catch(() => {});
 setInterval(tick, 1000);
 // Push the delta outbox on a cadence + whenever the app hides. Pulls stay
 // launch-only per V0 scope. Failed media uploads retry on the same cadence.

@@ -223,6 +223,29 @@ button {
   top: calc(152px + env(safe-area-inset-top, 0px));
 }
 
+/* Quest maker dock: admin+ only, left column. Default (admin) sits under
+ * the logo/pills; superadmin (tilt pill present, diagnostics at 152px)
+ * stacks below the diagnostics button. */
+.quest-dock {
+  position: absolute;
+  z-index: 3;
+  left: 24px;
+  top: calc(152px + env(safe-area-inset-top, 0px));
+  display: grid;
+  gap: 9px;
+}
+
+.quest-dock[hidden] { display: none !important; }
+
+.map-panel:has(#tiltLevel) .quest-dock {
+  top: calc(204px + env(safe-area-inset-top, 0px));
+}
+
+.quest-dock .map-control.armed {
+  background: var(--navy);
+  color: #fff;
+}
+
 /* Live Explore pill: lives in the toolbar, above the card. */
 .map-tracking {
   box-shadow: 0 4px 16px rgba(21, 73, 60, 0.12);

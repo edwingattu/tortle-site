@@ -18,7 +18,7 @@ import {
   isUnlocked,
 } from './engine.js';
 
-export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, onUserDotTap }) {
+export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, onUserDotTap, onQuestMark, onQuestSelect }) {
   const map = new maplibregl.Map({
     container: 'liveMap',
     style: CONFIG.mapStyle,
@@ -48,6 +48,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     onUserGesture?.();
   }
   let selectedCell = null;
+  // Quest marking: while armed, map taps report a point instead of selecting.
+  let markingMode = false;
   // Selection pulse: loops until another tile is tapped. Green for open
   // (unlocked/mastered) taps, white for active/locked. Runs on the
   // selected-outline layer only — the mastered border schematic is untouched.
@@ -792,6 +794,32 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'circle-opacity-transition': { duration: 300, delay: 0 },
       },
     });
+    map.addSource('quest-markers', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+    // Quest markers: amber dots for the active region's quests. Framework
+    // rendering only — tap toasts the title; detail UI comes with the builder.
+    map.addLayer({
+      id: 'quest-markers',
+      type: 'circle',
+      source: 'quest-markers',
+      paint: {
+        'circle-radius': 9,
+        'circle-color': '#e8a33d',
+        'circle-stroke-width': 2.5,
+        'circle-stroke-color': '#fff',
+        'circle-pitch-alignment': 'map',
+      },
+    });
+    map.on('click', 'quest-markers', (event) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      onQuestSelect?.(feature.properties);
+    });
+    map.on('mouseenter', 'quest-markers', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'quest-markers', () => {
+      try { map.getCanvas().style.cursor = markingMode ? 'crosshair' : ''; } catch {}
+    });
     // Tap feedback: the tapped hex flashes white, then its edge echoes
     // outward and fades — the six-edge trace is what sells "tile". One
     // rAF timeline on single-feature sources; retaps restart it.
@@ -904,6 +932,12 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       } catch { return false; }
     }
     map.on('click', 'hex-fills', (event) => {
+      // Quest marking preempts selection at every band.
+      if (markingMode) {
+        const ll = event.lngLat;
+        if (ll) onQuestMark?.({ lng: ll.lng, lat: ll.lat });
+        return;
+      }
       if (isDotTap(event)) { onUserDotTap?.(); return; }
       const feature = event.features?.[0];
       if (!feature) return;
@@ -924,6 +958,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
 
     for (const band of ['area', 'district', 'city', 'state', 'country', 'continent']) {
       map.on('click', `${band}-tiles`, (event) => {
+        if (markingMode) {
+          const ll = event.lngLat;
+          if (ll) onQuestMark?.({ lng: ll.lng, lat: ll.lat });
+          return;
+        }
         if (isDotTap(event)) { onUserDotTap?.(); return; }
         const feature = event.features?.[0];
         if (!feature) return;
@@ -1004,6 +1043,28 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       if (!pinsSource) return;
       window.clearTimeout(pinFadeTimer);
       setPinsOpacity(0, 300);
+    },
+    // Quest markers: repaint the active region's quests (framework cut).
+    showQuests(points) {
+      const src = map.getSource('quest-markers');
+      if (!src) return;
+      try {
+        src.setData({
+          type: 'FeatureCollection',
+          features: (points || []).map((q) => ({
+            type: 'Feature',
+            properties: { id: q.id, title: q.title },
+            geometry: { type: 'Point', coordinates: [q.lng, q.lat] },
+          })),
+        });
+      } catch {}
+    },
+    // Marking mode: map taps report points instead of selecting tiles.
+    setMarkingMode(on) {
+      markingMode = !!on;
+      try {
+        map.getCanvas().style.cursor = markingMode ? 'crosshair' : '';
+      } catch {}
     },
     setSelected(cell, status = null) {
       selectedCell = cell;
