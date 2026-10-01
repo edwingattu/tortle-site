@@ -1430,8 +1430,43 @@ let openQuestId = null;
 let lastQuestListSig = null;
 // editQuestId: finished/deployed row opened for editing (drafts always edit).
 let editQuestId = null;
+// Blip roles: one Main + one End per quest (partial unique index backs it).
+// Setting a new one unsets the previous holder; tapping the active chip
+// clears the role. Sequential awaits keep the index happy.
+async function setBlipRole(questId, o, kind) {
+  const flag = kind === 'main' ? 'is_main' : 'is_end';
+  const on = !o[flag];
+  try {
+    const known = await fetchObjectives(questId, { force: true });
+    for (const x of known) {
+      if (x[flag] && x.id !== o.id) await updateObjective(x.id, questId, { [flag]: false });
+    }
+    await updateObjective(o.id, questId, { [flag]: on });
+    await renderObjectives(questId);
+  } catch (err) {
+    console.warn('[quest] blip role failed:', err?.message || err);
+    toastDiag(`Blip role failed: ${err?.message || err}`);
+  }
+}
 async function transitionQuest(id, to, btn) {
   if (btn) btn.disabled = true;
+  // Deploy gate: a quest ships only with an End Blip declared (Main or
+  // any one Trail). Fresh fetch — the cache must not wave through a stale no.
+  if (to === 'deployed') {
+    try {
+      const known = await fetchObjectives(id, { force: true });
+      if (!known.some((o) => o.is_end && o.lat != null && o.lng != null)) {
+        toastDiag('Assign an End Blip before deploying.');
+        if (btn) btn.disabled = false;
+        return;
+      }
+    } catch (err) {
+      console.warn('[quest] deploy gate failed:', err?.message || err);
+      toastDiag(`Deploy check failed: ${err?.message || err}`);
+      if (btn) btn.disabled = false;
+      return;
+    }
+  }
   try {
     // Mark Finished means "save the state": flush any typed-but-unsaved
     // quest name from the open row before flipping status.
@@ -1726,12 +1761,18 @@ async function renderObjectives(questId) {
   if (list.length) {
     const ol = document.createElement('div');
     ol.className = 'obj-list';
-    for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current));
+    for (const o of list) ol.appendChild(buildObjectiveRow(questId, o, o.id === current, editable));
     wrap.appendChild(ol);
   }
   // Amber blips for the open quest's pinned objectives (quest map only).
   try {
-    const pins = (list || []).filter((o) => o.lat != null && o.lng != null);
+    const pins = (list || [])
+      .filter((o) => o.lat != null && o.lng != null)
+      .map((o) => ({
+        lat: o.lat,
+        lng: o.lng,
+        role: o.is_main && o.is_end ? 'main_end' : o.is_main ? 'main' : o.is_end ? 'end' : 'trail',
+      }));
     mapView.showObjectivePins(questMode ? pins : []);
   } catch {}
 }
@@ -1845,12 +1886,20 @@ function buildObjectiveEntry(questId) {
       const w = entry.closest('[data-objwrap]');
       const editId = (w?.dataset.editId || '') || null;
       const at = entry._pin || null;
+      // First pinned objective becomes the Main blip (quest start).
+      let hasMain = false;
+      try {
+        const known = await fetchObjectives(questId);
+        hasMain = known.some((x) => x.is_main && x.id !== editId);
+      } catch {}
       if (editId) {
         await updateObjective(editId, questId, {
           text: text || 'Untitled objective',
           tool: picked,
           lat: at ? at.lat : null,
           lng: at ? at.lng : null,
+          // Roles attach to blips: unpinning clears Main/End.
+          ...(at ? {} : { is_main: false, is_end: false }),
         });
       } else {
         await createObjective(questId, {
@@ -1858,6 +1907,8 @@ function buildObjectiveEntry(questId) {
           tool: picked,
           lat: at ? at.lat : null,
           lng: at ? at.lng : null,
+          isMain: !!at && !hasMain,
+          isEnd: false,
         });
       }
       pendingPins.delete(questId);
@@ -1891,7 +1942,7 @@ function buildObjectiveEntry(questId) {
   return entry;
 }
 
-function buildObjectiveRow(questId, o, isCurrent) {
+function buildObjectiveRow(questId, o, isCurrent, editable) {
   const row = document.createElement('div');
   row.className = 'obj-row';
   const radio = document.createElement('button');
@@ -1916,11 +1967,43 @@ function buildObjectiveRow(questId, o, isCurrent) {
     row.appendChild(tag);
   }
   // Amber blip marker: this objective carries an exact location.
+  // Role colors: Main amber, Trail green, End red, Main+End half-half.
   if (o.lat != null && o.lng != null) {
     const pinDot = document.createElement('span');
-    pinDot.className = 'obj-pin';
-    pinDot.title = 'Pinned location';
+    const roleCls = o.is_main && o.is_end ? 'main_end' : o.is_main ? 'main' : o.is_end ? 'end' : 'trail';
+    pinDot.className = `obj-pin ${roleCls}`;
+    pinDot.title = o.is_main && o.is_end ? 'Main + End blip' : o.is_main ? 'Main blip' : o.is_end ? 'End blip' : 'Trail blip';
     row.appendChild(pinDot);
+  }
+  // Blip roles are maker actions: Main/End toggles on pinned objectives
+  // in editable rows; read-only rows show a role tag instead.
+  const pinned = o.lat != null && o.lng != null;
+  if (pinned) {
+    if (editable) {
+      const roles = document.createElement('span');
+      roles.className = 'obj-roles';
+      const mkChip = (label, active, cls, kind) => {
+        const c = document.createElement('button');
+        c.type = 'button';
+        c.className = `obj-role ${cls}` + (active ? ' on' : '');
+        c.textContent = label;
+        c.setAttribute('aria-pressed', String(!!active));
+        c.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setBlipRole(questId, o, kind).catch(() => {});
+        });
+        roles.appendChild(c);
+      };
+      mkChip('Main', !!o.is_main, 'main', 'main');
+      mkChip('End', !!o.is_end, 'end', 'end');
+      row.appendChild(roles);
+    } else {
+      const tag = document.createElement('span');
+      const combo = o.is_main && o.is_end;
+      tag.className = 'obj-tool-tag blip-tag ' + (combo ? 'main_end' : o.is_main ? 'main' : o.is_end ? 'end' : 'trail');
+      tag.textContent = combo ? 'Main + End' : o.is_main ? 'Main' : o.is_end ? 'End' : 'Trail';
+      row.appendChild(tag);
+    }
   }
   const edit = document.createElement('button');
   edit.type = 'button';

@@ -276,12 +276,17 @@ button {
   display: none !important;
 }
 
+.quest-build-block { min-width: 0; }
+
 .quest-build-block[hidden] { display: none !important; }
 
 .quest-list {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
+
+.quest-list > * { min-width: 0; }
 
 .qempty {
   font-size: 12px;
@@ -336,7 +341,10 @@ button {
   gap: 8px;
   padding: 10px 12px 12px;
   border-top: 1px solid var(--line);
+  min-width: 0;
 }
+
+.qrow-detail > * { min-width: 0; }
 
 .qrow-detail[hidden] { display: none !important; }
 
@@ -349,12 +357,17 @@ button {
 
 .qactions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
+  min-width: 0;
 }
+
+.qactions > * { min-width: 0; }
 
 .qact {
   flex: 1;
+  min-width: 0;
   border-radius: 10px;
   padding: 9px 8px;
   font-size: 12px;
@@ -362,6 +375,8 @@ button {
   border: 1px solid var(--navy);
   background: #fff;
   color: var(--navy);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .qact.primary {
@@ -387,7 +402,10 @@ button {
   background: #f7f9fd;
   border-radius: 12px;
   padding: 10px;
+  min-width: 0;
 }
+
+.obj-entry > * { min-width: 0; }
 
 .obj-entry[hidden] { display: none !important; }
 
@@ -434,6 +452,9 @@ button {
 
 .obj-entry input {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   border: 1px solid #d8e3ee;
   background: #fff;
   border-radius: 10px;
@@ -453,7 +474,10 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+  min-width: 0;
 }
+
+.obj-tools > * { min-width: 0; }
 
 .obj-tool {
   display: flex;
@@ -467,6 +491,8 @@ button {
   color: #2a69aa;
   font-size: 11px;
   font-weight: 800;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .obj-tool.selected {
@@ -519,7 +545,17 @@ button {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px 12px;
+  min-width: 0;
+  max-width: 100%;
 }
+
+.obj-row > * { min-width: 0; }
+
+.obj-row > .obj-radio,
+.obj-row > .obj-tool-tag,
+.obj-row > .obj-pin,
+.obj-row > .obj-edit,
+.obj-row > .obj-role { min-width: auto; }
 
 .obj-radio {
   flex: none;
@@ -711,6 +747,9 @@ button {
   z-index: 4;
   left: 12px;
   right: 12px;
+  /* Floor: average phone is 360–430 CSS px wide — the card never
+   * collapses below 320px no matter how small the card gets. */
+  min-width: 320px;
   /* Flush to the edge over live map: the home indicator floats over the
    * card instead of a solid bar sitting below it. */
   bottom: 12px;
@@ -780,6 +819,10 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* No scope for horizontal scrolling anywhere in the card: content
+   * resizes to the card, never bleeds past its right edge. */
+  overflow-x: clip;
+  min-width: 0;
 }
 
 .card-handle {
@@ -813,10 +856,12 @@ button {
 .detail-content {
   display: none;
   overflow-y: auto;
+  overflow-x: clip;
   overscroll-behavior: contain;
   padding: 4px 17px 20px;
   border-top: 1px solid var(--line);
   -webkit-overflow-scrolling: touch;
+  min-width: 0;
 }
 
 .bottom-card.expanded .detail-content {
@@ -2264,6 +2309,43 @@ button {
   background: #e8a33d;
   border: 2px solid #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.obj-pin.main { background: #e8a33d; }
+.obj-pin.trail { background: #2fbf71; }
+.obj-pin.end { background: #e53935; }
+/* True half-amber / half-red for the combined Main+End dot. */
+.obj-pin.main_end {
+  background: linear-gradient(90deg, #e8a33d 0 50%, #e53935 50% 100%);
+}
+
+/* Blip role chips (editable rows) + tags (read-only rows). */
+.obj-roles {
+  flex: none;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.obj-role {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  background: #fff;
+  min-width: 0;
+}
+
+.obj-role.main { border: 1px solid #e8a33d; color: #9a6b1d; }
+.obj-role.main.on { background: #e8a33d; color: #fff; }
+.obj-role.end { border: 1px solid #e53935; color: #b0322b; }
+.obj-role.end.on { background: #e53935; color: #fff; }
+
+.blip-tag.main { background: #fbeed3; color: #9a6b1d; }
+.blip-tag.trail { background: #dcf3e5; color: #1e7a45; }
+.blip-tag.end { background: #fbdcdc; color: #b0322b; }
+.blip-tag.main_end {
+  background: linear-gradient(90deg, #fbeed3 0 50%, #fbdcdc 50% 100%);
+  color: #6b4a1f;
 }
 
 @keyframes puck-bounce {

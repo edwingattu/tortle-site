@@ -911,16 +911,37 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       try { map.getCanvas().style.cursor = markingMode ? 'crosshair' : ''; } catch {}
     });
     map.addSource('objective-pins', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-    // Objective pins: exact blip locations dropped per objective (amber).
+    // Objective pins: exact blip locations dropped per objective.
+    // Role colors: Main amber, Trail green, End red, Main+End red w/ amber core.
     map.addLayer({
       id: 'objective-pins',
       type: 'circle',
       source: 'objective-pins',
       paint: {
-        'circle-radius': 7,
-        'circle-color': '#e8a33d',
+        'circle-radius': 8,
+        'circle-color': [
+          'match', ['get', 'role'],
+          'main', '#e8a33d',
+          'trail', '#2fbf71',
+          'end', '#e53935',
+          'main_end', '#e53935',
+          '#e8a33d',
+        ],
         'circle-stroke-width': 2,
         'circle-stroke-color': '#fff',
+        'circle-pitch-alignment': 'map',
+      },
+    });
+    // Combined Main+End dot: amber core over the red base (circles can't do
+    // true half-half; the list badge carries the exact half-amber/half-red).
+    map.addLayer({
+      id: 'objective-pins-core',
+      type: 'circle',
+      source: 'objective-pins',
+      filter: ['==', ['get', 'role'], 'main_end'],
+      paint: {
+        'circle-radius': 3.5,
+        'circle-color': '#e8a33d',
         'circle-pitch-alignment': 'map',
       },
     });
@@ -1245,7 +1266,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         });
       } catch {}
     },
-    // Objective pins: repaint the open quest's dropped blips (amber).
+    // Objective pins: repaint the open quest's dropped blips (role-colored).
     showObjectivePins(points) {
       const src = map.getSource('objective-pins');
       if (!src) return;
@@ -1254,7 +1275,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           type: 'FeatureCollection',
           features: (points || []).map((p) => ({
             type: 'Feature',
-            properties: {},
+            properties: { role: p.role || 'trail' },
             geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
           })),
         });

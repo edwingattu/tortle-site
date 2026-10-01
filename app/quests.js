@@ -96,7 +96,7 @@ export function objectivesForQuest(questId) {
   return objectiveCache.get(questId) || [];
 }
 
-export async function createObjective(questId, { text, tool, lat, lng }) {
+export async function createObjective(questId, { text, tool, lat, lng, isMain = false, isEnd = false }) {
   const existing = await fetchObjectives(questId);
   const row = {
     quest_id: questId,
@@ -106,6 +106,9 @@ export async function createObjective(questId, { text, tool, lat, lng }) {
     // Exact blip location (navigation objectives); null when unpinned.
     lat: lat ?? null,
     lng: lng ?? null,
+    // Blip roles: one Main (quest start) + one End per quest (see migration).
+    is_main: !!isMain,
+    is_end: !!isEnd,
   };
   const { data, error } = await supabase.from('quest_objectives').insert(row).select().single();
   if (error) throw error;
