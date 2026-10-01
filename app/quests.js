@@ -56,6 +56,16 @@ export async function updateQuestStatus(id, status) {
   return data;
 }
 
+// Quest delete (objectives cascade in the DB). Purges quest + objective caches.
+export async function deleteQuest(id) {
+  const { error } = await supabase.from('quests').delete().eq('id', id);
+  if (error) throw error;
+  for (const [region, list] of cache.entries()) {
+    cache.set(region, list.filter((q) => q.id !== id));
+  }
+  objectiveCache.delete(id);
+}
+
 // Synchronous reads over the fetched cache (may lag the network —
 // refreshQuests repaints once each fetch lands).
 export function questsForCell(cell) {
@@ -130,6 +140,16 @@ export async function updateObjective(id, questId, patch) {
     list.map((o) => (o.id === id ? data : o)),
   );
   return data;
+}
+
+// Objective delete (maker-side). Patches the quest's cached list in place.
+export async function deleteObjective(id, questId) {
+  const { error } = await supabase.from('quest_objectives').delete().eq('id', id);
+  if (error) throw error;
+  objectiveCache.set(
+    questId,
+    (objectiveCache.get(questId) || []).filter((o) => o.id !== id),
+  );
 }
 
 // Current-objective pointer: per-device local state for now (player-side

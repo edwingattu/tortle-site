@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, fetchObjectives, createObjective, updateObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, deleteQuest, fetchObjectives, createObjective, updateObjective, deleteObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -1428,8 +1428,10 @@ const QUEST_PROGRESS = {
 };
 let openQuestId = null;
 let lastQuestListSig = null;
-// editQuestId: finished/deployed row opened for editing (drafts always edit).
+// editQuestId: finished/deployed row with objectives editing enabled.
+// nameEditId: row with the inline quest-name field open (any status).
 let editQuestId = null;
+let nameEditId = null;
 // Blip roles: one Main + one End per quest (partial unique index backs it).
 // Setting a new one unsets the previous holder; tapping the active chip
 // clears the role. Sequential awaits keep the index happy.
@@ -1483,6 +1485,7 @@ async function transitionQuest(id, to, btn) {
     await updateQuestStatus(id, to);
     openQuestId = id;
     editQuestId = null;
+    nameEditId = null;
     await refreshQuests(true);
   } catch (err) {
     console.warn('[quest] transition failed:', err?.message || err);
@@ -1581,56 +1584,86 @@ function confirmDropBlip() {
 }
 function buildQuestRow(q) {
   const meta = QUEST_PROGRESS[q.status] || QUEST_PROGRESS.draft;
+  const isOpen = openQuestId === q.id;
+  const nameEditing = nameEditId === q.id;
   const row = document.createElement('div');
   row.className = 'qrow';
-  const main = document.createElement('button');
-  main.type = 'button';
-  main.className = 'qrow-main';
-  main.setAttribute('aria-label', `Open quest ${q.title}`);
+  // Header: name toggle + name Edit (left of pill) + status pill.
+  // Name-editing collapses the pill to a same-color dot.
+  const main = document.createElement('div');
+  main.className = 'qrow-main' + (nameEditing ? ' name-editing' : '');
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'qrow-toggle';
+  toggle.setAttribute('aria-label', `Open quest ${q.title}`);
+  toggle.hidden = nameEditing;
   const title = document.createElement('span');
   title.className = 'qrow-title';
   title.textContent = q.title || 'Untitled quest';
+  toggle.appendChild(title);
+  main.appendChild(toggle);
+  const nameForm = document.createElement('div');
+  nameForm.className = 'qname-row';
+  nameForm.hidden = !nameEditing;
+  const qinput = document.createElement('input');
+  qinput.type = 'text';
+  qinput.maxLength = 50;
+  qinput.value = q.title || '';
+  qinput.setAttribute('aria-label', 'Quest name');
+  const qsave = document.createElement('button');
+  qsave.type = 'button';
+  qsave.className = 'qname-save';
+  qsave.textContent = 'Save';
+  qsave.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    qsave.disabled = true;
+    try {
+      await updateQuestTitle(q.id, qinput.value);
+      nameEditId = null;
+      await refreshQuests(true);
+    } catch (err) {
+      console.warn('[quest] rename failed:', err?.message || err);
+      toast('Quest rename failed — try again.');
+      qsave.disabled = false;
+    }
+  });
+  const qcancel = document.createElement('button');
+  qcancel.type = 'button';
+  qcancel.className = 'qname-cancel';
+  qcancel.textContent = '✕';
+  qcancel.setAttribute('aria-label', 'Cancel rename');
+  qcancel.addEventListener('click', (e) => {
+    e.stopPropagation();
+    nameEditId = null;
+    lastQuestListSig = null;
+    renderQuestList();
+  });
+  nameForm.append(qinput, qsave, qcancel);
+  main.appendChild(nameForm);
+  const nameEdit = document.createElement('button');
+  nameEdit.type = 'button';
+  nameEdit.className = 'qrow-nameedit';
+  nameEdit.textContent = 'Edit';
+  nameEdit.hidden = !isOpen || nameEditing;
+  nameEdit.addEventListener('click', (e) => {
+    e.stopPropagation();
+    nameEditId = q.id;
+    lastQuestListSig = null;
+    renderQuestList();
+    try { $('#questList .qname-row input')?.focus(); } catch {}
+  });
+  main.appendChild(nameEdit);
   const pill = document.createElement('span');
-  pill.className = `qpill ${meta.cls}`;
+  pill.className = `qpill ${meta.cls}` + (nameEditing ? ' dot' : '');
   pill.textContent = meta.label;
-  main.append(title, pill);
+  main.appendChild(pill);
   const detail = document.createElement('div');
   detail.className = 'qrow-detail';
-  detail.hidden = openQuestId !== q.id;
+  detail.hidden = !isOpen;
   const mean = document.createElement('p');
   mean.className = 'qmean';
   mean.textContent = meta.meaning;
   detail.appendChild(mean);
-  // Objectives live inside the open row (rendered by renderObjectives).
-  // Drafts and Edit-toggled rows also get an inline name editor.
-  const editing = q.status === 'draft' || editQuestId === q.id;
-  if (editing) {
-    const qname = document.createElement('div');
-    qname.className = 'qname-row';
-    const qinput = document.createElement('input');
-    qinput.type = 'text';
-    qinput.maxLength = 50;
-    qinput.value = q.title || '';
-    qinput.setAttribute('aria-label', 'Quest name');
-    const qsave = document.createElement('button');
-    qsave.type = 'button';
-    qsave.className = 'qname-save';
-    qsave.textContent = 'Save';
-    qsave.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      qsave.disabled = true;
-      try {
-        await updateQuestTitle(q.id, qinput.value);
-        await refreshQuests(true);
-      } catch (err) {
-        console.warn('[quest] rename failed:', err?.message || err);
-        toast('Quest rename failed — try again.');
-        qsave.disabled = false;
-      }
-    });
-    qname.append(qinput, qsave);
-    detail.appendChild(qname);
-  }
   const objLabel = document.createElement('div');
   objLabel.className = 'obj-sec-label';
   objLabel.textContent = 'Objectives';
@@ -1638,14 +1671,14 @@ function buildQuestRow(q) {
   objWrap.dataset.objwrap = q.id;
   detail.append(objLabel, objWrap);
   // Per-quest actions live inside the open row itself: drafts finish here,
-  // finished deploy or edit, deployed undeploy or edit.
-  if (openQuestId === q.id) {
+  // finished deploy or edit, deployed undeploy or edit — plus Delete.
+  if (isOpen) {
     const acts = document.createElement('div');
     acts.className = 'qactions';
-    const add = (label, primary, fn) => {
+    const add = (label, primary, fn, cls = '') => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'qact' + (primary ? ' primary' : '');
+      b.className = 'qact' + (primary ? ' primary' : '') + (cls ? ` ${cls}` : '');
       b.textContent = label;
       b.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1653,28 +1686,45 @@ function buildQuestRow(q) {
       });
       acts.appendChild(b);
     };
+    const addEditToggle = () => {
+      add(editQuestId === q.id ? 'Done' : 'Edit', false, async () => {
+        editQuestId = editQuestId === q.id ? null : q.id;
+        lastQuestListSig = null;
+        renderQuestList();
+        renderObjectives(q.id).catch(() => {});
+      });
+    };
     if (q.status === 'draft') {
       add('Mark Finished', true, (b) => transitionQuest(q.id, 'finished', b));
     } else if (q.status === 'finished') {
       add('Deploy', true, (b) => transitionQuest(q.id, 'deployed', b));
-      add(editQuestId === q.id ? 'Done' : 'Edit', false, async () => {
-        editQuestId = editQuestId === q.id ? null : q.id;
-        lastQuestListSig = null;
-        renderQuestList();
-      });
+      addEditToggle();
     } else if (q.status === 'deployed') {
       add('Undeploy', true, (b) => transitionQuest(q.id, 'finished', b));
-      add(editQuestId === q.id ? 'Done' : 'Edit', false, async () => {
-        editQuestId = editQuestId === q.id ? null : q.id;
-        lastQuestListSig = null;
-        renderQuestList();
-      });
+      addEditToggle();
     }
+    add('Delete', false, async (b) => {
+      if (!window.confirm(`Delete "${q.title || 'Untitled quest'}" and all its objectives?`)) return;
+      b.disabled = true;
+      try {
+        await deleteQuest(q.id);
+        if (openQuestId === q.id) openQuestId = null;
+        if (editQuestId === q.id) editQuestId = null;
+        if (nameEditId === q.id) nameEditId = null;
+        await refreshQuests(true);
+      } catch (err) {
+        console.warn('[quest] delete failed:', err?.message || err);
+        toastDiag(`Quest delete failed: ${err?.message || err}`);
+        b.disabled = false;
+      }
+    }, 'danger');
     if (acts.childElementCount) detail.appendChild(acts);
   }
-  main.addEventListener('click', (e) => {
+  toggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    openQuestId = openQuestId === q.id ? null : q.id;
+    const willOpen = openQuestId !== q.id;
+    openQuestId = willOpen ? q.id : null;
+    if (willOpen) nameEditId = null; // fresh open shows name + Edit
     lastQuestListSig = null; // force rebuild for the expand/collapse
     try {
       renderQuestList();
@@ -1698,7 +1748,7 @@ function renderQuestList() {
   }
   block.hidden = false;
   const qs = questsForCell(selectedCell);
-  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${q.status}:${q.title}`).join(',')}|${openQuestId || ''}|${editQuestId || ''}`;
+  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${q.status}:${q.title}`).join(',')}|${openQuestId || ''}|${editQuestId || ''}|${nameEditId || ''}`;
   if (sig === lastQuestListSig) return;
   lastQuestListSig = sig;
   list.innerHTML = '';
@@ -1710,6 +1760,9 @@ function renderQuestList() {
     return;
   }
   for (const q of qs) list.appendChild(buildQuestRow(q));
+  // The open row's objectives always render with it — transitions and
+  // Edit toggles rebuild the row, so repaint here centrally (no ghost states).
+  if (openQuestId) renderObjectives(openQuestId).catch(() => {});
   // Pins belong to the open quest: closing every row clears them.
   if (!openQuestId) {
     try { mapView.showObjectivePins([]); } catch {}
@@ -2015,6 +2068,23 @@ function buildObjectiveRow(questId, o, isCurrent, editable) {
     if (ent?._loadForEdit) ent._loadForEdit(o);
   });
   row.appendChild(edit);
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'obj-del';
+  del.textContent = 'Delete';
+  del.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete objective "${o.text || 'Untitled objective'}"?`)) return;
+    del.disabled = true;
+    deleteObjective(o.id, questId)
+      .then(() => renderObjectives(questId))
+      .catch((err) => {
+        console.warn('[objectives] delete failed:', err?.message || err);
+        toastDiag(`Objective delete failed: ${err?.message || err}`);
+        del.disabled = false;
+      });
+  });
+  row.appendChild(del);
   return row;
 }
 

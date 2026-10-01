@@ -307,10 +307,61 @@ button {
   align-items: center;
   gap: 8px;
   width: 100%;
+  padding: 12px;
+  min-width: 0;
+}
+
+.qrow-main > * { min-width: 0; }
+
+.qrow-main > .qpill,
+.qrow-main > .qrow-nameedit { min-width: auto; }
+
+.qrow-toggle {
+  flex: 1;
+  min-width: 0;
   background: transparent;
   border: 0;
-  padding: 12px;
+  padding: 0;
   text-align: left;
+}
+
+.qrow-toggle[hidden] { display: none !important; }
+
+/* Name Edit sits left of the status pill on open rows. */
+.qrow-nameedit {
+  flex: none;
+  border: 1px solid #8fd0f2;
+  background: #fff;
+  color: #2a69aa;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.qrow-nameedit[hidden] { display: none !important; }
+
+/* Name-editing: the status pill collapses to a same-color dot. */
+.qpill.dot {
+  font-size: 0;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.qname-row[hidden] { display: none !important; }
+
+.qname-cancel {
+  flex: none;
+  border: 1px solid #cfd8de;
+  background: #fff;
+  color: var(--navy);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .qrow-title {
@@ -384,6 +435,24 @@ button {
   color: #fff;
 }
 
+.qact.danger {
+  border-color: #e53935;
+  color: #b0322b;
+}
+
+.obj-del {
+  flex: none;
+  border: 1px solid #e53935;
+  background: #fff;
+  color: #b0322b;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.obj-del:disabled { opacity: 0.5; }
+
 /* Quest objectives: entry card (field + tool pick + save), then the
  * radio list of saved objective cards. */
 .obj-sec-label {
@@ -443,7 +512,9 @@ button {
 
 /* Read-only objective lists: entry + row edits hide, radios stay live. */
 .obj-locked .obj-entry,
-.obj-locked .obj-edit { display: none !important; }
+.obj-locked .obj-edit,
+.obj-locked .obj-del,
+.obj-locked .obj-roles { display: none !important; }
 
 /* Quest card breathing room: status clears the chevron corner. */
 .bottom-card.quest-mode .tile-sub-row {
@@ -555,7 +626,9 @@ button {
 .obj-row > .obj-tool-tag,
 .obj-row > .obj-pin,
 .obj-row > .obj-edit,
-.obj-row > .obj-role { min-width: auto; }
+.obj-row > .obj-del,
+.obj-row > .obj-role,
+.obj-row > .obj-roles { min-width: auto; }
 
 .obj-radio {
   flex: none;
