@@ -19,7 +19,6 @@ create policy "owner all" on public.quest_tiles
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 grant all on public.quest_tiles to authenticated;
-grant execute on function public.apply_quest_deltas(jsonb) to authenticated;
 
 -- Delta-additive merge RPC (mirrors apply_tile_deltas): the client pushes
 -- time *deltas*, so progress earned on two devices adds up. Timestamps keep
@@ -57,3 +56,6 @@ begin
   end loop;
 end;
 $$;
+
+-- Grants last: the function must exist before it can be granted.
+grant execute on function public.apply_quest_deltas(jsonb) to authenticated;
