@@ -1365,8 +1365,8 @@ function setQuestMode(on) {
     } catch {}
   }
   renderHud();
-  layoutToolbar();
   layoutCardLimit();
+  layoutToolbar();
 }
 // Workstation framing: with the quest card holding the bottom 2/3, ease the
 // edited tile under the (screen-fixed) dot in the visible top third.
@@ -2155,8 +2155,10 @@ function bindUi() {
   sheetArrow?.addEventListener('click', (e) => {
     e.stopPropagation();
     setExpanded(!bottomCard?.classList.contains('expanded'));
-    layoutToolbar();
+    // Heights before measurement: the toolbar reads card height, so the
+    // workstation pin must settle first or collapse strands the bar high.
     layoutCardLimit();
+    layoutToolbar();
     if (bottomCard?.classList.contains('expanded')) focusEditedTile();
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
