@@ -270,6 +270,8 @@ button {
  * every regular section stays buried no matter the rule order. */
 .bottom-card.quest-mode.expanded .detail-content {
   display: block;
+  flex: 1;
+  min-height: 0;
 }
 
 .bottom-card.quest-mode.expanded .detail-content > :not(.quest-build-block) {

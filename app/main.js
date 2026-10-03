@@ -1020,6 +1020,15 @@ function layoutCardLimit() {
   const stats = document.querySelector('.map-topbar .header-counts');
   const dock = $('#cardDock');
   if (!card || !stats || !dock) return;
+  // Workstation: the open quest card always fills 2/3 of the screen —
+  // elements or empty, it feels like a place to make quests.
+  if (questMode && card.classList.contains('expanded')) {
+    const h = Math.round(window.innerHeight * 2 / 3);
+    card.style.minHeight = `${h}px`;
+    card.style.maxHeight = `${h}px`;
+    return;
+  }
+  card.style.minHeight = '';
   const statsBottom = stats.getBoundingClientRect().bottom;
   const dockBottomGap = window.innerHeight - dock.getBoundingClientRect().bottom;
   const maxH = Math.max(160, Math.round(window.innerHeight - statsBottom - dockBottomGap - 8));
@@ -1350,6 +1359,24 @@ function setQuestMode(on) {
   }
   renderHud();
   layoutToolbar();
+  layoutCardLimit();
+}
+// Workstation framing: with the quest card holding the bottom 2/3, ease the
+// edited tile under the (screen-fixed) dot in the visible top third.
+// One-shot — later pans stay exactly where the maker leaves them.
+function focusEditedTile() {
+  try {
+    if (!questMode) return;
+    const q = openQuestId ? questById(openQuestId) : null;
+    const cell = q?.h3_cell || selectedCell;
+    if (!cell || !mapView?.map) return;
+    const c = cellCenter(cell);
+    mapView.map.easeTo({
+      center: [c.lng, c.lat],
+      offset: [0, -Math.round(window.innerHeight / 3)],
+      duration: 750,
+    });
+  } catch {}
 }
 function flyToPoint(lat, lng) {
   try {
@@ -1729,7 +1756,10 @@ function buildQuestRow(q) {
     try {
       renderQuestList();
     } catch {}
-    if (openQuestId === q.id) renderObjectives(q.id).catch(() => {});
+    if (openQuestId === q.id) {
+      renderObjectives(q.id).catch(() => {});
+      focusEditedTile();
+    }
   });
   row.append(main, detail);
   return row;
@@ -1763,6 +1793,8 @@ function renderQuestList() {
   // The open row's objectives always render with it — transitions and
   // Edit toggles rebuild the row, so repaint here centrally (no ghost states).
   if (openQuestId) renderObjectives(openQuestId).catch(() => {});
+  // Content changed the card height — re-seat the search bar on the new top.
+  try { layoutToolbar(); } catch {}
   // Pins belong to the open quest: closing every row clears them.
   if (!openQuestId) {
     try { mapView.showObjectivePins([]); } catch {}
@@ -1828,6 +1860,8 @@ async function renderObjectives(questId) {
       }));
     mapView.showObjectivePins(questMode ? pins : []);
   } catch {}
+  // Objectives landed after the row opened — the card grew, re-seat the bar.
+  try { layoutToolbar(); } catch {}
 }
 
 function buildObjectiveEntry(questId) {
@@ -2116,6 +2150,7 @@ function bindUi() {
     setExpanded(!bottomCard?.classList.contains('expanded'));
     layoutToolbar();
     layoutCardLimit();
+    if (bottomCard?.classList.contains('expanded')) focusEditedTile();
   });
   // Memory tools live inside the collapsed card: their taps/keys must act,
   // never expand/collapse the sheet.
@@ -2162,6 +2197,7 @@ function bindUi() {
       const q = await createQuest({ title: 'Untitled quest', lat: c.lat, lng: c.lng });
       openQuestId = q.id;
       await refreshQuests(true);
+      focusEditedTile();
     } catch (e) {
       console.warn('[quest] create failed:', e?.message || e);
       toast('Quest create failed — try again.');
