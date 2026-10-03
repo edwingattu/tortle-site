@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, deleteQuest, fetchObjectives, createObjective, updateObjective, deleteObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, deleteQuest, setQuestDeploy, clearQuestDeploy, effectiveQuestStatus, liveQuestCells, fetchObjectives, createObjective, updateObjective, deleteObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -221,8 +221,9 @@ function updateCountdown(rec, status) {
   }
   if (questMode) {
     // Quest tile states read quest rows only: Empty / Generating / Quests: N.
-    // Nothing here feeds from the regular map.
-    const qs = questsForCell(selectedCell);
+    // Nothing here feeds from the regular map. Recalled quests are off the
+    // map, so they never count (their rows stay listed for re-deploy).
+    const qs = questsForCell(selectedCell).filter((q) => effectiveQuestStatus(q) !== 'recalled');
     const card = $('#bottomCard');
     const expanded = !!card?.classList.contains('expanded');
     if (pill) {
@@ -1441,17 +1442,32 @@ async function runQuestSearch() {
 async function refreshQuests(force = false) {
   try {
     const pts = await fetchRegionQuests(areasDbg.getRegion(), { force });
-    // Deployed quests live on the Main Map; everything renders on the quest map.
-    mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
+    // Expiry sweep: deployed past deploy_until flips to recalled (map-cleared,
+    // location-locked). Display filters below treat it as recalled instantly.
+    for (const q of pts) {
+      if (q.status === 'deployed' && effectiveQuestStatus(q) === 'recalled') {
+        try { await updateQuestStatus(q.id, 'recalled'); } catch (e) {
+          console.warn('[quest] recall failed:', e?.message || e);
+        }
+      }
+    }
+    const live = pts.filter((q) => effectiveQuestStatus(q) !== 'recalled');
+    // Deployed quests live on the Main Map; everything live renders on quest map.
+    mapView.showQuests(questMode ? live : live.filter((q) => effectiveQuestStatus(q) === 'deployed'));
+    // Quest-holding tiles keep their amber pulse on the creator map.
+    try { mapView.showQuestTiles(questMode ? liveQuestCells() : []); } catch {}
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
     // Card quest list reads the same cache — repaint it too, otherwise
     // transitions (finish/deploy/undeploy) and creates leave a stale list
     // with a dead disabled button behind them.
     renderQuestList();
+    // Content changed the card height — re-seat the search bar on the new top.
+    try { layoutToolbar(); } catch {}
   } catch (e) {
     console.warn('[quest] fetch failed:', e?.message || e);
   }
+}
 }
 
 // Quest progress states (per-quest — distinct from the tile's quest count).
@@ -1459,6 +1475,7 @@ const QUEST_PROGRESS = {
   deployed: { label: 'Deployed', cls: 'deployed', meaning: 'Live on the Main Map.' },
   draft: { label: 'In Progress', cls: 'draft', meaning: 'Still being made — showing last saved.' },
   finished: { label: 'Finished', cls: 'finished', meaning: 'Complete but not deployed.' },
+  recalled: { label: 'Recalled', cls: 'recalled', meaning: 'Time ran out — re-deploy or delete.' },
 };
 let openQuestId = null;
 let lastQuestListSig = null;
@@ -1466,12 +1483,200 @@ let lastQuestListSig = null;
 // nameEditId: row with the inline quest-name field open (any status).
 let editQuestId = null;
 let nameEditId = null;
+// ---- Deploy sheet: 000 days : 00 hrs wheels + confirm commit ----
+let deploySheetState = null; // { questId, step, days, hours }
+const DEPLOY_OPT_H = 44;
+function fmtDeploy(d, h) {
+  const parts = [];
+  if (d > 0) parts.push(`${d} day${d === 1 ? '' : 's'}`);
+  if (h > 0) parts.push(`${h} hr${h === 1 ? '' : 's'}`);
+  return parts.join(' ') || '0 hrs';
+}
+function deploySheetEl() {
+  let root = document.getElementById('deploySheet');
+  if (root) return root;
+  root = document.createElement('div');
+  root.id = 'deploySheet';
+  root.hidden = true;
+  root.innerHTML = `
+    <div class="deploy-card" role="dialog" aria-label="Deploy quest">
+      <h3 class="deploy-title">Deploy quest</h3>
+      <p class="deploy-sub">How long should it stay on the map?</p>
+      <div class="deploy-pick">
+        <div class="deploy-wheels">
+          <div class="wheel-col">
+            <div class="wheel" id="wheelDays"></div>
+            <span class="wheel-label">days</span>
+          </div>
+          <span class="wheel-sep">:</span>
+          <div class="wheel-col">
+            <div class="wheel" id="wheelHours"></div>
+            <span class="wheel-label">hrs</span>
+          </div>
+        </div>
+        <p class="deploy-preview" id="deployPreview"></p>
+        <p class="deploy-error" id="deployError" hidden></p>
+        <div class="deploy-actions">
+          <button type="button" class="qact" id="deployCancel">Cancel</button>
+          <button type="button" class="qact primary" id="deployNext">Next</button>
+        </div>
+      </div>
+      <div class="deploy-confirm" hidden>
+        <p class="deploy-confirm-text" id="deployConfirmText"></p>
+        <div class="deploy-actions">
+          <button type="button" class="qact" id="deployBack">Back</button>
+          <button type="button" class="qact primary" id="deployCommit">Confirm</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(root);
+  const buildWheel = (el, count, pad) => {
+    el.innerHTML = '';
+    const top = document.createElement('div');
+    top.className = 'wheel-pad';
+    el.appendChild(top);
+    for (let i = 0; i < count; i++) {
+      const o = document.createElement('div');
+      o.className = 'wheel-opt';
+      o.textContent = String(i).padStart(pad, '0');
+      o.dataset.idx = String(i);
+      o.addEventListener('click', () => {
+        el.scrollTo({ top: i * DEPLOY_OPT_H, behavior: 'smooth' });
+      });
+      el.appendChild(o);
+    }
+    const bot = document.createElement('div');
+    bot.className = 'wheel-pad';
+    el.appendChild(bot);
+  };
+  buildWheel(root.querySelector('#wheelDays'), 181, 3);
+  buildWheel(root.querySelector('#wheelHours'), 24, 2);
+  const syncWheels = () => {
+    const st = deploySheetState;
+    if (!st) return;
+    const dEl = root.querySelector('#wheelDays');
+    const hEl = root.querySelector('#wheelHours');
+    st.days = Math.max(0, Math.min(180, Math.round(dEl.scrollTop / DEPLOY_OPT_H)));
+    st.hours = Math.max(0, Math.min(23, Math.round(hEl.scrollTop / DEPLOY_OPT_H)));
+    // 180 days is the ceiling — hours lock to 00 up there.
+    if (st.days >= 180) {
+      st.days = 180;
+      st.hours = 0;
+      if (hEl.scrollTop !== 0) hEl.scrollTop = 0;
+    }
+    const prev = root.querySelector('#deployPreview');
+    if (prev) prev.textContent = fmtDeploy(st.days, st.hours);
+    for (const [sel, val] of [['#wheelDays', st.days], ['#wheelHours', st.hours]]) {
+      const opts = root.querySelectorAll(`${sel} .wheel-opt`);
+      opts.forEach((o) => o.classList.toggle('sel', Number(o.dataset.idx) === val));
+    }
+  };
+  let syncT = 0;
+  const queueSync = () => {
+    clearTimeout(syncT);
+    syncT = setTimeout(syncWheels, 80);
+  };
+  root.querySelector('#wheelDays').addEventListener('scroll', queueSync, { passive: true });
+  root.querySelector('#wheelHours').addEventListener('scroll', queueSync, { passive: true });
+  root.querySelector('#deployCancel').addEventListener('click', () => closeDeploySheet());
+  root.querySelector('#deployNext').addEventListener('click', () => {
+    const st = deploySheetState;
+    if (!st) return;
+    syncWheels();
+    const err = root.querySelector('#deployError');
+    if (st.days === 0 && st.hours === 0) {
+      if (err) {
+        err.hidden = false;
+        err.textContent = 'Minimum deploy time is 1 hour.';
+      }
+      return;
+    }
+    if (err) err.hidden = true;
+    st.step = 'confirm';
+    renderDeploySheet();
+  });
+  root.querySelector('#deployBack').addEventListener('click', () => {
+    if (deploySheetState) deploySheetState.step = 'pick';
+    renderDeploySheet();
+  });
+  root.querySelector('#deployCommit').addEventListener('click', async (e) => {
+    const st = deploySheetState;
+    if (!st) return;
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    try {
+      const until = new Date(Date.now() + ((st.days * 24 + st.hours) * 3600e3)).toISOString();
+      await setQuestDeploy(st.questId, until);
+      closeDeploySheet();
+      openQuestId = st.questId;
+      editQuestId = null;
+      nameEditId = null;
+      await refreshQuests(true);
+    } catch (err) {
+      console.warn('[quest] deploy failed:', err?.message || err);
+      toastDiag(`Deploy failed: ${err?.message || err}`);
+      btn.disabled = false;
+    }
+  });
+  root.addEventListener('click', (e) => {
+    if (e.target === root) closeDeploySheet();
+  });
+  return root;
+}
+function renderDeploySheet() {
+  const root = deploySheetEl();
+  const st = deploySheetState;
+  if (!st) return;
+  const pick = root.querySelector('.deploy-pick');
+  const conf = root.querySelector('.deploy-confirm');
+  const isConfirm = st.step === 'confirm';
+  if (pick) pick.hidden = isConfirm;
+  if (conf) conf.hidden = !isConfirm;
+  if (isConfirm) {
+    const t = root.querySelector('#deployConfirmText');
+    if (t) t.textContent = `Confirm deploy for ${fmtDeploy(st.days, st.hours)}.`;
+  }
+}
+function openDeploySheet(questId) {
+  deploySheetState = { questId, step: 'pick', days: 7, hours: 0 };
+  renderDeploySheet();
+  const root = deploySheetEl();
+  root.hidden = false;
+  requestAnimationFrame(() => {
+    try {
+      root.querySelector('#wheelDays').scrollTop = 7 * DEPLOY_OPT_H;
+      root.querySelector('#wheelHours').scrollTop = 0;
+    } catch {}
+  });
+}
+function closeDeploySheet() {
+  try { deploySheetEl().hidden = true; } catch {}
+  deploySheetState = null;
+}
 // Blip roles: one Main + one End per quest (partial unique index backs it).
 // Setting a new one unsets the previous holder; tapping the active chip
 // clears the role. Sequential awaits keep the index happy.
+// Main-blip tile lock: once created, a quest's Main blip can move within
+// its tile but never outside it. Single gate for saves + role grants.
+function mainPinInTile(questId, lat, lng) {
+  try {
+    const q = questById(questId);
+    if (!q?.h3_cell) return true;
+    return cellAt(lat, lng) === q.h3_cell;
+  } catch {
+    return true;
+  }
+}
 async function setBlipRole(questId, o, kind) {
   const flag = kind === 'main' ? 'is_main' : 'is_end';
   const on = !o[flag];
+  // Granting Main to an outside-tile pin is blocked, not moved.
+  if (kind === 'main' && on && o.lat != null && o.lng != null) {
+    if (!mainPinInTile(questId, o.lat, o.lng)) {
+      toastDiag('Main blip must stay inside its tile.');
+      return;
+    }
+  }
   try {
     const known = await fetchObjectives(questId, { force: true });
     for (const x of known) {
@@ -1516,7 +1721,20 @@ async function transitionQuest(id, to, btn) {
         console.warn('[quest] name flush failed:', e?.message || e);
       }
     }
-    await updateQuestStatus(id, to);
+    if (to === 'deployed') {
+      // Duration commit happens in the sheet — hand off with the button live.
+      if (btn) btn.disabled = false;
+      openDeploySheet(id);
+      return;
+    }
+    if (to === 'finished') {
+      // Undeploy clears the expiry along with the status.
+      const cur = questById(id);
+      if (cur && cur.status === 'deployed') await clearQuestDeploy(id);
+      else await updateQuestStatus(id, to);
+    } else {
+      await updateQuestStatus(id, to);
+    }
     openQuestId = id;
     editQuestId = null;
     nameEditId = null;
@@ -1617,7 +1835,9 @@ function confirmDropBlip() {
   } catch {}
 }
 function buildQuestRow(q) {
-  const meta = QUEST_PROGRESS[q.status] || QUEST_PROGRESS.draft;
+  // Expired-but-unwritten displays as recalled immediately (sweep follows).
+  const eff = effectiveQuestStatus(q);
+  const meta = QUEST_PROGRESS[eff] || QUEST_PROGRESS.draft;
   const isOpen = openQuestId === q.id;
   const nameEditing = nameEditId === q.id;
   const row = document.createElement('div');
@@ -1728,14 +1948,16 @@ function buildQuestRow(q) {
         renderObjectives(q.id).catch(() => {});
       });
     };
-    if (q.status === 'draft') {
+    if (eff === 'draft') {
       add('Mark Finished', true, (b) => transitionQuest(q.id, 'finished', b));
-    } else if (q.status === 'finished') {
+    } else if (eff === 'finished') {
       add('Deploy', true, (b) => transitionQuest(q.id, 'deployed', b));
       addEditToggle();
-    } else if (q.status === 'deployed') {
+    } else if (eff === 'deployed') {
       add('Undeploy', true, (b) => transitionQuest(q.id, 'finished', b));
       addEditToggle();
+    } else if (eff === 'recalled') {
+      add('Re-deploy', true, (b) => transitionQuest(q.id, 'deployed', b));
     }
     add('Delete', false, async (b) => {
       if (!window.confirm(`Delete "${q.title || 'Untitled quest'}" and all its objectives?`)) return;
@@ -1785,7 +2007,7 @@ function renderQuestList() {
   }
   block.hidden = false;
   const qs = questsForCell(selectedCell);
-  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${q.status}:${q.title}`).join(',')}|${openQuestId || ''}|${editQuestId || ''}|${nameEditId || ''}`;
+  const sig = `${selectedCell}|${qs.map((q) => `${q.id}:${effectiveQuestStatus(q)}:${q.title}`).join(',')}|${openQuestId || ''}|${editQuestId || ''}|${nameEditId || ''}`;
   if (sig === lastQuestListSig) return;
   lastQuestListSig = sig;
   list.innerHTML = '';
@@ -1832,8 +2054,10 @@ async function renderObjectives(questId) {
   const wrap = document.querySelector(`[data-objwrap="${questId}"]`);
   if (!wrap) return;
   // Drafts always edit; finished/deployed edit only via the row's Edit toggle.
+  // Recalled never edits — location is locked, only re-deploy or delete.
   const q = questById(questId);
-  const editable = !q || q.status === 'draft' || editQuestId === questId;
+  const eff = effectiveQuestStatus(q);
+  const editable = eff !== 'recalled' && (!q || eff === 'draft' || editQuestId === questId);
   let list = [];
   try {
     list = await fetchObjectives(questId);
@@ -1982,10 +2206,25 @@ function buildObjectiveEntry(questId) {
       const at = entry._pin || null;
       // First pinned objective becomes the Main blip (quest start).
       let hasMain = false;
+      let editIsMain = false;
       try {
         const known = await fetchObjectives(questId);
         hasMain = known.some((x) => x.is_main && x.id !== editId);
+        editIsMain = !!editId && known.some((x) => x.is_main && x.id === editId);
       } catch {}
+      const willBeMain = editId ? editIsMain : !!at && !hasMain;
+      // Main blip can never leave its tile. Moving one out is blocked;
+      // a first pin dropped outside simply lands as a Trail instead.
+      let makeMain = willBeMain;
+      if (willBeMain && at && !mainPinInTile(questId, at.lat, at.lng)) {
+        if (editId) {
+          toastDiag('Main blip must stay inside its tile — drop the blip closer.');
+          save.disabled = false;
+          return;
+        }
+        makeMain = false;
+        toastDiag('Outside its tile — saved as Trail; drop the Main inside the tile.');
+      }
       if (editId) {
         await updateObjective(editId, questId, {
           text: text || 'Untitled objective',
@@ -2001,7 +2240,7 @@ function buildObjectiveEntry(questId) {
           tool: picked,
           lat: at ? at.lat : null,
           lng: at ? at.lng : null,
-          isMain: !!at && !hasMain,
+          isMain: makeMain,
           isEnd: false,
         });
       }

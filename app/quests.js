@@ -66,6 +66,61 @@ export async function deleteQuest(id) {
   objectiveCache.delete(id);
 }
 
+// Quest lifecycle: deployments are timed (deploy_until); a deployed quest
+// past its time is effectively 'recalled' — map-cleared, location-locked,
+// re-deployable or deletable.
+export function isQuestExpired(q) {
+  if (!q || q.status !== 'deployed' || !q.deploy_until) return false;
+  return new Date(q.deploy_until).getTime() <= Date.now();
+}
+
+export function effectiveQuestStatus(q) {
+  if (!q) return 'draft';
+  return isQuestExpired(q) ? 'recalled' : q.status;
+}
+
+// Unique H3 cells holding live (non-recalled) quests, for the pulse layer.
+export function liveQuestCells() {
+  const cells = new Set();
+  for (const list of cache.values()) {
+    for (const q of list) {
+      if (q?.h3_cell && effectiveQuestStatus(q) !== 'recalled') cells.add(q.h3_cell);
+    }
+  }
+  return [...cells];
+}
+
+// Deploy commit: status + expiry in one write, cache patched in place.
+export async function setQuestDeploy(id, deployUntilISO) {
+  const { data, error } = await supabase
+    .from('quests')
+    .update({ status: 'deployed', deploy_until: deployUntilISO })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  for (const list of cache.values()) {
+    const i = list.findIndex((q) => q.id === id);
+    if (i !== -1) list[i] = data;
+  }
+  return data;
+}
+
+// Undeploy: back to finished with the expiry cleared.
+export async function clearQuestDeploy(id) {
+  const { data, error } = await supabase
+    .from('quests')
+    .update({ status: 'finished', deploy_until: null })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  for (const list of cache.values()) {
+    const i = list.findIndex((q) => q.id === id);
+    if (i !== -1) list[i] = data;
+  }
+  return data;
+}
 // Synchronous reads over the fetched cache (may lag the network —
 // refreshQuests repaints once each fetch lands).
 export function questsForCell(cell) {

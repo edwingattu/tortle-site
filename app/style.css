@@ -388,6 +388,126 @@ button {
 .qpill.deployed { background: #5cc581; color: #fff; }
 .qpill.draft { background: #8fd0f2; color: #3a4b5e; }
 .qpill.finished { background: #e8a33d; color: #3a4b5e; }
+.qpill.recalled { background: #c3ccd4; color: #4a5560; }
+
+/* Deploy sheet: duration wheels + confirm commit. */
+#deploySheet {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15,25,35,0.5);
+}
+
+#deploySheet[hidden] { display: none !important; }
+
+.deploy-card {
+  width: min(430px, calc(100vw - 24px));
+  margin: 0 12px 12px;
+  background: #f8f7f2;
+  border-radius: 18px;
+  padding: 18px 18px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.deploy-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.deploy-sub {
+  margin: 6px 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6b7a;
+}
+
+.deploy-wheels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.wheel-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wheel {
+  width: 76px;
+  height: 132px;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.wheel::-webkit-scrollbar { display: none; }
+
+.wheel-pad { height: 44px; flex: none; }
+
+.wheel-opt {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #9fb0c3;
+}
+
+.wheel-opt.sel {
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.wheel-label, .wheel-sep {
+  font-size: 12px;
+  font-weight: 800;
+  color: #5b6b7a;
+}
+
+.deploy-preview {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.deploy-error {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #b0322b;
+}
+
+.deploy-error[hidden] { display: none !important; }
+
+.deploy-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.deploy-confirm-text {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+}
 
 .qrow-detail {
   display: grid;
