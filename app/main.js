@@ -1062,18 +1062,25 @@ function layoutToolbar() {
   const bar = $('#toolBar');
   const card = $('#bottomCard');
   if (!bar || !card) return;
+  // Measure the state, not the pixels: mid-toggle the card still carries
+  // the workstation inline height, so offsetHeight lies and strands the
+  // bar high until the next network-driven render. The expanded quest
+  // card is always 2/3 of the screen — use that directly.
+  const cardH = (questMode && card.classList.contains('expanded'))
+    ? Math.round(window.innerHeight * 2 / 3)
+    : card.offsetHeight;
   if (!card.classList.contains('expanded')) {
-    bar.style.bottom = `${card.offsetHeight + 10}px`;
+    bar.style.bottom = `${cardH + 10}px`;
   }
   // Quest search rides the quest card top the same way.
   const search = $('#questSearchBar');
   if (search && !search.hidden) {
-    search.style.bottom = `${card.offsetHeight + 10}px`;
+    search.style.bottom = `${cardH + 10}px`;
   }
   // Floating recorder rides above the toolbar, never under the card.
   const panel = $('#voicePanel');
   if (panel && !panel.hidden) {
-    panel.style.bottom = `${card.offsetHeight + bar.offsetHeight + 20}px`;
+    panel.style.bottom = `${cardH + bar.offsetHeight + 20}px`;
   }
 }
 
