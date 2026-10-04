@@ -74,13 +74,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
   function pulseTick() {
     try {
+      if (!map.getLayer('selected-fill') || !selectedCell) return;
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
-      // Quest-tile pulse breathes on the same phase (no selection needed).
-      if (map.getLayer('quest-tile-pulse')) {
-        map.setPaintProperty('quest-tile-pulse', 'fill-opacity', 0.12 + 0.22 * k);
-      }
-      if (!map.getLayer('selected-fill') || !selectedCell) return;
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
       // Mastered border breathes with the same phase (grow + shrink).
       if (map.getLayer('hex-mastered-borders')) {
@@ -888,19 +884,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'circle-opacity-transition': { duration: 300, delay: 0 },
       },
     });
-    map.addSource('quest-tile-cells', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-    // Quest tiles: every H3 cell holding a live quest keeps a permanent
-    // amber pulse on the creator map until the quest is deleted/recalled.
-    map.addLayer({
-      id: 'quest-tile-pulse',
-      type: 'fill',
-      source: 'quest-tile-cells',
-      paint: {
-        'fill-color': '#e8a33d',
-        'fill-opacity': 0.25,
-        'fill-pitch-alignment': 'map',
-      },
-    });
     map.addSource('quest-markers', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     // Quest markers: amber dots for the active region's quests. Framework
     // rendering only — tap toasts the title; detail UI comes with the builder.
@@ -1295,27 +1278,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
             properties: { role: p.role || 'trail' },
             geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
           })),
-        });
-      } catch {}
-    },
-    // Quest tiles: repaint the cells holding live quests (creator map).
-    // Starts the shared pulse loop even with no tile selected.
-    showQuestTiles(cells) {
-      if (!pulseTimer) pulseTimer = window.setInterval(pulseTick, 120);
-      const src = map.getSource('quest-tile-cells');
-      if (!src) return;
-      try {
-        src.setData({
-          type: 'FeatureCollection',
-          features: (cells || []).map((cell) => {
-            let ring = [];
-            try { ring = boundaryFor(cell); } catch {}
-            return {
-              type: 'Feature',
-              properties: { h3: cell },
-              geometry: { type: 'Polygon', coordinates: [ring] },
-            };
-          }),
         });
       } catch {}
     },

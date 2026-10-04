@@ -14,7 +14,7 @@ import { setupJoystick } from './joystick.js';
 import { regionCenter, regionCredit, regionForPoint, savedRegion, setRegion } from './areas.js';
 import * as areasDbg from './areas.js';
 import { isAdmin, isSuperadmin } from './roles.js';
-import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, deleteQuest, liveQuestCells, fetchObjectives, createObjective, updateObjective, deleteObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
+import { createQuest, fetchRegionQuests, questsForCell, questById, updateQuestStatus, updateQuestTitle, deleteQuest, fetchObjectives, createObjective, updateObjective, deleteObjective, currentObjectiveId, setCurrentObjectiveId } from './quests.js';
 import { compressPhoto, flushMediaOutbox, hasMedia, mediaOutbox, pathFromActivity, pickAudioMime, pickPhotoMime, pickVideoMime, signedUrl, uploadMedia } from './media.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -1367,7 +1367,6 @@ function setQuestMode(on) {
   renderHud();
   layoutCardLimit();
   layoutToolbar();
-  try { mapView.showQuestTiles(on ? liveQuestCells() : []); } catch {}
 }
 // Workstation framing: with the quest card holding the bottom 2/3, ease the
 // edited tile under the (screen-fixed) dot in the visible top third.
@@ -1444,8 +1443,6 @@ async function refreshQuests(force = false) {
     const pts = await fetchRegionQuests(areasDbg.getRegion(), { force });
     // Deployed quests live on the Main Map; everything renders on the quest map.
     mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
-    // Quest-holding tiles keep their amber pulse on the creator map.
-    try { mapView.showQuestTiles(questMode ? liveQuestCells() : []); } catch {}
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
     // Card quest list reads the same cache — repaint it too, otherwise
