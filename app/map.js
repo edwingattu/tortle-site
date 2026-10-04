@@ -682,8 +682,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       // (area-edges source retired: ward outlines now come from area-tiles.)
 
     // Polygon states: unclaimed draws borders only (hexes are the fill).
-    // Activated shares the locked grey fill and reads through its blue
-    // edge-light; unlocked fills green, mastered (areas only) fills gold.
+    // Activated carries no fill at all — it borrows the hex layer below —
+    // and reads purely through its blue edge-light. Unlocked fills green,
+    // mastered (areas only) fills gold.
     // Live fills get a white hairline (unclaimed opacity is 0, so its
     // outline stays invisible).
     const TILE_FILL_COLOR = [
@@ -698,8 +699,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     const TILE_FILL_OPACITY = [
       'match',
       ['get', 'status'],
-      'activated',
-      0.7,
       'unlocked',
       0.7,
       'mastered',
@@ -885,7 +884,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         country: [0, 3.0],
         continent: null,
       };
-      const LIVE_FILL = ['match', ['get', 'status'], 'activated', 0.7, 'unlocked', 0.7, 0];
+      const LIVE_FILL = ['match', ['get', 'status'], 'unlocked', 0.7, 0];
       if (band === 'country') {
         // Live countries only (activated grey + edge-light, unlocked green
         // — unclaimed stays bare). Hard off at 3.0.
