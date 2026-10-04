@@ -1058,7 +1058,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     });
     let tapRaf = 0;
     const TAP_DUR = 650;
-    // Unlocked/mastered tiles flash green, everything else white.
+    // Unlocked/mastered tiles flash green, everything else white — except
+    // on the quest map, where no green may ever appear: amber flash + ring.
     function playTapTile(geometry, status) {
       let flash, ring;
       try {
@@ -1071,8 +1072,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       try {
         flash.setData({ type: 'FeatureCollection', features: [feat] });
         ring.setData({ type: 'FeatureCollection', features: [feat] });
-        map.setPaintProperty('tap-flash', 'fill-color', live ? '#2ed67c' : '#ffffff');
-        map.setPaintProperty('tap-ring', 'line-color', live ? '#7ce3a8' : '#cfeafb');
+        map.setPaintProperty('tap-flash', 'fill-color', questMode ? '#e8a33d' : live ? '#2ed67c' : '#ffffff');
+        map.setPaintProperty('tap-ring', 'line-color', questMode ? '#f0c069' : live ? '#7ce3a8' : '#cfeafb');
       } catch { return; }
       cancelAnimationFrame(tapRaf);
       const t0 = performance.now();
