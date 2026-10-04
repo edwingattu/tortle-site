@@ -681,15 +681,14 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     // underneath stays hexes. No dissolved hex-edge overlay anymore.
       // (area-edges source retired: ward outlines now come from area-tiles.)
 
-    // Polygon states: unclaimed draws borders only (hexes are the fill);
-    // activated fills light sky-blue, unlocked fills green at the same
-    // opacity, mastered (areas only) fills gold. Live fills get a white
-    // hairline (unclaimed opacity is 0, so its outline stays invisible).
+    // Polygon states: unclaimed draws borders only (hexes are the fill).
+    // Activated shares the locked grey fill and reads through its blue
+    // edge-light; unlocked fills green, mastered (areas only) fills gold.
+    // Live fills get a white hairline (unclaimed opacity is 0, so its
+    // outline stays invisible).
     const TILE_FILL_COLOR = [
       'match',
       ['get', 'status'],
-      'activated',
-      '#8fd0f2',
       'unlocked',
       '#5cc581',
       'mastered',
@@ -709,6 +708,37 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     ];
 
     // One fill + glow border + core border + labels per semantic level.
+    // Activated edge-light, shared by every polygon band: blurred blue
+    // halo under a bright core, same as the street hexes. Grey fill stays.
+    function addBandEdgeLight(source, minzoom, maxzoom) {
+      map.addLayer({
+        id: `${source}-edge-glow`,
+        type: 'line',
+        source,
+        minzoom,
+        maxzoom,
+        filter: ['==', ['get', 'status'], 'activated'],
+        paint: {
+          'line-color': '#8fd0f2',
+          'line-width': 7,
+          'line-blur': 5,
+          'line-opacity': 0.55,
+        },
+      });
+      map.addLayer({
+        id: `${source}-edge`,
+        type: 'line',
+        source,
+        minzoom,
+        maxzoom,
+        filter: ['==', ['get', 'status'], 'activated'],
+        paint: {
+          'line-color': '#c4e4f7',
+          'line-width': 2,
+          'line-opacity': 0.95,
+        },
+      });
+    }
     // Bands mirror app/data/meta.json; area borders/labels extend into the
     // street band as an orientation overlay. Adjacent bands overlap by FADE
     // on each side with a zoom-ramped opacity, so levels crossfade instead
@@ -857,8 +887,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       };
       const LIVE_FILL = ['match', ['get', 'status'], 'activated', 0.7, 'unlocked', 0.7, 0];
       if (band === 'country') {
-        // Live countries only (activated blue, unlocked green — unclaimed
-        // stays bare). Hard off at 3.0.
+        // Live countries only (activated grey + edge-light, unlocked green
+        // — unclaimed stays bare). Hard off at 3.0.
         map.addLayer({
           id: 'country-fill',
           type: 'fill',
@@ -872,6 +902,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
             'fill-opacity-transition': { duration: 300, delay: 0 },
           },
         });
+        addBandEdgeLight('country-tiles', 0, 3.0);
       } else if (band === 'continent') {
         // Continent fill disabled entirely — no layer. (Labels still render.)
       } else {
@@ -889,6 +920,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
             'fill-opacity-transition': { duration: 300, delay: 0 },
           },
         });
+        addBandEdgeLight(`${band}-tiles`, fillMin, fillMax);
       }
       // Polygons carry no borders at any state — fills alone (plus labels)
       // distinguish unclaimed / activated / unlocked / mastered.
