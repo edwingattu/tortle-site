@@ -84,12 +84,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         map.setPaintProperty('quest-tile-edge', 'line-opacity', 0.55 + 0.45 * k);
         map.setPaintProperty('quest-tile-edge', 'line-width', 2 + 1.5 * k);
       }
-      // Escaping light: streak shimmer marches on a slower counter.
-      streakTick += 1;
-      if (map.getLayer('quest-streaks')) {
-        map.setPaintProperty('quest-streaks', 'line-dasharray', streakTick % 12 < 6 ? [2, 5] : [5, 2]);
-        map.setPaintProperty('quest-streaks', 'line-opacity', 0.6 + 0.35 * k);
-      }
       if (!map.getLayer('selected-fill') || !selectedCell) return;
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
       // Mastered border breathes with the same phase (grow + shrink).
@@ -101,48 +95,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
   // Live quest cells for the tile pulse (pushed from the quests cache).
   let questCellList = [];
-  let streakTick = 0;
   function questPulseFilter() {
     return ['in', ['get', 'h3'], ['literal', questCellList]];
-  }
-  // Escaping-light streaks: short segments jutting outward perpendicular
-  // from every quest-cell edge (vertex-ordered outward). Rebuilt only when
-  // the quest list changes — the tick only breathes paint, never geometry.
-  function rebuildQuestStreaks() {
-    try {
-      const src = map.getSource('quest-streaks');
-      if (!src) return;
-      const feats = [];
-      for (const cell of questCellList) {
-        let ring = [];
-        try { ring = boundaryFor(cell); } catch {}
-        if (!ring || ring.length < 4) continue;
-        let cc = null;
-        try { cc = cellCenter(cell); } catch {}
-        const cx = cc ? cc.lng : 0, cy = cc ? cc.lat : 0;
-        for (let i = 0; i < ring.length - 1; i++) {
-          const a = ring[i], b = ring[i + 1];
-          const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-          let dx = b[0] - a[0], dy = b[1] - a[1];
-          const el = Math.hypot(dx, dy) || 1e-9;
-          dx /= el; dy /= el;
-          let nx = -dy, ny = dx;
-          if ((mx - cx) * nx + (my - cy) * ny < 0) { nx = -nx; ny = -ny; }
-          // Three parallel streaks per edge, staggered outward.
-          for (const lateral of [-0.22, 0, 0.22]) {
-            const px = mx + dx * el * lateral, py = my + dy * el * lateral;
-            const g0 = 0.1 * el, len = 0.42 * el;
-            const sx = px + nx * g0, sy = py + ny * g0;
-            feats.push({
-              type: 'Feature',
-              properties: {},
-              geometry: { type: 'LineString', coordinates: [[sx, sy], [sx + nx * len, sy + ny * len]] },
-            });
-          }
-        }
-      }
-      src.setData({ type: 'FeatureCollection', features: feats });
-    } catch {}
   }
   function applyQuestPulse() {
     try {
@@ -152,9 +106,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       const vis = questCellList.length ? 'visible' : 'none';
       if (map.getLayer('quest-tile-pulse')) map.setLayoutProperty('quest-tile-pulse', 'visibility', vis);
       if (map.getLayer('quest-tile-edge')) map.setLayoutProperty('quest-tile-edge', 'visibility', vis);
-      if (map.getLayer('quest-streaks')) map.setLayoutProperty('quest-streaks', 'visibility', vis);
-      if (map.getLayer('quest-streaks-glow')) map.setLayoutProperty('quest-streaks-glow', 'visibility', vis);
-      rebuildQuestStreaks();
       // The selection loop used to own the timer — quest cells start it too
       // so the pulse breathes with no tile ever tapped.
       if (questCellList.length && !pulseTimer) pulseTimer = window.setInterval(pulseTick, 120);
@@ -1172,37 +1123,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'line-color': '#e8a33d',
           'line-width': 2.5,
           'line-opacity': 0.8,
-        },
-      },
-      'selected-outline',
-    );
-    // Escaping light: parallel glowing streaks jutting outward from the
-    // quest borders. Wide translucent underlay fakes the glow (lines can't
-    // blur); the dashed core shimmers outward on the tick.
-    map.addSource('quest-streaks', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-    map.addLayer(
-      {
-        id: 'quest-streaks-glow',
-        type: 'line',
-        source: 'quest-streaks',
-        paint: {
-          'line-color': '#e8a33d',
-          'line-width': 7,
-          'line-opacity': 0.16,
-        },
-      },
-      'selected-outline',
-    );
-    map.addLayer(
-      {
-        id: 'quest-streaks',
-        type: 'line',
-        source: 'quest-streaks',
-        paint: {
-          'line-color': '#ffd98a',
-          'line-width': 2.5,
-          'line-opacity': 0.85,
-          'line-dasharray': [2, 5],
         },
       },
       'selected-outline',
