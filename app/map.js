@@ -802,7 +802,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'rgba(0,0,0,0)',
           'mastered',
           'rgba(0,0,0,0)',
-          '#293441',
+          '#1d242e',
         ],
         'fill-opacity': [
           'match',
