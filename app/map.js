@@ -820,32 +820,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'fill-opacity-transition': { duration: 300, delay: 0 },
       },
     });
-    // Activated edge-light: blue light escaping the tile sides while the
-    // fill stays locked grey. Blurred halo under a bright core reads as a
-    // realistic glow (no fake stacking needed — lines blur natively).
-    map.addLayer({
-      id: 'activated-edge-glow',
-      type: 'line',
-      source: 'hex-fog',
-      filter: ['==', ['get', 'status'], 'activated'],
-      paint: {
-        'line-color': '#86bddb',
-        'line-width': 7,
-        'line-blur': 5,
-        'line-opacity': 0.55,
-      },
-    });
-    map.addLayer({
-      id: 'activated-edge',
-      type: 'line',
-      source: 'hex-fog',
-      filter: ['==', ['get', 'status'], 'activated'],
-      paint: {
-        'line-color': '#c4e4f7',
-        'line-width': 2,
-        'line-opacity': 0.95,
-      },
-    });
+    // Activated edge-light lives on the polygon bands only now — the
+    // street hexes read pure blue fill.
     // Mastered border: true line layer over the clear fill — no double-draw.
     // Thinner base width; the selection pulse tick below grows/shrinks it
     // in sync with the fill pulse (same phase). Progress-bar green.
