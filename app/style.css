@@ -385,7 +385,7 @@ button {
   padding: 4px 10px;
 }
 
-.qpill.deployed { background: #5cc581; color: #fff; }
+.qpill.launched { background: #5cc581; color: #fff; }
 .qpill.draft { background: #8fd0f2; color: #3a4b5e; }
 .qpill.finished { background: #e8a33d; color: #3a4b5e; }
 

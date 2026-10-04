@@ -1441,7 +1441,7 @@ async function runQuestSearch() {
 async function refreshQuests(force = false) {
   try {
     const pts = await fetchRegionQuests(areasDbg.getRegion(), { force });
-    // Deployed quests live on the Main Map; everything renders on the quest map.
+    // Launched quests live on the Main Map; everything renders on the quest map.
     mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
     // Permanent tile pulse: every live quest cell breathes amber.
     // ('recalled' can't occur until the lifecycle migration lands.)
@@ -1451,7 +1451,7 @@ async function refreshQuests(force = false) {
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
     // Card quest list reads the same cache — repaint it too, otherwise
-    // transitions (finish/deploy/undeploy) and creates leave a stale list
+    // transitions (finish/launch/deactivate) and creates leave a stale list
     // with a dead disabled button behind them.
     renderQuestList();
   } catch (e) {
@@ -1461,13 +1461,13 @@ async function refreshQuests(force = false) {
 
 // Quest progress states (per-quest — distinct from the tile's quest count).
 const QUEST_PROGRESS = {
-  deployed: { label: 'Deployed', cls: 'deployed', meaning: 'Live on the Main Map.' },
+  deployed: { label: 'Launched', cls: 'launched', meaning: 'Live on the Main Map.' },
   draft: { label: 'In Progress', cls: 'draft', meaning: 'Still being made — showing last saved.' },
-  finished: { label: 'Finished', cls: 'finished', meaning: 'Complete but not deployed.' },
+  finished: { label: 'Finished', cls: 'finished', meaning: 'Complete but not launched.' },
 };
 let openQuestId = null;
 let lastQuestListSig = null;
-// editQuestId: finished/deployed row with objectives editing enabled.
+// editQuestId: finished/launched row with objectives editing enabled.
 // nameEditId: row with the inline quest-name field open (any status).
 let editQuestId = null;
 let nameEditId = null;
@@ -1491,19 +1491,19 @@ async function setBlipRole(questId, o, kind) {
 }
 async function transitionQuest(id, to, btn) {
   if (btn) btn.disabled = true;
-  // Deploy gate: a quest ships only with an End Blip declared (Main or
+  // Launch gate: a quest ships only with an End Blip declared (Main or
   // any one Trail). Fresh fetch — the cache must not wave through a stale no.
   if (to === 'deployed') {
     try {
       const known = await fetchObjectives(id, { force: true });
       if (!known.some((o) => o.is_end && o.lat != null && o.lng != null)) {
-        toastDiag('Assign an End Blip before deploying.');
+        toastDiag('Assign an End Blip before launching.');
         if (btn) btn.disabled = false;
         return;
       }
     } catch (err) {
-      console.warn('[quest] deploy gate failed:', err?.message || err);
-      toastDiag(`Deploy check failed: ${err?.message || err}`);
+      console.warn('[quest] launch gate failed:', err?.message || err);
+      toastDiag(`Launch check failed: ${err?.message || err}`);
       if (btn) btn.disabled = false;
       return;
     }
@@ -1710,7 +1710,7 @@ function buildQuestRow(q) {
   objWrap.dataset.objwrap = q.id;
   detail.append(objLabel, objWrap);
   // Per-quest actions live inside the open row itself: drafts finish here,
-  // finished deploy or edit, deployed undeploy or edit — plus Delete.
+  // finished launch or edit, launched deactivate or edit — plus Delete.
   if (isOpen) {
     const acts = document.createElement('div');
     acts.className = 'qactions';
@@ -1736,10 +1736,10 @@ function buildQuestRow(q) {
     if (q.status === 'draft') {
       add('Mark Finished', true, (b) => transitionQuest(q.id, 'finished', b));
     } else if (q.status === 'finished') {
-      add('Deploy', true, (b) => transitionQuest(q.id, 'deployed', b));
+      add('Launch', true, (b) => transitionQuest(q.id, 'deployed', b));
       addEditToggle();
     } else if (q.status === 'deployed') {
-      add('Undeploy', true, (b) => transitionQuest(q.id, 'finished', b));
+      add('Deactivate', true, (b) => transitionQuest(q.id, 'finished', b));
       addEditToggle();
     }
     add('Delete', false, async (b) => {
@@ -1836,7 +1836,7 @@ const OBJ_TOOL_LABEL = { camera: 'Camera', voice: 'Voice', navigation: 'Nav' };
 async function renderObjectives(questId) {
   const wrap = document.querySelector(`[data-objwrap="${questId}"]`);
   if (!wrap) return;
-  // Drafts always edit; finished/deployed edit only via the row's Edit toggle.
+  // Drafts always edit; finished/launched edit only via the row's Edit toggle.
   const q = questById(questId);
   const editable = !q || q.status === 'draft' || editQuestId === questId;
   let list = [];

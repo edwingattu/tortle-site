@@ -20,7 +20,7 @@ export async function createQuest({ title, lat, lng }) {
     lat,
     lng,
     title: (title || '').trim() || 'Untitled quest',
-    // New quests start In Progress (draft); Deploy makes them Main-Map live.
+    // New quests start In Progress (draft); Launch makes them Main-Map live.
     status: 'draft',
   };
   const { data, error } = await supabase.from('quests').insert(row).select().single();
@@ -44,7 +44,7 @@ export async function fetchRegionQuests(region, { force = false } = {}) {
   return cache.get(region);
 }
 
-// Progress transition (Finish / Deploy / Reopen / Undeploy). Patches the
+// Progress transition (Finish / Launch / Reopen / Deactivate). Patches the
 // local cache row in place so counts and lists update instantly.
 export async function updateQuestStatus(id, status) {
   const { data, error } = await supabase.from('quests').update({ status }).eq('id', id).select().single();
