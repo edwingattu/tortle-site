@@ -756,10 +756,10 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     ];
     // Hex base MUST be added before every polygon layer: insertion order
     // is paint order, so this keeps hexes under all fills and labels.
-    // Seamless fill, antialias off, no seams. Locked blue-tinted dark grey
-    // (30% darker pass), activated 60 sky blue / 15 grey. Unlocked +
-    // mastered (stored media) are clear — mastered gets its green border
-    // from hex-mastered-borders.
+    // Seamless fill, antialias off, no seams. Locked + activated share the
+    // dark grey fill — activated reads through its blue edge-light, not a
+    // blue fill. Unlocked + mastered (stored media) are clear — mastered
+    // gets its green border from hex-mastered-borders.
     map.addLayer({
       id: 'hex-fills',
       type: 'fill',
@@ -773,8 +773,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'rgba(0,0,0,0)',
           'mastered',
           'rgba(0,0,0,0)',
-          'activated',
-          '#86bddb',
           '#293441',
         ],
         'fill-opacity': [
@@ -784,9 +782,37 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           0,
           'mastered',
           0,
+          'activated',
+          0.62,
           0.62,
         ],
         'fill-opacity-transition': { duration: 300, delay: 0 },
+      },
+    });
+    // Activated edge-light: blue light escaping the tile sides while the
+    // fill stays locked grey. Blurred halo under a bright core reads as a
+    // realistic glow (no fake stacking needed — lines blur natively).
+    map.addLayer({
+      id: 'activated-edge-glow',
+      type: 'line',
+      source: 'hex-fog',
+      filter: ['==', ['get', 'status'], 'activated'],
+      paint: {
+        'line-color': '#86bddb',
+        'line-width': 7,
+        'line-blur': 5,
+        'line-opacity': 0.55,
+      },
+    });
+    map.addLayer({
+      id: 'activated-edge',
+      type: 'line',
+      source: 'hex-fog',
+      filter: ['==', ['get', 'status'], 'activated'],
+      paint: {
+        'line-color': '#c4e4f7',
+        'line-width': 2,
+        'line-opacity': 0.95,
       },
     });
     // Mastered border: true line layer over the clear fill — no double-draw.
