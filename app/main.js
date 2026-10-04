@@ -1367,6 +1367,9 @@ function setQuestMode(on) {
   renderHud();
   layoutCardLimit();
   layoutToolbar();
+  // Mode switch changes which quests render — refetch so the tile look
+  // (pulse + border + streaks) follows immediately.
+  refreshQuests(true).catch(() => {});
 }
 // Workstation framing: with the quest card holding the bottom 2/3, ease the
 // edited tile under the (screen-fixed) dot in the visible top third.
@@ -1441,12 +1444,12 @@ async function runQuestSearch() {
 async function refreshQuests(force = false) {
   try {
     const pts = await fetchRegionQuests(areasDbg.getRegion(), { force });
-    // Launched quests live on the Main Map; everything renders on the quest map.
-    mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
-    // Permanent tile pulse: every live quest cell breathes amber.
-    // ('recalled' can't occur until the lifecycle migration lands.)
+    // Quest look (both maps, tile pulse + border + streaks): quest map takes
+    // every live quest, explorer takes launched only. Center dots are gone —
+    // tile taps already select.
+    const live = (pts || []).filter((q) => q.status !== 'recalled');
     try {
-      mapView.setQuestCells((pts || []).filter((q) => q.status !== 'recalled').map((q) => q.h3_cell));
+      mapView.setQuestCells((questMode ? live : live.filter((q) => q.status === 'deployed')).map((q) => q.h3_cell));
     } catch {}
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();

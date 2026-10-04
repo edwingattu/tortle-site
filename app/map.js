@@ -76,9 +76,19 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     try {
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
-      // Quest-tile pulse: every live quest cell breathes amber (creator map).
+      // Quest-tile pulse: fill + border breathe on the same phase (in sync).
       if (map.getLayer('quest-tile-pulse')) {
         map.setPaintProperty('quest-tile-pulse', 'fill-opacity', 0.08 + 0.2 * k);
+      }
+      if (map.getLayer('quest-tile-edge')) {
+        map.setPaintProperty('quest-tile-edge', 'line-opacity', 0.55 + 0.45 * k);
+        map.setPaintProperty('quest-tile-edge', 'line-width', 2 + 1.5 * k);
+      }
+      // Escaping light: streak shimmer marches on a slower counter.
+      streakTick += 1;
+      if (map.getLayer('quest-streaks')) {
+        map.setPaintProperty('quest-streaks', 'line-dasharray', streakTick % 12 < 6 ? [2, 5] : [5, 2]);
+        map.setPaintProperty('quest-streaks', 'line-opacity', 0.6 + 0.35 * k);
       }
       if (!map.getLayer('selected-fill') || !selectedCell) return;
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
@@ -91,14 +101,60 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
   // Live quest cells for the tile pulse (pushed from the quests cache).
   let questCellList = [];
+  let streakTick = 0;
+  function questPulseFilter() {
+    return ['in', ['get', 'h3'], ['literal', questCellList]];
+  }
+  // Escaping-light streaks: short segments jutting outward perpendicular
+  // from every quest-cell edge (vertex-ordered outward). Rebuilt only when
+  // the quest list changes — the tick only breathes paint, never geometry.
+  function rebuildQuestStreaks() {
+    try {
+      const src = map.getSource('quest-streaks');
+      if (!src) return;
+      const feats = [];
+      for (const cell of questCellList) {
+        let ring = [];
+        try { ring = boundaryFor(cell); } catch {}
+        if (!ring || ring.length < 4) continue;
+        let cc = null;
+        try { cc = cellCenter(cell); } catch {}
+        const cx = cc ? cc.lng : 0, cy = cc ? cc.lat : 0;
+        for (let i = 0; i < ring.length - 1; i++) {
+          const a = ring[i], b = ring[i + 1];
+          const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+          let dx = b[0] - a[0], dy = b[1] - a[1];
+          const el = Math.hypot(dx, dy) || 1e-9;
+          dx /= el; dy /= el;
+          let nx = -dy, ny = dx;
+          if ((mx - cx) * nx + (my - cy) * ny < 0) { nx = -nx; ny = -ny; }
+          // Three parallel streaks per edge, staggered outward.
+          for (const lateral of [-0.22, 0, 0.22]) {
+            const px = mx + dx * el * lateral, py = my + dy * el * lateral;
+            const g0 = 0.1 * el, len = 0.42 * el;
+            const sx = px + nx * g0, sy = py + ny * g0;
+            feats.push({
+              type: 'Feature',
+              properties: {},
+              geometry: { type: 'LineString', coordinates: [[sx, sy], [sx + nx * len, sy + ny * len]] },
+            });
+          }
+        }
+      }
+      src.setData({ type: 'FeatureCollection', features: feats });
+    } catch {}
+  }
   function applyQuestPulse() {
     try {
-      if (!map.getLayer('quest-tile-pulse')) return;
-      map.setFilter('quest-tile-pulse', ['in', ['get', 'h3'], ['literal', questCellList]]);
-      map.setLayoutProperty(
-        'quest-tile-pulse', 'visibility',
-        questMode && questCellList.length ? 'visible' : 'none',
-      );
+      const f = questPulseFilter();
+      if (map.getLayer('quest-tile-pulse')) map.setFilter('quest-tile-pulse', f);
+      if (map.getLayer('quest-tile-edge')) map.setFilter('quest-tile-edge', f);
+      const vis = questCellList.length ? 'visible' : 'none';
+      if (map.getLayer('quest-tile-pulse')) map.setLayoutProperty('quest-tile-pulse', 'visibility', vis);
+      if (map.getLayer('quest-tile-edge')) map.setLayoutProperty('quest-tile-edge', 'visibility', vis);
+      if (map.getLayer('quest-streaks')) map.setLayoutProperty('quest-streaks', 'visibility', vis);
+      if (map.getLayer('quest-streaks-glow')) map.setLayoutProperty('quest-streaks-glow', 'visibility', vis);
+      rebuildQuestStreaks();
       // The selection loop used to own the timer — quest cells start it too
       // so the pulse breathes with no tile ever tapped.
       if (questCellList.length && !pulseTimer) pulseTimer = window.setInterval(pulseTick, 120);
@@ -903,32 +959,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'circle-opacity-transition': { duration: 300, delay: 0 },
       },
     });
-    map.addSource('quest-markers', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-    // Quest markers: amber dots for the active region's quests. Framework
-    // rendering only — tap toasts the title; detail UI comes with the builder.
-    map.addLayer({
-      id: 'quest-markers',
-      type: 'circle',
-      source: 'quest-markers',
-      paint: {
-        'circle-radius': 9,
-        'circle-color': '#e8a33d',
-        'circle-stroke-width': 2.5,
-        'circle-stroke-color': '#fff',
-        'circle-pitch-alignment': 'map',
-      },
-    });
-    map.on('click', 'quest-markers', (event) => {
-      const feature = event.features?.[0];
-      if (!feature) return;
-      onQuestSelect?.(feature.properties);
-    });
-    map.on('mouseenter', 'quest-markers', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'quest-markers', () => {
-      try { map.getCanvas().style.cursor = markingMode ? 'crosshair' : ''; } catch {}
-    });
     map.addSource('objective-pins', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     // Objective pins: exact blip locations dropped per objective.
     // Role colors: Main amber, Trail green, End red, Main+End red w/ amber core.
@@ -1131,6 +1161,52 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       },
       'selected-outline',
     );
+    // Quest-tile border: amber edge pulsing in sync with the fill.
+    map.addLayer(
+      {
+        id: 'quest-tile-edge',
+        type: 'line',
+        source: 'hex-fog',
+        filter: ['in', ['get', 'h3'], ['literal', []]],
+        paint: {
+          'line-color': '#e8a33d',
+          'line-width': 2.5,
+          'line-opacity': 0.8,
+        },
+      },
+      'selected-outline',
+    );
+    // Escaping light: parallel glowing streaks jutting outward from the
+    // quest borders. Wide translucent underlay fakes the glow (lines can't
+    // blur); the dashed core shimmers outward on the tick.
+    map.addSource('quest-streaks', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+    map.addLayer(
+      {
+        id: 'quest-streaks-glow',
+        type: 'line',
+        source: 'quest-streaks',
+        paint: {
+          'line-color': '#e8a33d',
+          'line-width': 7,
+          'line-opacity': 0.16,
+        },
+      },
+      'selected-outline',
+    );
+    map.addLayer(
+      {
+        id: 'quest-streaks',
+        type: 'line',
+        source: 'quest-streaks',
+        paint: {
+          'line-color': '#ffd98a',
+          'line-width': 2.5,
+          'line-opacity': 0.85,
+          'line-dasharray': [2, 5],
+        },
+      },
+      'selected-outline',
+    );
     // Selected tile fill: the looping pulse lives here (green for open
     // taps, white for active/locked). Sits above the base fills (and below
     // the selected edge + mastered border, which both draw on top untouched).
@@ -1289,20 +1365,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       window.clearTimeout(pinFadeTimer);
       setPinsOpacity(0, 300);
     },
-    // Quest markers: repaint the active region's quests (framework cut).
-    showQuests(points) {
-      const src = map.getSource('quest-markers');
-      if (!src) return;
-      try {
-        src.setData({
-          type: 'FeatureCollection',
-          features: (points || []).map((q) => ({
-            type: 'Feature',
-            properties: { id: q.id, title: q.title },
-            geometry: { type: 'Point', coordinates: [q.lng, q.lat] },
-          })),
-        });
-      } catch {}
+    // Quest-tile pulse: feed the live quest cell list (both maps —
+    // quest map takes all live quests, explorer takes launched only).
+    setQuestCells(cells) {
+      questCellList = Array.isArray(cells) ? [...new Set(cells.filter(Boolean))] : [];
+      applyQuestPulse();
     },
     // Objective pins: repaint the open quest's dropped blips (role-colored).
     showObjectivePins(points) {
