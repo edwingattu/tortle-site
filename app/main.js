@@ -1443,6 +1443,11 @@ async function refreshQuests(force = false) {
     const pts = await fetchRegionQuests(areasDbg.getRegion(), { force });
     // Deployed quests live on the Main Map; everything renders on the quest map.
     mapView.showQuests(questMode ? pts : pts.filter((q) => q.status === 'deployed'));
+    // Permanent tile pulse: every live quest cell breathes amber.
+    // ('recalled' can't occur until the lifecycle migration lands.)
+    try {
+      mapView.setQuestCells((pts || []).filter((q) => q.status !== 'recalled').map((q) => q.h3_cell));
+    } catch {}
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
     // Card quest list reads the same cache — repaint it too, otherwise

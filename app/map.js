@@ -74,15 +74,34 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
   function pulseTick() {
     try {
-      if (!map.getLayer('selected-fill') || !selectedCell) return;
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
+      // Quest-tile pulse: every live quest cell breathes amber (creator map).
+      if (map.getLayer('quest-tile-pulse')) {
+        map.setPaintProperty('quest-tile-pulse', 'fill-opacity', 0.08 + 0.2 * k);
+      }
+      if (!map.getLayer('selected-fill') || !selectedCell) return;
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
       // Mastered border breathes with the same phase (grow + shrink).
       if (map.getLayer('hex-mastered-borders')) {
         map.setPaintProperty('hex-mastered-borders', 'line-opacity', 0.35 + 0.65 * k);
         map.setPaintProperty('hex-mastered-borders', 'line-width', 3 + 3 * k);
       }
+    } catch {}
+  }
+  // Live quest cells for the tile pulse (pushed from the quests cache).
+  let questCellList = [];
+  function applyQuestPulse() {
+    try {
+      if (!map.getLayer('quest-tile-pulse')) return;
+      map.setFilter('quest-tile-pulse', ['in', ['get', 'h3'], ['literal', questCellList]]);
+      map.setLayoutProperty(
+        'quest-tile-pulse', 'visibility',
+        questMode && questCellList.length ? 'visible' : 'none',
+      );
+      // The selection loop used to own the timer — quest cells start it too
+      // so the pulse breathes with no tile ever tapped.
+      if (questCellList.length && !pulseTimer) pulseTimer = window.setInterval(pulseTick, 120);
     } catch {}
   }
   // No silent user position: null until a real fix lands via the gate,
@@ -1093,6 +1112,24 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         'line-opacity': 0.95,
       },
     });
+    // Quest-tile pulse: permanent amber breathing over every live quest
+    // cell (creator map). Same hex-fog source as selection — the filter is
+    // the quest cell list, pushed from the quests cache (no geometry work).
+    // Sits with selected-fill so the selected edge + mastered border draw
+    // above it untouched.
+    map.addLayer(
+      {
+        id: 'quest-tile-pulse',
+        type: 'fill',
+        source: 'hex-fog',
+        filter: ['in', ['get', 'h3'], ['literal', []]],
+        paint: {
+          'fill-color': '#e8a33d',
+          'fill-opacity': 0.12,
+        },
+      },
+      'selected-outline',
+    );
     // Selected tile fill: the looping pulse lives here (green for open
     // taps, white for active/locked). Sits above the base fills (and below
     // the selected edge + mastered border, which both draw on top untouched).
@@ -1281,6 +1318,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         });
       } catch {}
     },
+    // Quest-tile pulse: feed the live quest cell list (creator map).
+    setQuestCells(cells) {
+      questCellList = Array.isArray(cells) ? [...new Set(cells.filter(Boolean))] : [];
+      applyQuestPulse();
+    },
     // Marking mode: map taps report points instead of selecting tiles.
     setMarkingMode(on) {
       markingMode = !!on;
@@ -1292,6 +1334,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     // from the last store so the switch applies instantly.
     setQuestMode(on) {
       questMode = !!on;
+      applyQuestPulse();
       if (lastStoreRef) schedulePaint(lastStoreRef);
     },
     setSelected(cell, status = null) {
