@@ -66,6 +66,19 @@ export async function deleteQuest(id) {
   objectiveCache.delete(id);
 }
 
+// Unique H3 cells holding live quests, for the permanent tile pulse.
+// (Recall exclusion arrives with the lifecycle sprint; until then every
+// cached quest counts — deletion already purges the cache.)
+export function liveQuestCells() {
+  const cells = new Set();
+  for (const list of cache.values()) {
+    for (const q of list) {
+      if (q?.h3_cell) cells.add(q.h3_cell);
+    }
+  }
+  return [...cells];
+}
+
 // Synchronous reads over the fetched cache (may lag the network —
 // refreshQuests repaints once each fetch lands).
 export function questsForCell(cell) {
