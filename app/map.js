@@ -86,11 +86,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       }
       if (!map.getLayer('selected-fill') || !selectedCell) return;
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
-      // Mastered border breathes with the same phase (grow + shrink).
-      if (map.getLayer('hex-mastered-borders')) {
-        map.setPaintProperty('hex-mastered-borders', 'line-opacity', 0.35 + 0.65 * k);
-        map.setPaintProperty('hex-mastered-borders', 'line-width', 3 + 3 * k);
-      }
     } catch {}
   }
   // Live quest cells for the tile pulse (pushed from the quests cache).
@@ -785,10 +780,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     ];
     // Hex base MUST be added before every polygon layer: insertion order
     // is paint order, so this keeps hexes under all fills and labels.
-    // Seamless fill, antialias off, no seams. Locked + activated share the
-    // dark grey fill — activated reads through its blue edge-light, not a
-    // blue fill. Unlocked + mastered (stored media) are clear — mastered
-    // gets its green border from hex-mastered-borders.
+    // Seamless fill, antialias off, no seams. Locked fills dark grey,
+    // activated fills blue. Unlocked + mastered (stored media) are clear —
+    // mastered reads lifted via hex-mastered-shadow.
     map.addLayer({
       id: 'hex-fills',
       type: 'fill',
@@ -822,21 +816,24 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     });
     // Activated edge-light lives on the polygon bands only now — the
     // street hexes read pure blue fill.
-    // Mastered border: true line layer over the clear fill — no double-draw.
-    // Thinner base width; the selection pulse tick below grows/shrinks it
-    // in sync with the fill pulse (same phase). Progress-bar green.
-    map.addLayer({
-      id: 'hex-mastered-borders',
-      type: 'line',
-      source: 'hex-fog',
-      filter: ['==', ['get', 'status'], 'mastered'],
-      paint: {
-        'line-color': '#5cc581',
-        'line-width': 4,
-        'line-opacity': 1,
-        'line-opacity-transition': { duration: 1800, delay: 0 },
+    // Mastered drop shadow: a dark copy of the clear fill, offset
+    // viewport-down-right so the tile reads lifted off the map. Static —
+    // no pulse. Painted under hex-fills so it peeks from behind the tile.
+    map.addLayer(
+      {
+        id: 'hex-mastered-shadow',
+        type: 'fill',
+        source: 'hex-fog',
+        filter: ['==', ['get', 'status'], 'mastered'],
+        paint: {
+          'fill-color': '#0b1520',
+          'fill-opacity': 0.4,
+          'fill-translate': [4, 7],
+          'fill-translate-anchor': 'viewport',
+        },
       },
-    });
+      'hex-fills',
+    );
     // Area labels overlay the street hexes for orientation (their window
     // runs open-top); polygon fills hard-switch per FILL_WINDOW.
     for (const [band, vis] of Object.entries(BAND_VIS)) {
