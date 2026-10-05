@@ -797,7 +797,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'mastered',
           'rgba(0,0,0,0)',
           'activated',
-          '#86bddb',
+          '#4ea7da',
           '#1d242e',
         ],
         'fill-opacity': [
@@ -808,7 +808,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'mastered',
           0,
           'activated',
-          0.62,
+          0.65,
           0.62,
         ],
         'fill-opacity-transition': { duration: 300, delay: 0 },
