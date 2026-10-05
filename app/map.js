@@ -781,8 +781,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     // Hex base MUST be added before every polygon layer: insertion order
     // is paint order, so this keeps hexes under all fills and labels.
     // Seamless fill, antialias off, no seams. Activated fills sky-blue;
-    // unlocked + mastered (stored media) are clear — mastered gets its
-    // static royal-blue border from hex-mastered-borders.
+    // unlocked + mastered (stored media) are clear.
     map.addLayer({
       id: 'hex-fills',
       type: 'fill',
@@ -816,19 +815,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     });
     // Activated edge-light lives on the polygon bands only now — the
     // street hexes read pure blue fill.
-    // Mastered border: static royal-blue line over the clear fill — no
-    // pulse, no blur, no shadow. Presence is the reward, not motion.
-    map.addLayer({
-      id: 'hex-mastered-borders',
-      type: 'line',
-      source: 'hex-fog',
-      filter: ['==', ['get', 'status'], 'mastered'],
-      paint: {
-        'line-color': '#4169e1',
-        'line-width': 4,
-        'line-opacity': 1,
-      },
-    });
+    // Mastered tiles read as-is: clear fill, no border. The stored media
+    // in the gallery carries the reward, not the map.
     // Area labels overlay the street hexes for orientation (their window
     // runs open-top); polygon fills hard-switch per FILL_WINDOW.
     for (const [band, vis] of Object.entries(BAND_VIS)) {
