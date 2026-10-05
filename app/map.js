@@ -1055,8 +1055,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     });
     let tapRaf = 0;
     const TAP_DUR = 650;
-    // Unlocked/mastered tiles flash green, everything else white — except
-    // on the quest map, where no green may ever appear: amber flash + ring.
+    // Tap flash is status-blind like selection: white on the regular map,
+    // amber on the quest map. No green anywhere in either.
     function playTapTile(geometry, status) {
       let flash, ring;
       try {
@@ -1065,12 +1065,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         if (!flash || !ring) return;
       } catch { return; }
       const feat = { type: 'Feature', properties: {}, geometry };
-      const live = status === 'unlocked' || status === 'mastered';
       try {
         flash.setData({ type: 'FeatureCollection', features: [feat] });
         ring.setData({ type: 'FeatureCollection', features: [feat] });
-        map.setPaintProperty('tap-flash', 'fill-color', questMode ? '#e8a33d' : live ? '#2ed67c' : '#ffffff');
-        map.setPaintProperty('tap-ring', 'line-color', questMode ? '#f0c069' : live ? '#7ce3a8' : '#cfeafb');
+        map.setPaintProperty('tap-flash', 'fill-color', questMode ? '#e8a33d' : '#ffffff');
+        map.setPaintProperty('tap-ring', 'line-color', questMode ? '#f0c069' : '#cfeafb');
       } catch { return; }
       cancelAnimationFrame(tapRaf);
       const t0 = performance.now();
@@ -1344,20 +1343,17 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     setSelected(cell, status = null) {
       selectedCell = cell;
       try {
-        // Selection edge: green echoes mastered taps, amber rules quest
-        // mode, otherwise steady white (unlocked keeps white too).
-        const mastered = status === 'mastered';
-        const edge = questMode ? '#e8a33d' : mastered ? '#5cc581' : '#ffffff';
+        // Selection is status-blind: steady white edge + white pulse fill
+        // for every tile on the regular map (amber rules quest mode).
         if (map.getLayer('selected-outline')) {
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-outline', 'line-color', edge);
+          map.setPaintProperty('selected-outline', 'line-color', questMode ? '#e8a33d' : '#ffffff');
           map.setPaintProperty('selected-outline', 'line-width', 3);
           map.setPaintProperty('selected-outline', 'line-opacity', 0.95);
         }
         if (map.getLayer('selected-fill')) {
-          const open = mastered || status === 'unlocked';
           map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-fill', 'fill-color', questMode ? '#e8a33d' : open ? '#2ed67c' : '#ffffff');
+          map.setPaintProperty('selected-fill', 'fill-color', questMode ? '#e8a33d' : '#ffffff');
         }
       } catch {}
       // Start the loop on first selection; every later tap just retargets it.
