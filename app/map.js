@@ -816,7 +816,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'match',
           ['get', 'status'],
           'unlocked',
-          0.2,
+          0.25,
           'mastered',
           0,
           'activated',
@@ -1412,7 +1412,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           ]);
           map.setPaintProperty('hex-fills', 'fill-opacity', [
             'match', ['get', 'status'],
-            'unlocked', questMode ? 0 : 0.2,
+            'unlocked', questMode ? 0 : 0.25,
             'mastered', 0,
             'activated', 0.65,
             0.62,
