@@ -85,6 +85,12 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         map.setPaintProperty('quest-tile-edge', 'line-opacity', 0.55 + 0.45 * k);
         map.setPaintProperty('quest-tile-edge', 'line-width', 2 + 1.5 * k);
       }
+      // Quest selection border twins the quest border: same max width,
+      // same phase, same breath.
+      if (questMode && selectedCell && map.getLayer('selected-outline')) {
+        map.setPaintProperty('selected-outline', 'line-opacity', 0.55 + 0.45 * k);
+        map.setPaintProperty('selected-outline', 'line-width', 2 + 1.5 * k);
+      }
       if (!map.getLayer('selected-fill') || !selectedCell) return;
       map.setPaintProperty('selected-fill', 'fill-opacity', 0.1 + 0.2 * k);
     } catch {}
@@ -1384,6 +1390,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         }
       } catch {}
       applyQuestPulse();
+      // Mode switch re-asserts the selection style (colors/opacity differ).
+      try { setSelected(selectedCell); } catch {}
       if (lastStoreRef) schedulePaint(lastStoreRef);
     },
     setSelected(cell, status = null) {
@@ -1395,9 +1403,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         if (map.getLayer('selected-outline')) {
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
           map.setPaintProperty('selected-outline', 'line-color', questMode ? '#ffd05e' : '#ffffff');
-          map.setPaintProperty('selected-outline', 'line-width', 3);
-          // Quest map selection carries no border — the yellow fill speaks.
-          map.setPaintProperty('selected-outline', 'line-opacity', questMode ? 0 : 0.95);
+          // Quest mode: width/opacity ride the tick with the quest border.
+          map.setPaintProperty('selected-outline', 'line-width', questMode ? 3.5 : 3);
+          map.setPaintProperty('selected-outline', 'line-opacity', questMode ? 1 : 0.95);
         }
         if (map.getLayer('selected-fill')) {
           map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
