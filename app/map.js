@@ -1063,7 +1063,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     let tapRaf = 0;
     const TAP_DUR = 650;
     // Tap flash is status-blind like selection: white on the regular map,
-    // amber on the quest map. No green anywhere in either.
+    // yellow on the quest map. No green anywhere in either.
     function playTapTile(geometry, status) {
       let flash, ring;
       try {
@@ -1075,8 +1075,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       try {
         flash.setData({ type: 'FeatureCollection', features: [feat] });
         ring.setData({ type: 'FeatureCollection', features: [feat] });
-        map.setPaintProperty('tap-flash', 'fill-color', questMode ? '#e8a33d' : '#ffffff');
-        map.setPaintProperty('tap-ring', 'line-color', questMode ? '#f0c069' : '#cfeafb');
+        map.setPaintProperty('tap-flash', 'fill-color', questMode ? '#ffec5e' : '#ffffff');
+        map.setPaintProperty('tap-ring', 'line-color', questMode ? '#ffd05e' : '#cfeafb');
       } catch { return; }
       cancelAnimationFrame(tapRaf);
       const t0 = performance.now();
@@ -1360,7 +1360,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           map.setPaintProperty('quest-tile-pulse', 'fill-color', '#ffec5e');
         }
         if (map.getLayer('quest-tile-edge')) {
-          map.setPaintProperty('quest-tile-edge', 'line-color', questMode ? '#e8a33d' : '#ffffff');
+          map.setPaintProperty('quest-tile-edge', 'line-color', questMode ? '#ffd05e' : '#ffffff');
         }
       } catch {}
       // Unlocked wash lives on the explorer map only — quest mode reports
@@ -1390,16 +1390,17 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       selectedCell = cell;
       try {
         // Selection is status-blind: steady white edge + white pulse fill
-        // for every tile on the regular map (amber rules quest mode).
+        // for every tile on the regular map; quest mode selects in yellow
+        // (#FFEC5E) with a #FFD05E border.
         if (map.getLayer('selected-outline')) {
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-outline', 'line-color', questMode ? '#e8a33d' : '#ffffff');
+          map.setPaintProperty('selected-outline', 'line-color', questMode ? '#ffd05e' : '#ffffff');
           map.setPaintProperty('selected-outline', 'line-width', 3);
           map.setPaintProperty('selected-outline', 'line-opacity', 0.95);
         }
         if (map.getLayer('selected-fill')) {
           map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
-          map.setPaintProperty('selected-fill', 'fill-color', questMode ? '#e8a33d' : '#ffffff');
+          map.setPaintProperty('selected-fill', 'fill-color', questMode ? '#ffec5e' : '#ffffff');
         }
       } catch {}
       // Start the loop on first selection; every later tap just retargets it.
