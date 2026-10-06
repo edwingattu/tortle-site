@@ -1,0 +1,724 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-07-28T02:16:18Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 245658745,
+  "lat": 18.9914237,
+  "lon": 72.8364587,
+  "tags": {
+    "name": "Lalbaug",
+    "name:en": "Lalbaug",
+    "name:hi": "लालबाग",
+    "name:mr": "लालबाग",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 245662803,
+  "lat": 19.0369905,
+  "lon": 72.8621647,
+  "tags": {
+    "name": "Guru Tegh Bahadur Nagar",
+    "name:hi": "गुरु तेज बहादुर नगर",
+    "name:ml": "ഗുരു തേജ് ബഹാദൂർ നഗർ",
+    "place": "suburb",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245670134,
+  "lat": 19.0970000,
+  "lon": 72.8945000,
+  "tags": {
+    "name": "Asalpha",
+    "place": "suburb",
+    "wikidata": "Q4803461",
+    "wikipedia": "en:Asalfa"
+  }
+},
+{
+  "type": "node",
+  "id": 469318604,
+  "lat": 18.9581616,
+  "lon": 72.8033665,
+  "tags": {
+    "name": "Malabar Hill",
+    "name:en": "Malabar Hill",
+    "name:hi": "मलाबार टेकडी",
+    "name:ml": "മലബാർ ഹിൽ",
+    "name:mr": "मलाबार हिल",
+    "place": "suburb",
+    "wikimedia_commons": "Category:Malabar Hill",
+    "wikipedia": "en:Malabar Hill"
+  }
+},
+{
+  "type": "node",
+  "id": 477243538,
+  "lat": 18.9584855,
+  "lon": 72.8122522,
+  "tags": {
+    "name": "Gamdevi",
+    "name:hi": "गामदेवी",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 495197492,
+  "lat": 18.9892129,
+  "lon": 72.8186798,
+  "tags": {
+    "name": "Mahalakshmi",
+    "name:hi": "महालक्ष्मी",
+    "place": "suburb",
+    "wikidata": "Q5455168",
+    "wikipedia": "en:Mahalaxmi, Mumbai"
+  }
+},
+{
+  "type": "node",
+  "id": 528866707,
+  "lat": 19.0014180,
+  "lon": 72.8542575,
+  "tags": {
+    "name": "Sewri",
+    "name:en": "Sewri",
+    "name:hi": "शिवड़ी",
+    "name:mr": "शिवडी",
+    "place": "suburb",
+    "wikidata": "Q4933909",
+    "wikipedia": "en:Sewri"
+  }
+},
+{
+  "type": "node",
+  "id": 529911940,
+  "lat": 18.9779948,
+  "lon": 72.8191822,
+  "tags": {
+    "alt_name": "Ghakatewadi",
+    "name": "Tulsi Wadi",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 537767524,
+  "lat": 19.0428153,
+  "lon": 72.8653563,
+  "tags": {
+    "name": "Sion East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 610909222,
+  "lat": 18.9686230,
+  "lon": 72.8068368,
+  "tags": {
+    "name": "Cumballa Hill",
+    "name:hi": "कम्बाला हिल",
+    "place": "suburb",
+    "wikidata": "Q5193802",
+    "wikimedia_commons": "Category:Cumbala Hill",
+    "wikipedia": "en:Cumbala Hill"
+  }
+},
+{
+  "type": "node",
+  "id": 620427148,
+  "lat": 18.9492575,
+  "lon": 72.8279382,
+  "tags": {
+    "name": "Kalbadevi",
+    "name:hi": "कालबादेवी",
+    "name:ml": "കൽബാദേവി",
+    "name:mr": "काळबादेवी",
+    "place": "suburb",
+    "wikidata": "Q6351737",
+    "wikimedia_commons": "Category:Kalbadevi",
+    "wikipedia": "en:Kalbadevi"
+  }
+},
+{
+  "type": "node",
+  "id": 622002639,
+  "lat": 19.0141778,
+  "lon": 72.8972339,
+  "tags": {
+    "name": "Mahul",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 622267823,
+  "lat": 19.0583358,
+  "lon": 72.8302669,
+  "tags": {
+    "addr:city": "Mumbai",
+    "addr:district": "Mumbai Suburban",
+    "addr:postcode": "400050",
+    "addr:postcode_1": "400051",
+    "landuse": "residential",
+    "name": "Bandra West",
+    "name:en": "Bandra West",
+    "name:hi": "बांद्रा पश्चिम",
+    "name:mr": "वांद्रे पश्चिम",
+    "place": "suburb",
+    "population": "300000",
+    "population:date": "1991",
+    "wikipedia": "en:Bandra"
+  }
+},
+{
+  "type": "node",
+  "id": 622267824,
+  "lat": 19.0616565,
+  "lon": 72.8498111,
+  "tags": {
+    "name": "Bandra East",
+    "name:hi": "बांद्रा पूर्व",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 622267825,
+  "lat": 19.0724575,
+  "lon": 72.8337068,
+  "tags": {
+    "name": "Khar",
+    "name:hi": "खार",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 622267826,
+  "lat": 19.0844004,
+  "lon": 72.8372899,
+  "tags": {
+    "description": "This area is Santacruz West, Mumbai",
+    "name": "Santacruz West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 631525426,
+  "lat": 19.0423145,
+  "lon": 72.8398344,
+  "tags": {
+    "name": "Mahim",
+    "name:hi": "माहिम",
+    "name:ml": "മാഹിം",
+    "name:mr": "माहिम",
+    "place": "suburb",
+    "wikidata": "Q674501",
+    "wikimedia_commons": "Category:Mahim",
+    "wikipedia": "en:Mahim"
+  }
+},
+{
+  "type": "node",
+  "id": 631537707,
+  "lat": 19.0238887,
+  "lon": 72.8382236,
+  "tags": {
+    "name": "Dadar West",
+    "name:en": "Dadar West",
+    "name:mr": "दादर पश्चिम",
+    "place": "suburb",
+    "wikidata": "Q5207921",
+    "wikipedia": "en:Dadar"
+  }
+},
+{
+  "type": "node",
+  "id": 632314632,
+  "lat": 19.0548180,
+  "lon": 72.8979713,
+  "tags": {
+    "name": "Chembur",
+    "name:hi": "चेम्बुर",
+    "place": "suburb",
+    "wikidata": "Q251170",
+    "wikimedia_commons": "Category:Chembur",
+    "wikipedia": "en:Chembur"
+  }
+},
+{
+  "type": "node",
+  "id": 674751024,
+  "lat": 19.0148811,
+  "lon": 72.8279556,
+  "tags": {
+    "name": "Prabhadevi",
+    "name:en": "Prabhadevi",
+    "name:hi": "प्रभादेवी",
+    "name:mr": "प्रभादेवी",
+    "place": "suburb",
+    "wikidata": "Q5456385",
+    "wikipedia": "en:Prabhadevi"
+  }
+},
+{
+  "type": "node",
+  "id": 674751026,
+  "lat": 19.0029881,
+  "lon": 72.8303219,
+  "tags": {
+    "name": "Lower Parel",
+    "name:en": "Lower Parel",
+    "name:hi": "लोअर परेल",
+    "name:mr": "लोअर परळ",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 674855624,
+  "lat": 19.0117388,
+  "lon": 72.8178706,
+  "tags": {
+    "name": "Worli",
+    "name:en": "Worli",
+    "name:hi": "वर्ली",
+    "name:mr": "वरळी",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 700688007,
+  "lat": 19.0269192,
+  "lon": 72.8759337,
+  "tags": {
+    "name": "Wadala",
+    "name:en": "Wadala",
+    "name:etymology:wikidata": "Q4856518",
+    "name:hi": "वडाला",
+    "name:mr": "वडाळा",
+    "place": "suburb",
+    "wikidata": "Q4856518",
+    "wikimedia_commons": "Category:Wadala",
+    "wikipedia": "en:Wadala"
+  }
+},
+{
+  "type": "node",
+  "id": 700774326,
+  "lat": 18.9697337,
+  "lon": 72.8406201,
+  "tags": {
+    "name": "Mazgaon",
+    "name:hi": "मझगांव",
+    "place": "suburb",
+    "wikidata": "Q5121900"
+  }
+},
+{
+  "type": "node",
+  "id": 700886173,
+  "lat": 18.9770363,
+  "lon": 72.8490768,
+  "tags": {
+    "name": "Darukhana",
+    "name:hi": "दारूखाना",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 715015485,
+  "lat": 18.9537706,
+  "lon": 72.8274755,
+  "tags": {
+    "name": "Bhuleshwar",
+    "name:en": "Bhuleshwar",
+    "name:hi": "भुलेश्वर",
+    "name:mr": "भुलेश्वर",
+    "place": "suburb",
+    "wikidata": "Q4902131",
+    "wikipedia": "en:Bhuleshwar"
+  }
+},
+{
+  "type": "node",
+  "id": 715015487,
+  "lat": 18.9681782,
+  "lon": 72.8286009,
+  "tags": {
+    "name": "Nagpada",
+    "name:en": "Nagpada",
+    "name:hi": "नागपाड़ा",
+    "name:mr": "नागपाडा",
+    "place": "suburb",
+    "population": "103",
+    "population:date": "12"
+  }
+},
+{
+  "type": "node",
+  "id": 715015488,
+  "lat": 18.9736935,
+  "lon": 72.8367795,
+  "tags": {
+    "name": "Byculla East",
+    "name:hi": "भायखला पूर्व",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1288965355,
+  "lat": 19.0261579,
+  "lon": 72.8520846,
+  "tags": {
+    "name": "Matunga East",
+    "name:en": "Matunga East",
+    "name:mr": "माटुंगा पूर्व",
+    "place": "suburb",
+    "wikidata": "Q5226775",
+    "wikipedia": "en:Matunga"
+  }
+},
+{
+  "type": "node",
+  "id": 1365560111,
+  "lat": 19.0317259,
+  "lon": 72.8433917,
+  "tags": {
+    "name": "Matunga West",
+    "name:en": "Matunga West",
+    "name:mr": "माटुंगा पश्चिम",
+    "place": "suburb",
+    "wikidata": "Q5226775",
+    "wikipedia": "en:Matunga"
+  }
+},
+{
+  "type": "node",
+  "id": 1366008926,
+  "lat": 19.0686026,
+  "lon": 72.8765830,
+  "tags": {
+    "name": "Kurla West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1375215062,
+  "lat": 19.0792730,
+  "lon": 72.8612672,
+  "tags": {
+    "name": "Kalina",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640184966,
+  "lat": 18.9750879,
+  "lon": 72.8282502,
+  "tags": {
+    "name": "Byculla West",
+    "name:en": "Byculla West",
+    "name:hi": "भायखला पश्चिम",
+    "name:mr": "भायखळा पश्चिम",
+    "place": "suburb",
+    "wikidata": "Q5003979",
+    "wikipedia": "en:Byculla"
+  }
+},
+{
+  "type": "node",
+  "id": 1640184981,
+  "lat": 18.9641312,
+  "lon": 72.8416378,
+  "tags": {
+    "name": "Chinch Bunder",
+    "name:hi": "चिंच बंदर",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640184983,
+  "lat": 18.9150910,
+  "lon": 72.8259691,
+  "tags": {
+    "name": "Colaba",
+    "name:hi": "कोलाबा",
+    "name:ml": "കൊളാബ",
+    "place": "suburb",
+    "wikidata": "Q3632559",
+    "wikimedia_commons": "Category:Colaba",
+    "wikipedia": "en:Colaba"
+  }
+},
+{
+  "type": "node",
+  "id": 1640184992,
+  "lat": 18.9543165,
+  "lon": 72.8179082,
+  "tags": {
+    "name": "Girgaon",
+    "name:en": "Girgaon",
+    "name:hi": "गिरगांव",
+    "name:ml": "ഗിർഗാവ്",
+    "name:mr": "गिरगाव",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640185006,
+  "lat": 18.9519858,
+  "lon": 72.8396237,
+  "tags": {
+    "name": "Masjid Bunder",
+    "name:hi": "मस्जिद बन्दर",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640185011,
+  "lat": 18.9722351,
+  "lon": 72.8203423,
+  "tags": {
+    "name": "Tardeo",
+    "name:en": "Tardeo",
+    "name:hi": "ताड़देव",
+    "name:ml": "തർദേവ്",
+    "name:mr": "ताडदेव",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640191299,
+  "lat": 18.9932602,
+  "lon": 72.8310115,
+  "tags": {
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640192794,
+  "lat": 19.0010485,
+  "lon": 72.8194265,
+  "tags": {
+    "name": "Nehru Nagar",
+    "name:en": "Nehru Nagar",
+    "name:hi": "नेहरू नगर",
+    "name:mr": "नेहरू नगर",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640198202,
+  "lat": 18.9805523,
+  "lon": 72.8379288,
+  "tags": {
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640248215,
+  "lat": 19.0628944,
+  "lon": 72.8825604,
+  "tags": {
+    "name": "Kurla East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640248218,
+  "lat": 19.0812972,
+  "lon": 72.8948540,
+  "tags": {
+    "name": "Vidya Vihar West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640253261,
+  "lat": 19.0084268,
+  "lon": 72.8425050,
+  "tags": {
+    "name": "Parel",
+    "name:en": "Parel",
+    "name:hi": "परेल",
+    "name:mr": "परळ",
+    "place": "suburb",
+    "wikidata": "Q4856263",
+    "wikimedia_commons": "Category:Parel",
+    "wikipedia": "en:Parel"
+  }
+},
+{
+  "type": "node",
+  "id": 1640253262,
+  "lat": 18.9622265,
+  "lon": 72.8367950,
+  "tags": {
+    "name": "Dongri",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640260024,
+  "lat": 18.9856662,
+  "lon": 72.8436536,
+  "tags": {
+    "name": "Cotton Green",
+    "name:en": "Cotton Green",
+    "name:hi": "कॉटन ग्रीन",
+    "name:mr": "कॉटन ग्रीन",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640260027,
+  "lat": 19.0368069,
+  "lon": 72.8960683,
+  "tags": {
+    "name": "Fertilizer Colony",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640262758,
+  "lat": 19.0671150,
+  "lon": 72.8657245,
+  "tags": {
+    "alt_name:mr": "वांद्रे कुर्ला संकुल",
+    "name": "Bandra Kurla Complex",
+    "name:en": "Bandra Kurla Complex",
+    "name:mr": "वांद्रे कुर्ला कॉम्प्लेक्स",
+    "place": "suburb",
+    "short_name": "BKC",
+    "short_name:en": "BKC",
+    "short_name:hi": "बीकेसी",
+    "short_name:mr": "बीकेसी"
+  }
+},
+{
+  "type": "node",
+  "id": 1645906561,
+  "lat": 19.0702213,
+  "lon": 72.8431601,
+  "tags": {
+    "name": "Golibar",
+    "place": "suburb",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 3228587120,
+  "lat": 19.0444630,
+  "lon": 72.8586177,
+  "tags": {
+    "name": "Dharavi",
+    "name:en": "Dharavi",
+    "name:hi": "धारावी",
+    "name:ml": "ധാരാവി",
+    "name:mr": "धारावी",
+    "place": "suburb",
+    "wikidata": "Q649632",
+    "wikimedia_commons": "Category:Dharavi",
+    "wikipedia": "en:Dharavi"
+  }
+},
+{
+  "type": "node",
+  "id": 3708838354,
+  "lat": 18.9332665,
+  "lon": 72.8345146,
+  "tags": {
+    "name": "Fort",
+    "name:en": "Fort",
+    "name:hi": "फोर्ट",
+    "name:ml": "ഫോർട്ട്",
+    "name:mr": "फोर्ट",
+    "place": "suburb",
+    "wikidata": "Q5470698",
+    "wikipedia": "en:Fort (Mumbai precinct)"
+  }
+},
+{
+  "type": "node",
+  "id": 4292746740,
+  "lat": 19.0239461,
+  "lon": 72.8685474,
+  "tags": {
+    "name": "Antop Hill",
+    "name:en": "Antop Hill",
+    "name:etymology:wikidata": "Q4777297",
+    "name:hi": "एंटॉप हिल",
+    "name:mr": "अँटॉप हिल",
+    "place": "suburb",
+    "wikipedia": "en:Antop Hill"
+  }
+},
+{
+  "type": "node",
+  "id": 5496604603,
+  "lat": 18.9935288,
+  "lon": 72.8424069,
+  "tags": {
+    "addr:city": "Mumbai",
+    "addr:postcode": "400033",
+    "addr:suburb": "Parel",
+    "name": "Lal Baug",
+    "name:hi": "लाल बाग",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5890165452,
+  "lat": 19.0612177,
+  "lon": 72.8448733,
+  "tags": {
+    "name": "Kherwadi",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 6212377883,
+  "lat": 19.0360520,
+  "lon": 72.8635501,
+  "tags": {
+    "name": "Indira Nagar",
+    "place": "suburb"
+  }
+}
+
+  ]
+}

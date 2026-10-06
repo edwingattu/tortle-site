@@ -1,0 +1,1092 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-07-15T15:22:01Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 245671112,
+  "lat": 19.1016734,
+  "lon": 72.9236504,
+  "tags": {
+    "alt_name": "Pirojshanagar",
+    "name": "Pirojsha Godrej Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 245671696,
+  "lat": 19.1091482,
+  "lon": 72.8945793,
+  "tags": {
+    "alt_name": "Chandivli",
+    "name": "Chandivali",
+    "name:hi": "चाँदिवली",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 245680938,
+  "lat": 19.2097189,
+  "lon": 72.8759248,
+  "tags": {
+    "name": "Thakur Village",
+    "name:hi": "ठाकुर गाँव",
+    "place": "suburb",
+    "wikidata": "Q7709425",
+    "wikipedia": "en:Thakur village"
+  }
+},
+{
+  "type": "node",
+  "id": 245680983,
+  "lat": 19.2051958,
+  "lon": 72.8626165,
+  "tags": {
+    "name": "Kandivali East",
+    "place": "suburb",
+    "wikidata": "Q6361552",
+    "wikipedia": "en:Kandivali"
+  }
+},
+{
+  "type": "node",
+  "id": 619109750,
+  "lat": 19.1193307,
+  "lon": 72.9995096,
+  "tags": {
+    "name": "Ghansoli",
+    "name:en": "Ghansoli",
+    "name:mr": "घणसोली",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 619112404,
+  "lat": 19.1582719,
+  "lon": 72.9967088,
+  "tags": {
+    "name": "Airoli",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 619117090,
+  "lat": 19.1741818,
+  "lon": 73.0204924,
+  "tags": {
+    "addr:street": "Dargah Rd.",
+    "name": "Amrut Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 619117091,
+  "lat": 19.1885360,
+  "lon": 73.0215253,
+  "tags": {
+    "name": "Mumbra",
+    "name:hi": "मुंब्रा",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 630302986,
+  "lat": 19.1561292,
+  "lon": 72.8707223,
+  "tags": {
+    "name": "Aarey Milk Colony",
+    "place": "suburb",
+    "wikidata": "Q4661699",
+    "wikimedia_commons": "Category:Aarey Milk Colony",
+    "wikipedia": "en:Aarey Forest"
+  }
+},
+{
+  "type": "node",
+  "id": 702054645,
+  "lat": 19.2877650,
+  "lon": 72.8725964,
+  "tags": {
+    "name": "Mira",
+    "name:en": "Mira",
+    "name:hi": "मीरा",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 702054667,
+  "lat": 19.3053025,
+  "lon": 72.8557264,
+  "tags": {
+    "name": "Bhayander East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 702054734,
+  "lat": 19.3428238,
+  "lon": 72.8054410,
+  "tags": {
+    "name": "Vasai",
+    "name:ja": "ヴァサイー",
+    "name:mr": "वसई",
+    "place": "suburb",
+    "population": "10000",
+    "postal_code": "401200",
+    "wikidata": "Q1949022",
+    "wikimedia_commons": "Category:Vasai",
+    "wikipedia": "en:Vasai"
+  }
+},
+{
+  "type": "node",
+  "id": 702054743,
+  "lat": 19.1633281,
+  "lon": 72.8411995,
+  "tags": {
+    "name": "Goregaon West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 702054777,
+  "lat": 19.1158835,
+  "lon": 72.8542020,
+  "tags": {
+    "addr:city": "Mumbai",
+    "name": "Andheri East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 702054798,
+  "lat": 19.2055321,
+  "lon": 72.8399273,
+  "tags": {
+    "name": "Kandivali West",
+    "name:en": "Kandivali West",
+    "name:hi": "कांदिवली पश्चिम",
+    "name:mr": "कांदिवली पश्चिम",
+    "place": "suburb",
+    "wikidata": "Q6361552",
+    "wikipedia": "en:Kandivali"
+  }
+},
+{
+  "type": "node",
+  "id": 702054821,
+  "lat": 19.1363940,
+  "lon": 72.8373817,
+  "tags": {
+    "name": "Jogeshwari West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 884364390,
+  "lat": 19.1172495,
+  "lon": 72.8339680,
+  "tags": {
+    "name": "Andheri West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 884364415,
+  "lat": 19.1502437,
+  "lon": 72.8342294,
+  "tags": {
+    "name": "Oshiwara",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 884466842,
+  "lat": 19.1309837,
+  "lon": 72.8187345,
+  "tags": {
+    "name": "Versova",
+    "name:hi": "वर्सोवा",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1235720588,
+  "lat": 19.2659668,
+  "lon": 72.9847705,
+  "tags": {
+    "name": "Waghbil",
+    "place": "suburb",
+    "wikidata": "Q7959556",
+    "wikipedia": "en:Waghbil"
+  }
+},
+{
+  "type": "node",
+  "id": 1369351426,
+  "lat": 19.1616450,
+  "lon": 73.0787257,
+  "tags": {
+    "name": "Nilaje",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1375170587,
+  "lat": 19.2141193,
+  "lon": 72.8258652,
+  "tags": {
+    "name": "Charkop",
+    "name:hi": "चारकोप",
+    "name:mr": "चारकोप",
+    "place": "suburb",
+    "wikidata": "Q4932712",
+    "wikipedia": "en:Charkop"
+  }
+},
+{
+  "type": "node",
+  "id": 1375170588,
+  "lat": 19.1855960,
+  "lon": 72.8195942,
+  "tags": {
+    "name": "Malwani",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1375273529,
+  "lat": 19.1273336,
+  "lon": 72.8326176,
+  "tags": {
+    "name": "Dadabhai Naoroji Nagar",
+    "name_alt": "DN Nagar",
+    "place": "suburb",
+    "wikidata": "Q5203432",
+    "wikipedia": "en:D.N. Nagar"
+  }
+},
+{
+  "type": "node",
+  "id": 1389428493,
+  "lat": 19.1740198,
+  "lon": 72.8695219,
+  "tags": {
+    "name": "Dindoshi",
+    "name:hi": "दिंडोशी",
+    "place": "suburb",
+    "wikidata": "Q5278012",
+    "wikipedia": "en:Dindoshi"
+  }
+},
+{
+  "type": "node",
+  "id": 1389428494,
+  "lat": 19.1616970,
+  "lon": 72.8867800,
+  "tags": {
+    "alt_name": "Film City",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1632712164,
+  "lat": 19.1944819,
+  "lon": 72.8389662,
+  "tags": {
+    "name": "Orlem",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640203457,
+  "lat": 19.2267228,
+  "lon": 72.8619328,
+  "tags": {
+    "name": "Borivali East",
+    "place": "suburb",
+    "wikidata": "Q4945504",
+    "wikipedia": "en:Borivali"
+  }
+},
+{
+  "type": "node",
+  "id": 1640203468,
+  "lat": 19.1860219,
+  "lon": 72.8563181,
+  "tags": {
+    "name": "Malad East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640203470,
+  "lat": 19.1840129,
+  "lon": 72.8412155,
+  "tags": {
+    "name": "Malad West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640244270,
+  "lat": 19.2486925,
+  "lon": 72.8640593,
+  "tags": {
+    "name": "Dahisar East",
+    "place": "suburb",
+    "wikidata": "Q5208846",
+    "wikipedia": "en:Dahisar"
+  }
+},
+{
+  "type": "node",
+  "id": 1640244277,
+  "lat": 19.1692623,
+  "lon": 72.8552548,
+  "tags": {
+    "name": "Goregaon East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640244289,
+  "lat": 19.1070215,
+  "lon": 72.8275275,
+  "tags": {
+    "name": "Juhu",
+    "name:en": "Juhu",
+    "name:hi": "जुहू",
+    "name:ml": "ജുഹു",
+    "name:mr": "जुहू",
+    "place": "suburb",
+    "wikidata": "Q674362",
+    "wikimedia_commons": "Category:Juhu",
+    "wikipedia": "en:Juhu"
+  }
+},
+{
+  "type": "node",
+  "id": 1640244314,
+  "lat": 19.1039080,
+  "lon": 72.8403010,
+  "tags": {
+    "name": "Vile Parle West",
+    "name:hi": "विले पार्ले पश्चिम",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640260039,
+  "lat": 19.1082060,
+  "lon": 72.8828404,
+  "tags": {
+    "name": "Saki Naka",
+    "name:en": "Saki Naka",
+    "name:mr": "साकी नाका",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640260042,
+  "lat": 19.1172592,
+  "lon": 72.9355194,
+  "tags": {
+    "name": "Vikhroli East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640260045,
+  "lat": 19.1145410,
+  "lon": 72.9257184,
+  "tags": {
+    "name": "Vikhroli West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640273573,
+  "lat": 19.1462636,
+  "lon": 72.9339461,
+  "tags": {
+    "name": "Bhandup West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640273575,
+  "lat": 19.1378308,
+  "lon": 72.9361964,
+  "tags": {
+    "name": "Bhandup East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640273576,
+  "lat": 19.1289914,
+  "lon": 72.9225983,
+  "tags": {
+    "name": "Kanjur West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461321,
+  "lat": 19.1375285,
+  "lon": 72.7918857,
+  "tags": {
+    "name": "Madh",
+    "name:hi": "मढ",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461326,
+  "lat": 19.1777778,
+  "lon": 72.9383511,
+  "tags": {
+    "name": "Mulund Colony",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640611520,
+  "lat": 19.1688142,
+  "lon": 72.8336777,
+  "tags": {
+    "name": "Bangur Nagar",
+    "name:en": "Bangur Nagar",
+    "name:hi": "बांगुर नगर",
+    "name:mr": "बांगुर नगर",
+    "place": "suburb",
+    "wikidata": "Q4855640",
+    "wikipedia": "en:Bangur Nagar"
+  }
+},
+{
+  "type": "node",
+  "id": 1640611534,
+  "lat": 19.2755399,
+  "lon": 72.8841851,
+  "tags": {
+    "name": "Kashimira",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640625266,
+  "lat": 19.1205119,
+  "lon": 72.8646365,
+  "tags": {
+    "alt_name": "MIDC Industrial Estate",
+    "name": "MIDC",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1640686130,
+  "lat": 19.1946967,
+  "lon": 72.7992026,
+  "tags": {
+    "AND_a_nosr_p": "10004278",
+    "name": "Marve",
+    "place": "suburb",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1643429085,
+  "lat": 19.2130251,
+  "lon": 72.9784852,
+  "tags": {
+    "name": "Majiwada",
+    "place": "suburb",
+    "wikidata": "Q560805",
+    "wikipedia": "en:Maj"
+  }
+},
+{
+  "type": "node",
+  "id": 1643429091,
+  "lat": 19.2168021,
+  "lon": 72.9564294,
+  "tags": {
+    "name": "Shivai Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1643429092,
+  "lat": 19.2155371,
+  "lon": 72.9627101,
+  "tags": {
+    "name": "Vartak Nagar",
+    "place": "suburb",
+    "wikidata": "Q28174147",
+    "wikipedia": "en:Vartak Nagar, Thane"
+  }
+},
+{
+  "type": "node",
+  "id": 1643429093,
+  "lat": 19.1985175,
+  "lon": 72.9509778,
+  "tags": {
+    "name": "Wagle Industrial Estate",
+    "place": "suburb",
+    "wikidata": "Q16928151",
+    "wikipedia": "en:Wagle Estate"
+  }
+},
+{
+  "type": "node",
+  "id": 1645992776,
+  "lat": 19.2840605,
+  "lon": 72.9529050,
+  "tags": {
+    "name": "Bhayander Pada",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1645992804,
+  "lat": 19.2757727,
+  "lon": 72.9612408,
+  "tags": {
+    "name": "Owale",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 1651962252,
+  "lat": 19.2469649,
+  "lon": 72.9818412,
+  "tags": {
+    "name": "Brahmand Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 2441346137,
+  "lat": 19.2125658,
+  "lon": 73.0771186,
+  "tags": {
+    "name": "Kopar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 2441346305,
+  "lat": 19.2222373,
+  "lon": 73.0960108,
+  "tags": {
+    "name": "Thakurli",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 2629849624,
+  "lat": 19.1456658,
+  "lon": 73.0426995,
+  "tags": {
+    "name": "Shill Phata",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 2629924560,
+  "lat": 19.2111814,
+  "lon": 73.0911290,
+  "tags": {
+    "is_in": "Kalyan",
+    "name": "Dombivli East",
+    "name:ja": "ドーンビヴリー",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 2629924561,
+  "lat": 19.2221822,
+  "lon": 73.0809274,
+  "tags": {
+    "is_in": "Dombivli",
+    "name": "Dombivli West",
+    "name:ja": "ドーンビヴリー",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 2630768231,
+  "lat": 19.3815287,
+  "lon": 72.8291213,
+  "tags": {
+    "name": "Vasai Road",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 4200619402,
+  "lat": 19.2341381,
+  "lon": 72.9455652,
+  "tags": {
+    "name": "Yeoor",
+    "place": "suburb",
+    "wikidata": "Q8052481",
+    "wikimedia_commons": "Category:Yeoor",
+    "wikipedia": "en:Yeoor"
+  }
+},
+{
+  "type": "node",
+  "id": 4306945141,
+  "lat": 19.1704719,
+  "lon": 72.9610447,
+  "tags": {
+    "name": "Mulund East",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 4306945142,
+  "lat": 19.1719717,
+  "lon": 72.9511956,
+  "tags": {
+    "name": "Mulund West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 4374647320,
+  "lat": 19.3006740,
+  "lon": 72.8498149,
+  "tags": {
+    "name": "Bhayander West",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 4759418251,
+  "lat": 19.1187195,
+  "lon": 72.9073476,
+  "tags": {
+    "name": "Powai",
+    "name:en": "Powai",
+    "name:hi": "पवई",
+    "name:mr": "पवई",
+    "place": "suburb",
+    "wikidata": "Q13118508",
+    "wikimedia_commons": "Category:Powai",
+    "wikipedia": "en:Powai"
+  }
+},
+{
+  "type": "node",
+  "id": 5177728630,
+  "lat": 19.2909323,
+  "lon": 73.0636739,
+  "tags": {
+    "name": "Kaneri",
+    "name:en": "Kaneri",
+    "name:hi": "काणेरी",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5177728632,
+  "lat": 19.2787193,
+  "lon": 73.0779648,
+  "tags": {
+    "name": "Temghar",
+    "name:en": "Temghar",
+    "name:hi": "टेमघर",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5177728687,
+  "lat": 19.2797523,
+  "lon": 73.0664634,
+  "tags": {
+    "name": "Fene",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5177728688,
+  "lat": 19.2843297,
+  "lon": 73.0467653,
+  "tags": {
+    "name": "Narpoli",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5177728689,
+  "lat": 19.2791446,
+  "lon": 73.0515718,
+  "tags": {
+    "name": "Kamatghar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5178045375,
+  "lat": 19.1909740,
+  "lon": 73.0930280,
+  "tags": {
+    "name": "Sagaon",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5453475995,
+  "lat": 19.1018763,
+  "lon": 73.0040855,
+  "tags": {
+    "name": "Kopar Khairne",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5547929546,
+  "lat": 19.1093012,
+  "lon": 73.0235724,
+  "tags": {
+    "name": "Mahape",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862578,
+  "lat": 19.2664447,
+  "lon": 72.9680800,
+  "tags": {
+    "name": "Anand Nagar",
+    "place": "suburb",
+    "wikidata": "Q6374043",
+    "wikipedia": "en:Kasarvadavali"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862579,
+  "lat": 19.2212069,
+  "lon": 72.9853105,
+  "tags": {
+    "name": "Kapur Bawadi",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862581,
+  "lat": 19.1896853,
+  "lon": 72.9696845,
+  "tags": {
+    "name": "Naupada",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862693,
+  "lat": 19.1825941,
+  "lon": 72.9732621,
+  "tags": {
+    "name": "Kopri",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5924611701,
+  "lat": 19.1904471,
+  "lon": 72.9458284,
+  "tags": {
+    "name": "Shree Nagar",
+    "name:hi": "श्री नगर",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 5934004275,
+  "lat": 19.1795780,
+  "lon": 72.9964178,
+  "tags": {
+    "name": "Digha",
+    "name:en": "Digha",
+    "name:hi": "दिघा",
+    "name:mr": "दिघा",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 6017562113,
+  "lat": 19.2121802,
+  "lon": 72.9511660,
+  "tags": {
+    "name": "Lokmanya Nagar",
+    "name:hi": "लोकमान्य नगर",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8493428351,
+  "lat": 19.2224897,
+  "lon": 72.9663424,
+  "tags": {
+    "name": "Vasant Vihar",
+    "name:hi": "वसन्त विहार",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8493428352,
+  "lat": 19.2223841,
+  "lon": 72.9615698,
+  "tags": {
+    "name": "Pawar Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8494298798,
+  "lat": 19.2314156,
+  "lon": 72.9738156,
+  "tags": {
+    "name": "Manpada",
+    "place": "suburb",
+    "wikidata": "Q24928758",
+    "wikipedia": "en:Manpada"
+  }
+},
+{
+  "type": "node",
+  "id": 8500103222,
+  "lat": 19.2331096,
+  "lon": 72.9661446,
+  "tags": {
+    "name": "Kokanipada",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8639993896,
+  "lat": 19.2389025,
+  "lon": 72.9932692,
+  "tags": {
+    "name": "Kolshet",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8639993899,
+  "lat": 19.2255786,
+  "lon": 72.9845436,
+  "tags": {
+    "name": "Dhokali",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8639993900,
+  "lat": 19.1967007,
+  "lon": 72.9645022,
+  "tags": {
+    "name": "Panch Pakadi",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8639993902,
+  "lat": 19.1925842,
+  "lon": 72.9779552,
+  "tags": {
+    "name": "Jambli Naka",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8639993904,
+  "lat": 19.2812529,
+  "lon": 72.9696945,
+  "tags": {
+    "name": "Mogharpada",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8639993907,
+  "lat": 19.2512778,
+  "lon": 72.9709464,
+  "tags": {
+    "name": "Dongaripada",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8858817513,
+  "lat": 19.1825426,
+  "lon": 72.9814236,
+  "tags": {
+    "name": "Veer Sawarkar Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 8954375074,
+  "lat": 19.1757787,
+  "lon": 72.9728796,
+  "tags": {
+    "name": "Hariom Nagar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 10247349011,
+  "lat": 19.3806280,
+  "lon": 72.8236484,
+  "tags": {
+    "name": "Navghar-Manikpur",
+    "place": "suburb",
+    "wikidata": "Q2573104",
+    "wikipedia": "en:Navghar-Manikpur"
+  }
+},
+{
+  "type": "node",
+  "id": 10275450998,
+  "lat": 19.2021398,
+  "lon": 72.9762340,
+  "tags": {
+    "name": "Uthalsar",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 10301015928,
+  "lat": 19.1591292,
+  "lon": 72.9464400,
+  "tags": {
+    "name": "Nahur",
+    "name:en": "Nahur",
+    "name:hi": "नाहूर",
+    "name:ml": "നാഹൂർ",
+    "name:mr": "नाहूर",
+    "place": "suburb",
+    "wikidata": "Q4934047",
+    "wikipedia": "en:Nahur"
+  }
+},
+{
+  "type": "node",
+  "id": 10800031332,
+  "lat": 19.1425026,
+  "lon": 73.0123365,
+  "tags": {
+    "name": "MIDC - Rabale",
+    "place": "suburb"
+  }
+},
+{
+  "type": "node",
+  "id": 12871624398,
+  "lat": 19.2488750,
+  "lon": 72.8529590,
+  "tags": {
+    "name": "Dahisar West",
+    "place": "suburb",
+    "wikidata": "Q5208846",
+    "wikipedia": "en:Dahisar"
+  }
+},
+{
+  "type": "node",
+  "id": 13967298170,
+  "lat": 19.2549288,
+  "lon": 72.9820704,
+  "tags": {
+    "name": "Hiranandani Estate",
+    "place": "suburb",
+    "wikidata": "Q5769388"
+  }
+}
+
+  ]
+}

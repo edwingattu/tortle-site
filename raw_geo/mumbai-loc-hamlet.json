@@ -1,0 +1,158 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-06-01T08:52:28Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 245675023,
+  "lat": 19.1348001,
+  "lon": 72.8164999,
+  "tags": {
+    "name": "Sunder Wadi",
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 623407521,
+  "lat": 18.9152567,
+  "lon": 72.8295078,
+  "tags": {
+    "name": "Koli Nagar",
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769721,
+  "lat": 19.3656989,
+  "lon": 72.9303789,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769774,
+  "lat": 19.3439052,
+  "lon": 72.9827142,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769775,
+  "lat": 19.3486934,
+  "lon": 72.9734015,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769776,
+  "lat": 19.3490173,
+  "lon": 72.9678118,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769777,
+  "lat": 19.3444620,
+  "lon": 72.9626459,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769778,
+  "lat": 19.3326023,
+  "lon": 72.9537034,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769783,
+  "lat": 19.3169045,
+  "lon": 72.9806757,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769784,
+  "lat": 19.3218150,
+  "lon": 72.9769850,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5928769986,
+  "lat": 19.3378616,
+  "lon": 72.9785299,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 5934004114,
+  "lat": 19.0447158,
+  "lon": 73.0513143,
+  "tags": {
+    "name": "Fanaspada",
+    "name:mr": "फणसपाडा",
+    "place": "hamlet",
+    "population": "240",
+    "population:date": "2024-05-04"
+  }
+},
+{
+  "type": "node",
+  "id": 5934004115,
+  "lat": 19.0538227,
+  "lon": 73.0471355,
+  "tags": {
+    "name": "Chapewadi",
+    "name:mr": "चापेवाडी",
+    "place": "hamlet",
+    "population": "2210",
+    "population:date": "2024-05-04"
+  }
+},
+{
+  "type": "node",
+  "id": 5937381486,
+  "lat": 19.1454976,
+  "lon": 72.8995335,
+  "tags": {
+    "place": "hamlet"
+  }
+},
+{
+  "type": "node",
+  "id": 10246521911,
+  "lat": 19.2115419,
+  "lon": 73.0398559,
+  "tags": {
+    "name": "Kolyachapada",
+    "place": "hamlet"
+  }
+}
+
+  ]
+}

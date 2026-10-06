@@ -1,0 +1,5334 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-05-31T22:37:44Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 245654272,
+  "lat": 18.9319334,
+  "lon": 72.8271436,
+  "tags": {
+    "name": "Churchgate",
+    "name:en": "Churchgate",
+    "name:hi": "चर्चगेट",
+    "name:ml": "ചർച്ച്ഗേറ്റ്",
+    "name:mr": "चर्चगेट",
+    "place": "neighbourhood",
+    "wikidata": "Q985666",
+    "wikipedia": "en:Churchgate"
+  }
+},
+{
+  "type": "node",
+  "id": 245654576,
+  "lat": 18.9429941,
+  "lon": 72.8262921,
+  "tags": {
+    "name": "Navjeevan Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245657778,
+  "lat": 18.9759291,
+  "lon": 72.8393799,
+  "tags": {
+    "name": "Mustafa Bazaar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245658868,
+  "lat": 18.9911218,
+  "lon": 72.8548908,
+  "tags": {
+    "name": "Priyadarshini Ambica Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245659295,
+  "lat": 18.9996351,
+  "lon": 72.8599349,
+  "tags": {
+    "name": "Rajiv Gandhi Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245659664,
+  "lat": 19.0039990,
+  "lon": 72.8475097,
+  "tags": {
+    "name": "Ambedkar Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245660130,
+  "lat": 19.0115373,
+  "lon": 72.8905892,
+  "tags": {
+    "name": "Ambapada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245660341,
+  "lat": 19.0157176,
+  "lon": 72.8655421,
+  "tags": {
+    "name": "Korba Mithagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245660420,
+  "lat": 19.0137508,
+  "lon": 72.8654260,
+  "tags": {
+    "name": "Lal Bahadur Shastri Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245660604,
+  "lat": 19.0173423,
+  "lon": 72.8674746,
+  "tags": {
+    "name": "Panchsheel Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245660801,
+  "lat": 19.0192545,
+  "lon": 72.8689016,
+  "tags": {
+    "name": "Barkat Ali Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245660883,
+  "lat": 19.0183290,
+  "lon": 72.9091655,
+  "tags": {
+    "AND_a_nosr_p": "10005342",
+    "name": "Prayag Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245661244,
+  "lat": 19.0250002,
+  "lon": 72.9061681,
+  "tags": {
+    "AND_a_nosr_p": "10005334",
+    "name": "Vishnu Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245661614,
+  "lat": 19.0255252,
+  "lon": 72.8891898,
+  "tags": {
+    "AND_a_nosr_p": "10005335",
+    "name": "Sri Ganesh Patel Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245662182,
+  "lat": 19.0295314,
+  "lon": 72.8693989,
+  "tags": {
+    "name": "CGS Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245662657,
+  "lat": 19.0360956,
+  "lon": 72.8990875,
+  "tags": {
+    "name": "BP Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245662677,
+  "lat": 19.0350000,
+  "lon": 72.9449000,
+  "tags": {
+    "name": "Payal Pada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245662746,
+  "lat": 19.0364591,
+  "lon": 72.9508938,
+  "tags": {
+    "name": "Upper Trombay",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245662755,
+  "lat": 19.0371475,
+  "lon": 72.8394547,
+  "tags": {
+    "name": "Kapad Bazar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245662855,
+  "lat": 19.0332068,
+  "lon": 72.9488998,
+  "tags": {
+    "name": "Trombay Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245663132,
+  "lat": 19.0397000,
+  "lon": 72.9389000,
+  "tags": {
+    "name": "TIFR Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245663333,
+  "lat": 19.0412000,
+  "lon": 72.8481000,
+  "tags": {
+    "name": "Bhatiya Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245663434,
+  "lat": 19.0432474,
+  "lon": 72.8918081,
+  "tags": {
+    "AND_a_nosr_p": "10005331",
+    "name": "Collector Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245663827,
+  "lat": 19.0463395,
+  "lon": 72.8410029,
+  "tags": {
+    "name": "Fishermen Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245663905,
+  "lat": 19.0445775,
+  "lon": 72.8901279,
+  "tags": {
+    "AND_a_nosr_p": "10005328",
+    "name": "Vijay Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245663944,
+  "lat": 19.0463570,
+  "lon": 72.9025304,
+  "tags": {
+    "name": "Borla Society",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245664026,
+  "lat": 19.0458988,
+  "lon": 72.8904687,
+  "tags": {
+    "AND_a_nosr_p": "10004876",
+    "name": "VES HOSTEL",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245664135,
+  "lat": 19.0492112,
+  "lon": 72.9054038,
+  "tags": {
+    "name": "Maitri Park",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245664144,
+  "lat": 19.0485257,
+  "lon": 72.8875786,
+  "tags": {
+    "AND_a_nosr_p": "10004870",
+    "name": "Chembur Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245664227,
+  "lat": 19.0498216,
+  "lon": 72.8602953,
+  "tags": {
+    "name": "Kala Qila",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245664335,
+  "lat": 19.0492000,
+  "lon": 72.8788000,
+  "tags": {
+    "name": "Mahatma Phule Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245664355,
+  "lat": 19.0505605,
+  "lon": 72.8611572,
+  "tags": {
+    "name": "PMGP Colony",
+    "name:ur": "پی ایم جی پی کالونی",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245664525,
+  "lat": 19.0513907,
+  "lon": 72.8869208,
+  "tags": {
+    "name": "Ramji Ambedkar Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245664605,
+  "lat": 19.0514135,
+  "lon": 72.9114314,
+  "tags": {
+    "name": "Shivneri Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245665134,
+  "lat": 19.0552238,
+  "lon": 72.8938192,
+  "tags": {
+    "name": "Ganesh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245665558,
+  "lat": 19.0570035,
+  "lon": 72.8804980,
+  "tags": {
+    "name": "Naik Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245665635,
+  "lat": 19.0573887,
+  "lon": 72.8824530,
+  "tags": {
+    "name": "Shivshrushti",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245665638,
+  "lat": 19.0579562,
+  "lon": 72.9055659,
+  "tags": {
+    "name": "Subhash Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245666110,
+  "lat": 19.0607418,
+  "lon": 72.8949685,
+  "tags": {
+    "name": "Postal Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245666177,
+  "lat": 19.0610000,
+  "lon": 72.8810000,
+  "tags": {
+    "name": "Nehru Nagar",
+    "name:en": "Nehru Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245666194,
+  "lat": 19.0627075,
+  "lon": 72.8910418,
+  "tags": {
+    "name": "Sai Baba Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245666473,
+  "lat": 19.0628728,
+  "lon": 72.9019425,
+  "tags": {
+    "name": "Phule Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245666594,
+  "lat": 19.0646267,
+  "lon": 72.9008764,
+  "tags": {
+    "name": "Jyoti Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245666802,
+  "lat": 19.0627798,
+  "lon": 72.8728237,
+  "tags": {
+    "name": "Ram Manohar Lohia Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245666912,
+  "lat": 19.0656000,
+  "lon": 72.8819000,
+  "tags": {
+    "name": "Naware Baug Jagruti Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245667240,
+  "lat": 19.0679783,
+  "lon": 72.8873276,
+  "tags": {
+    "name": "Sabale Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245667526,
+  "lat": 19.0692541,
+  "lon": 72.9019227,
+  "tags": {
+    "name": "Pestom Sagar Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245667543,
+  "lat": 19.0732808,
+  "lon": 72.8625539,
+  "tags": {
+    "name": "Vidya Nagari",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245667675,
+  "lat": 19.0729921,
+  "lon": 72.8284323,
+  "tags": {
+    "name": "Ambedkar Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245667924,
+  "lat": 19.0740000,
+  "lon": 72.8815000,
+  "tags": {
+    "name": "Netaji Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245667945,
+  "lat": 19.0741334,
+  "lon": 72.9085221,
+  "tags": {
+    "name": "Garodia Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245667970,
+  "lat": 19.0764570,
+  "lon": 72.8880556,
+  "tags": {
+    "name": "Premier Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245668044,
+  "lat": 19.0761530,
+  "lon": 72.8319138,
+  "tags": {
+    "name": "Vithaldas Nagar",
+    "name:en": "Vithaldas Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245668559,
+  "lat": 19.0801000,
+  "lon": 72.9155000,
+  "tags": {
+    "name": "Samata Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245668599,
+  "lat": 19.0806000,
+  "lon": 72.8941000,
+  "tags": {
+    "name": "Sai Sagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245668677,
+  "lat": 19.0815000,
+  "lon": 72.9159000,
+  "tags": {
+    "name": "Naidu Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245669049,
+  "lat": 19.0903449,
+  "lon": 72.8405847,
+  "tags": {
+    "name": "Kothu Wadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245669204,
+  "lat": 19.0875000,
+  "lon": 72.8277000,
+  "tags": {
+    "name": "Chandrabai Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245669211,
+  "lat": 19.0895840,
+  "lon": 72.8409782,
+  "tags": {
+    "name": "MSEB Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245669378,
+  "lat": 19.0873708,
+  "lon": 72.8871292,
+  "tags": {
+    "name": "Sunder Baug",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245669472,
+  "lat": 19.0911867,
+  "lon": 72.9092006,
+  "tags": {
+    "name": "Gangawadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245669474,
+  "lat": 19.0908037,
+  "lon": 72.9167981,
+  "tags": {
+    "name": "Laxmi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245669667,
+  "lat": 19.0942142,
+  "lon": 72.8957166,
+  "tags": {
+    "name": "Narayan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245669829,
+  "lat": 19.0948840,
+  "lon": 72.9088175,
+  "tags": {
+    "name": "Jagdusha Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245669851,
+  "lat": 19.0941665,
+  "lon": 72.9108609,
+  "tags": {
+    "name": "Sainath Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245669964,
+  "lat": 19.0958613,
+  "lon": 72.8975984,
+  "tags": {
+    "name": "Shiv Premi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245670013,
+  "lat": 19.0948913,
+  "lon": 72.9135910,
+  "tags": {
+    "name": "Damodar Park",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245670274,
+  "lat": 19.0989932,
+  "lon": 72.8971921,
+  "tags": {
+    "name": "Kulkarni Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245670540,
+  "lat": 19.1034624,
+  "lon": 72.8585612,
+  "tags": {
+    "name": "Bamanwada",
+    "name:hi": "बामनवाड़ा",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245670584,
+  "lat": 19.1008449,
+  "lon": 72.9118196,
+  "tags": {
+    "name": "Amrut Nagar",
+    "place": "neighbourhood",
+    "source": "AND",
+    "wikidata": "Q4748734",
+    "wikipedia": "en:Amrut Nagar"
+  }
+},
+{
+  "type": "node",
+  "id": 245670711,
+  "lat": 19.1016318,
+  "lon": 72.9144376,
+  "tags": {
+    "name": "Park Site Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245670960,
+  "lat": 19.1061867,
+  "lon": 72.8793994,
+  "tags": {
+    "name": "Chimatpada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245670983,
+  "lat": 19.1068264,
+  "lon": 72.8756308,
+  "tags": {
+    "name": "Navpada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245671345,
+  "lat": 19.1073949,
+  "lon": 72.9289886,
+  "tags": {
+    "name": "Godrej Station Side Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245671498,
+  "lat": 19.1136865,
+  "lon": 72.9297750,
+  "tags": {
+    "name": "Hariyali",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245671585,
+  "lat": 19.1088244,
+  "lon": 72.9148393,
+  "tags": {
+    "name": "Varsha Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245671674,
+  "lat": 19.1094051,
+  "lon": 72.9173693,
+  "tags": {
+    "name": "Vasant Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245671681,
+  "lat": 19.1132940,
+  "lon": 72.9351762,
+  "tags": {
+    "name": "Kannamwar Nagar I",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245671999,
+  "lat": 19.1152873,
+  "lon": 72.8618085,
+  "tags": {
+    "name": "Chakala",
+    "name:en": "Chakala",
+    "name:hi": "चकाला",
+    "name:mr": "चकाला",
+    "place": "neighbourhood",
+    "source": "AND",
+    "wikidata": "Q4933737",
+    "wikipedia": "en:Chakala"
+  }
+},
+{
+  "type": "node",
+  "id": 245672865,
+  "lat": 19.1168383,
+  "lon": 72.9401198,
+  "tags": {
+    "name": "Kannamwar Nagar II",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245673516,
+  "lat": 19.1237521,
+  "lon": 72.8376829,
+  "tags": {
+    "name": "Munshi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245673601,
+  "lat": 19.1217086,
+  "lon": 72.9232030,
+  "tags": {
+    "name": "Chandan Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245674432,
+  "lat": 19.1336235,
+  "lon": 72.8975934,
+  "tags": {
+    "name": "Paspoli Village",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245674691,
+  "lat": 19.1312000,
+  "lon": 72.8149000,
+  "tags": {
+    "AND_a_nosr_p": "10004631",
+    "name": "Joseph Patel Wadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245674983,
+  "lat": 19.1391201,
+  "lon": 72.9048058,
+  "tags": {
+    "name": "Peru Baug",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245675316,
+  "lat": 19.1433206,
+  "lon": 72.9251908,
+  "tags": {
+    "name": "Jamil Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245675466,
+  "lat": 19.1442447,
+  "lon": 72.9244247,
+  "tags": {
+    "name": "Samarath Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245675629,
+  "lat": 19.1432444,
+  "lon": 72.8353779,
+  "tags": {
+    "name": "Behram Baug",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245675641,
+  "lat": 19.1403402,
+  "lon": 72.7890879,
+  "tags": {
+    "name": "Christian Wada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245675808,
+  "lat": 19.1432340,
+  "lon": 72.7989598,
+  "tags": {
+    "AND_a_nosr_p": "10004268",
+    "name": "Dhondewadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245675887,
+  "lat": 19.1479253,
+  "lon": 72.9241119,
+  "tags": {
+    "name": "Santoshi Mata Hill",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245675915,
+  "lat": 19.1439280,
+  "lon": 72.7980352,
+  "tags": {
+    "AND_a_nosr_p": "10004267",
+    "name": "Pascal Wadi",
+    "name:hi": "पैस्कल वाडी",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245675918,
+  "lat": 19.1490182,
+  "lon": 72.9257057,
+  "tags": {
+    "name": "Sai Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245675975,
+  "lat": 19.1491416,
+  "lon": 72.9372099,
+  "tags": {
+    "name": "Bhattipada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245676168,
+  "lat": 19.1507737,
+  "lon": 72.9309976,
+  "tags": {
+    "name": "Sarvoday Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245676436,
+  "lat": 19.1485870,
+  "lon": 72.8378546,
+  "tags": {
+    "name": "Motilal Nagar I",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245676608,
+  "lat": 19.1560835,
+  "lon": 72.9273657,
+  "tags": {
+    "name": "Tembhipada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245676654,
+  "lat": 19.1592749,
+  "lon": 72.9290662,
+  "tags": {
+    "name": "Tanajiwadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245676679,
+  "lat": 19.1543344,
+  "lon": 72.9394015,
+  "tags": {
+    "name": "Bhandup Industrial Area",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245676797,
+  "lat": 19.1599327,
+  "lon": 72.9302769,
+  "tags": {
+    "name": "Tulshethpada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245676818,
+  "lat": 19.1551050,
+  "lon": 72.8829275,
+  "tags": {
+    "name": "Agaripada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245677009,
+  "lat": 19.1628583,
+  "lon": 72.9341720,
+  "tags": {
+    "name": "Sonapur",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245677072,
+  "lat": 19.1582101,
+  "lon": 72.8359531,
+  "tags": {
+    "name": "Shastri Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245677080,
+  "lat": 19.1582000,
+  "lon": 72.9311000,
+  "tags": {
+    "name": "Shrirampada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677088,
+  "lat": 19.1585671,
+  "lon": 72.7841410,
+  "tags": {
+    "AND_a_nosr_p": "10004282",
+    "name": "Fazalbhoy Wadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677112,
+  "lat": 19.1624658,
+  "lon": 72.9562251,
+  "tags": {
+    "name": "Tatanagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245677126,
+  "lat": 19.1661238,
+  "lon": 72.9488873,
+  "tags": {
+    "AND_a_nosr_p": "10005570",
+    "name": "Vaithara Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677226,
+  "lat": 19.1658230,
+  "lon": 72.9546392,
+  "tags": {
+    "AND_a_nosr_p": "10005563",
+    "name": "LIC Housing Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677285,
+  "lat": 19.1642497,
+  "lon": 72.8395324,
+  "tags": {
+    "name": "Motilal Nagar III",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245677305,
+  "lat": 19.1650350,
+  "lon": 72.9304173,
+  "tags": {
+    "name": "Khindipada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677453,
+  "lat": 19.1619000,
+  "lon": 72.8425000,
+  "tags": {
+    "name": "Unnat Nagar",
+    "name:hi": "उन्नत नगर",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677699,
+  "lat": 19.1672245,
+  "lon": 72.9676413,
+  "tags": {
+    "name": "MHADA Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245677851,
+  "lat": 19.1658979,
+  "lon": 72.9619708,
+  "tags": {
+    "name": "Mahakali Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245677900,
+  "lat": 19.1717774,
+  "lon": 72.9463808,
+  "tags": {
+    "name": "Keshav Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245678295,
+  "lat": 19.1700000,
+  "lon": 72.8460000,
+  "tags": {
+    "name": "Udyog Nagar",
+    "name:hi": "उद्योग नगर",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245678670,
+  "lat": 19.1827053,
+  "lon": 72.9451907,
+  "tags": {
+    "name": "Veena Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245678675,
+  "lat": 19.1759000,
+  "lon": 72.8320000,
+  "tags": {
+    "AND_a_nosr_p": "10004321",
+    "name": "Ram Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245678679,
+  "lat": 19.1823190,
+  "lon": 72.9396140,
+  "tags": {
+    "AND_a_nosr_p": "10005575",
+    "name": "Rampada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245678846,
+  "lat": 19.1843222,
+  "lon": 72.9399737,
+  "tags": {
+    "name": "Yogi Hills",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245678996,
+  "lat": 19.1809000,
+  "lon": 72.8435000,
+  "tags": {
+    "name": "Rai Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245680650,
+  "lat": 19.2046539,
+  "lon": 72.8548369,
+  "tags": {
+    "name": "Chanakya Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245681095,
+  "lat": 19.2133612,
+  "lon": 72.8475671,
+  "tags": {
+    "name": "Boraspada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245681473,
+  "lat": 19.2214400,
+  "lon": 72.8300268,
+  "tags": {
+    "AND_a_nosr_p": "10004356",
+    "name": "Charkop Sector 7",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245681488,
+  "lat": 19.2221864,
+  "lon": 72.8611566,
+  "tags": {
+    "name": "Jai Jawan Nagar",
+    "name:hi": "जय जवान नगर",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245681824,
+  "lat": 19.2252681,
+  "lon": 72.8651415,
+  "tags": {
+    "name": "Devipada",
+    "place": "neighbourhood",
+    "wikidata": "Q5267555",
+    "wikipedia": "en:Devipada"
+  }
+},
+{
+  "type": "node",
+  "id": 245681862,
+  "lat": 19.2270440,
+  "lon": 72.8768029,
+  "tags": {
+    "AND_a_nosr_p": "10004421",
+    "name": "Navapada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245681906,
+  "lat": 19.2300299,
+  "lon": 72.8740024,
+  "tags": {
+    "name": "Mafco Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245681908,
+  "lat": 19.2296994,
+  "lon": 72.8393605,
+  "tags": {
+    "AND_a_nosr_p": "10004367",
+    "name": "Ashtavinayak Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245682562,
+  "lat": 19.2414963,
+  "lon": 72.8630086,
+  "tags": {
+    "name": "Ovaripada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245682701,
+  "lat": 19.2493000,
+  "lon": 72.8712000,
+  "tags": {
+    "name": "Ashokvan",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 245682920,
+  "lat": 19.2546000,
+  "lon": 72.8727000,
+  "tags": {
+    "name": "Vaishali Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245682936,
+  "lat": 19.2528641,
+  "lon": 72.8744785,
+  "tags": {
+    "name": "Dharkhadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245682981,
+  "lat": 19.2560922,
+  "lon": 72.8748351,
+  "tags": {
+    "name": "Ketkipada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 245683125,
+  "lat": 19.2595846,
+  "lon": 72.8588480,
+  "tags": {
+    "AND_a_nosr_p": "10004258",
+    "name": "Gaondevi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 494919648,
+  "lat": 18.9826851,
+  "lon": 72.8252534,
+  "tags": {
+    "name": "Dhobi Ghat",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 495196949,
+  "lat": 18.9750400,
+  "lon": 72.8250555,
+  "tags": {
+    "name": "Agripada",
+    "place": "neighbourhood",
+    "source": "AND",
+    "wikidata": "Q4694159",
+    "wikipedia": "en:Agripada"
+  }
+},
+{
+  "type": "node",
+  "id": 528974855,
+  "lat": 19.0242996,
+  "lon": 72.8721003,
+  "tags": {
+    "name": "Sangam Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 528974857,
+  "lat": 19.0266907,
+  "lon": 72.8728751,
+  "tags": {
+    "name": "Bharatiya Kamala Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 528975097,
+  "lat": 19.0295170,
+  "lon": 72.8727440,
+  "tags": {
+    "name": "Vijay Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 529957140,
+  "lat": 18.9927572,
+  "lon": 72.8175234,
+  "tags": {
+    "name": "Mariammar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 537766326,
+  "lat": 19.0215609,
+  "lon": 72.8173559,
+  "tags": {
+    "name": "Worli Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 564871060,
+  "lat": 19.2406289,
+  "lon": 72.7857512,
+  "tags": {
+    "name": "Kajori Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 564878638,
+  "lat": 19.2421038,
+  "lon": 72.7930382,
+  "tags": {
+    "name": "Juipada",
+    "place": "neighbourhood",
+    "source": "Yahoo"
+  }
+},
+{
+  "type": "node",
+  "id": 564890990,
+  "lat": 19.2168430,
+  "lon": 72.7824124,
+  "tags": {
+    "name": "Om Wadi",
+    "name:hi": "ओम वाडी",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 564890996,
+  "lat": 19.2202389,
+  "lon": 72.7871502,
+  "tags": {
+    "name": "Motempada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 588794625,
+  "lat": 18.9460331,
+  "lon": 72.8323329,
+  "tags": {
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 593088354,
+  "lat": 19.0649126,
+  "lon": 72.8270326,
+  "tags": {
+    "name": "Pali Hill",
+    "name:en": "Pali Hill",
+    "name:hi": "पाली हिल",
+    "name:mr": "पाली हिल",
+    "place": "neighbourhood",
+    "wikidata": "Q7127509",
+    "wikipedia": "en:Pali Hill"
+  }
+},
+{
+  "type": "node",
+  "id": 618775787,
+  "lat": 18.9718255,
+  "lon": 72.8167156,
+  "tags": {
+    "name": "Cowasji Jehangir Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619080937,
+  "lat": 19.0110526,
+  "lon": 73.0399276,
+  "tags": {
+    "name": "Diwale Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619081083,
+  "lat": 19.0134180,
+  "lon": 73.0303857,
+  "tags": {
+    "name": "Belapur Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619081366,
+  "lat": 19.0347072,
+  "lon": 73.0141116,
+  "tags": {
+    "name": "Nerul Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619081705,
+  "lat": 19.0424720,
+  "lon": 73.0131985,
+  "tags": {
+    "name": "Sarsole Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619109864,
+  "lat": 19.1251668,
+  "lon": 72.9962223,
+  "tags": {
+    "name": "Ghansoli Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619110166,
+  "lat": 19.1311494,
+  "lon": 72.9954214,
+  "tags": {
+    "name": "Talavali Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619110240,
+  "lat": 19.1388528,
+  "lon": 72.9989393,
+  "tags": {
+    "name": "Gothivali Gaon",
+    "name:en": "Gothivali Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619110874,
+  "lat": 19.1633186,
+  "lon": 72.9928877,
+  "tags": {
+    "name": "Airoli Gaon",
+    "name:en": "Airoli Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 619297605,
+  "lat": 18.9650659,
+  "lon": 72.8261833,
+  "tags": {
+    "name": "Kamathipura",
+    "place": "neighbourhood",
+    "wikidata": "Q13564478",
+    "wikimedia_commons": "Category:Kamathipura",
+    "wikipedia": "en:Kamathipura"
+  }
+},
+{
+  "type": "node",
+  "id": 622005421,
+  "lat": 19.0543142,
+  "lon": 72.9134872,
+  "tags": {
+    "name": "Samrat Ashok Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 622016202,
+  "lat": 19.0767716,
+  "lon": 72.8592947,
+  "tags": {
+    "name": "Mathuradas Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 622395124,
+  "lat": 19.0708218,
+  "lon": 72.8288647,
+  "tags": {
+    "name": "Ambedkar Nagar",
+    "name:en": "Ambedkar Nagar",
+    "name:mr": "अंबेडकर नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 628634586,
+  "lat": 18.9097659,
+  "lon": 72.8098311,
+  "tags": {
+    "name": "New Navy Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 631475927,
+  "lat": 19.0278681,
+  "lon": 72.8795682,
+  "tags": {
+    "name": "Bhakti Park",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 631494008,
+  "lat": 19.0400760,
+  "lon": 72.8631472,
+  "tags": {
+    "name": "Agarwada Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 631507899,
+  "lat": 19.0439420,
+  "lon": 72.8601127,
+  "tags": {
+    "name": "Social Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 631507900,
+  "lat": 19.0407158,
+  "lon": 72.8579262,
+  "tags": {
+    "name": "Joglekar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 667392410,
+  "lat": 19.1325956,
+  "lon": 72.9195901,
+  "tags": {
+    "name": "Jyotiba Phule Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 674704059,
+  "lat": 19.0454948,
+  "lon": 72.8587682,
+  "tags": {
+    "name": "Laxmi Baug",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 674705698,
+  "lat": 19.0425710,
+  "lon": 72.8493536,
+  "tags": {
+    "name": "Sheshwadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 674711712,
+  "lat": 19.0102201,
+  "lon": 72.8274009,
+  "tags": {
+    "name": "Kamgar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 674711724,
+  "lat": 19.0066978,
+  "lon": 72.8236294,
+  "tags": {
+    "name": "Gopal Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 674711733,
+  "lat": 19.0080072,
+  "lon": 72.8236164,
+  "tags": {
+    "name": "Hanuman Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 674866079,
+  "lat": 19.0504556,
+  "lon": 72.8218606,
+  "tags": {
+    "name": "Bandstand",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 683823328,
+  "lat": 18.9822516,
+  "lon": 73.0736929,
+  "tags": {
+    "name": "Pargaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 683823330,
+  "lat": 18.9798573,
+  "lon": 73.0747658,
+  "tags": {
+    "name": "Dapoli",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 700687985,
+  "lat": 19.0005743,
+  "lon": 72.8469378,
+  "tags": {
+    "AND_a_nosr_p": "10005264",
+    "name": "Parmanand Wadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 700688002,
+  "lat": 19.0079697,
+  "lon": 72.8566581,
+  "tags": {
+    "name": "Sadbhavana Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 700728217,
+  "lat": 18.9566459,
+  "lon": 72.8411014,
+  "tags": {
+    "name": "Wadi Bandar",
+    "name:hi": "वादी बंदर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 700851652,
+  "lat": 18.9896188,
+  "lon": 72.8454005,
+  "tags": {
+    "name": "Dock Labour Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 700851691,
+  "lat": 19.0006640,
+  "lon": 72.8573567,
+  "tags": {
+    "name": "Sewri Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 700886147,
+  "lat": 18.9906660,
+  "lon": 72.8412564,
+  "tags": {
+    "name": "Ambewadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 702054594,
+  "lat": 19.2467725,
+  "lon": 72.8489125,
+  "tags": {
+    "name": "I C Colony",
+    "place": "neighbourhood",
+    "wikidata": "Q5967791",
+    "wikipedia": "en:I.C. Colony"
+  }
+},
+{
+  "type": "node",
+  "id": 854249988,
+  "lat": 19.0655007,
+  "lon": 72.8342325,
+  "tags": {
+    "name": "Linking Road Shopping area",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 858714709,
+  "lat": 18.9541066,
+  "lon": 72.8394907,
+  "tags": {
+    "name": "Dana Bandar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884182550,
+  "lat": 19.1392063,
+  "lon": 72.8206450,
+  "tags": {
+    "full_name": "Sardar Vallabhbhai Patel Nagar",
+    "name": "S.V. Patel Nagar",
+    "name:etymology:wikipedia": "en:Vallabhbhai_Patel",
+    "name:hi": "एस. वी. पटेल नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884265506,
+  "lat": 19.1507707,
+  "lon": 72.8267729,
+  "tags": {
+    "name": "Milat Nagar",
+    "name:hi": "मिल्लत नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884364379,
+  "lat": 19.1505477,
+  "lon": 72.8366970,
+  "tags": {
+    "name": "Prakash Nagar",
+    "name:hi": "प्रकाश नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884364386,
+  "lat": 19.1481254,
+  "lon": 72.8275990,
+  "tags": {
+    "name": "Yamuna Nagar",
+    "name:hi": "यमुना नगर",
+    "name:pa": "ਯਮੁਨਾ ਨਗਰ",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884364394,
+  "lat": 19.1336719,
+  "lon": 72.8269553,
+  "tags": {
+    "name": "Suresh Nagar",
+    "name:hi": "सुरेश नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884364396,
+  "lat": 19.1323339,
+  "lon": 72.8296589,
+  "tags": {
+    "name": "Bhudargarh Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 884364411,
+  "lat": 19.1563461,
+  "lon": 72.8334032,
+  "tags": {
+    "name": "Bhagat Singh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 969785834,
+  "lat": 19.1014909,
+  "lon": 72.8618508,
+  "tags": {
+    "name": "P&T Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 997675414,
+  "lat": 19.2133591,
+  "lon": 72.8707940,
+  "tags": {
+    "name": "Dattani Park",
+    "name:hi": "दत्तानी पार्क",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 997676415,
+  "lat": 19.2139380,
+  "lon": 72.8795821,
+  "tags": {
+    "name": "MESB Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1034842711,
+  "lat": 18.9576845,
+  "lon": 72.8355858,
+  "tags": {
+    "addr:postcode": "400003",
+    "name": "Mandvi",
+    "name:hi": "मांडवी",
+    "place": "neighbourhood",
+    "wikidata": "Q6748260",
+    "wikipedia": "en:Mandvi, Mumbai"
+  }
+},
+{
+  "type": "node",
+  "id": 1169590221,
+  "lat": 19.1723644,
+  "lon": 72.8550274,
+  "tags": {
+    "name": "Yashodham",
+    "place": "neighbourhood",
+    "wikidata": "Q8049753",
+    "wikipedia": "en:Yashodham"
+  }
+},
+{
+  "type": "node",
+  "id": 1169602622,
+  "lat": 19.1738527,
+  "lon": 72.8670935,
+  "tags": {
+    "name": "Gokuldham",
+    "place": "neighbourhood",
+    "wikidata": "Q5578111",
+    "wikimedia_commons": "Category:Gokuldham",
+    "wikipedia": "en:Gokuldham"
+  }
+},
+{
+  "type": "node",
+  "id": 1235720470,
+  "lat": 19.2493501,
+  "lon": 72.9760694,
+  "tags": {
+    "name": "Patlipada",
+    "place": "neighbourhood",
+    "wikidata": "Q7145084",
+    "wikipedia": "en:Patlipada"
+  }
+},
+{
+  "type": "node",
+  "id": 1288925266,
+  "lat": 19.0697229,
+  "lon": 73.0883299,
+  "tags": {
+    "name": "Taloja Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1288965326,
+  "lat": 19.0158783,
+  "lon": 72.8550732,
+  "tags": {
+    "name": "Wadala Village",
+    "place": "neighbourhood",
+    "wikidata": "Q4856518",
+    "wikipedia": "en:Wadala"
+  }
+},
+{
+  "type": "node",
+  "id": 1365948775,
+  "lat": 19.0465755,
+  "lon": 72.8537044,
+  "tags": {
+    "name": "Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1366008903,
+  "lat": 19.0730876,
+  "lon": 72.8797604,
+  "tags": {
+    "name": "Buddha Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1366008909,
+  "lat": 19.0757274,
+  "lon": 72.8799569,
+  "tags": {
+    "name": "Hallow Pul",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1368747052,
+  "lat": 19.1607297,
+  "lon": 72.8475308,
+  "tags": {
+    "name": "Jawahar Nagar",
+    "name:hi": "जवाहर नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1375251415,
+  "lat": 19.0642162,
+  "lon": 72.8534765,
+  "tags": {
+    "name": "Sant Dnyaneshwar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1392005686,
+  "lat": 19.0828379,
+  "lon": 72.8435302,
+  "tags": {
+    "name": "Sen Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1640185017,
+  "lat": 18.9270890,
+  "lon": 72.8235859,
+  "tags": {
+    "name": "Nariman Point",
+    "name:hi": "नरीमन पॉइंट",
+    "name:ml": "നരിമാൻ പോയിന്റ്",
+    "place": "neighbourhood",
+    "wikidata": "Q3632268",
+    "wikimedia_commons": "Category:Nariman Point",
+    "wikipedia": "en:Nariman Point"
+  }
+},
+{
+  "type": "node",
+  "id": 1640244305,
+  "lat": 19.1422869,
+  "lon": 72.8051956,
+  "tags": {
+    "name": "Versova Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640261139,
+  "lat": 19.0512275,
+  "lon": 72.8326014,
+  "tags": {
+    "name": "Bandra Reclamation",
+    "name:en": "Bandra Reclamation",
+    "name:hi": "बांद्रा रिक्लेमेशन",
+    "name:mr": "वांद्रे रिक्लेमेशन",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640273577,
+  "lat": 19.1618994,
+  "lon": 72.9478998,
+  "tags": {
+    "name": "Nahur Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461311,
+  "lat": 18.9366512,
+  "lon": 72.8391325,
+  "tags": {
+    "name": "Ballard Estate",
+    "name:hi": "बैलार्ड एस्टेट",
+    "name:ml": "ബല്ലാർഡ് എസ്റ്റേറ്റ്",
+    "place": "neighbourhood",
+    "wikidata": "Q4851507",
+    "wikimedia_commons": "Category:Ballard Estate",
+    "wikipedia": "en:Ballard Estate"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461315,
+  "lat": 19.0222370,
+  "lon": 72.8356574,
+  "tags": {
+    "name": "Bhavanishankar",
+    "name:hi": "भवानीशंकर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461324,
+  "lat": 19.0532557,
+  "lon": 72.9377326,
+  "tags": {
+    "name": "Mandala",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461328,
+  "lat": 19.0287453,
+  "lon": 72.8391613,
+  "tags": {
+    "name": "Shivaji Park",
+    "name:en": "Shivaji Park",
+    "name:hi": "शिवाजी पार्क",
+    "name:mr": "शिवाजी पार्क",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461329,
+  "lat": 19.1196145,
+  "lon": 72.9343142,
+  "tags": {
+    "name": "Tagore Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640461335,
+  "lat": 19.0692377,
+  "lon": 72.8978464,
+  "tags": {
+    "name": "Tilak Nagar",
+    "name:mr": "टिळकनगर",
+    "name:ta": "திலக் நகர்",
+    "name:ur": "تلک نگر",
+    "place": "neighbourhood",
+    "wikidata": "Q7802034",
+    "wikipedia": "en:Tilak Nagar (Mumbai)"
+  }
+},
+{
+  "type": "node",
+  "id": 1640611527,
+  "lat": 18.9776392,
+  "lon": 72.8090351,
+  "tags": {
+    "name": "Haji Ali",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640611539,
+  "lat": 18.9285952,
+  "lon": 72.8254342,
+  "tags": {
+    "name": "Mantralaya",
+    "name:en": "Mantralaya",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640686127,
+  "lat": 19.1632294,
+  "lon": 72.7856274,
+  "tags": {
+    "AND_a_nosr_p": "10004276",
+    "name": "Erangal",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1640686128,
+  "lat": 19.1516575,
+  "lon": 72.7893644,
+  "tags": {
+    "AND_a_nosr_p": "10004285",
+    "name": "Hiradevi Nagar",
+    "name:hi": "हीरादेवी नगर",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1640730174,
+  "lat": 19.0742418,
+  "lon": 72.8253058,
+  "tags": {
+    "name": "Chuim Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1640730175,
+  "lat": 19.0771365,
+  "lon": 72.8244872,
+  "tags": {
+    "description": "Khar Danda is a major village on the Salsette Island of Mumbai, India. Located on the north western coast of Bandra district. It is a fishing village inhabited by the Koli & East Indian Catholics who are also the original inhabitants of the city and subur",
+    "ele": "10",
+    "name": "Khar Danda Koliwada",
+    "name:hi": "खार दांडा कोलीवाड़ा",
+    "name:mr": "खार दांडा कोळीवाडा",
+    "place": "neighbourhood",
+    "population": "17556",
+    "wikidata": "Q28153922",
+    "wikipedia": "en:Khar Danda"
+  }
+},
+{
+  "type": "node",
+  "id": 1640851799,
+  "lat": 19.1006803,
+  "lon": 72.8669299,
+  "tags": {
+    "name": "Sahar Village",
+    "place": "neighbourhood",
+    "wikidata": "Q155507",
+    "wikipedia": "en:Sahar Village, Mumbai"
+  }
+},
+{
+  "type": "node",
+  "id": 1641890061,
+  "lat": 19.0718905,
+  "lon": 72.8244456,
+  "tags": {
+    "name": "Union Park",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1642954353,
+  "lat": 19.0464843,
+  "lon": 72.8761301,
+  "tags": {
+    "name": "Anik Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1643031070,
+  "lat": 19.0747430,
+  "lon": 72.9039034,
+  "tags": {
+    "name": "Neelkanth Colony",
+    "name:hi": "नीलकण्ठ कॉलोनी",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1643035279,
+  "lat": 19.0841614,
+  "lon": 72.9105915,
+  "tags": {
+    "name": "Saibaba Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1643351684,
+  "lat": 19.0466800,
+  "lon": 72.9293794,
+  "tags": {
+    "name": "Mankhurd Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1643429082,
+  "lat": 19.1900398,
+  "lon": 72.9488523,
+  "tags": {
+    "name": "Kisan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1644081910,
+  "lat": 19.1320512,
+  "lon": 72.9366078,
+  "tags": {
+    "name": "Chhatrapati Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1644098755,
+  "lat": 19.1530293,
+  "lon": 72.9475181,
+  "tags": {
+    "name": "RCF Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1644110559,
+  "lat": 19.1471224,
+  "lon": 72.9914250,
+  "tags": {
+    "name": "Diva Gaon",
+    "name:en": "Diva Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1645854310,
+  "lat": 18.9923128,
+  "lon": 72.8305062,
+  "tags": {
+    "name": "BDD Chawl",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1645906569,
+  "lat": 19.0692334,
+  "lon": 72.8450702,
+  "tags": {
+    "name": "RPF Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1646196425,
+  "lat": 19.1878187,
+  "lon": 72.8641984,
+  "tags": {
+    "name": "Kurar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1646685589,
+  "lat": 19.1654931,
+  "lon": 72.8357802,
+  "tags": {
+    "AND_a_nosr_p": "10004332",
+    "name": "Motilal Nagar II",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1646685590,
+  "lat": 19.2107529,
+  "lon": 72.8361875,
+  "tags": {
+    "name": "Renuka Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1646850355,
+  "lat": 19.1312855,
+  "lon": 72.8330052,
+  "tags": {
+    "name": "Jeevan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1646850360,
+  "lat": 19.1430985,
+  "lon": 72.8246055,
+  "tags": {
+    "addr:city": "Mumbai",
+    "name": "Lokhandwala Complex",
+    "name:hi": "लोखण्डवाला कॉम्प्लेक्स",
+    "official_name": "Swami Samarth Nagar",
+    "official_name:hi": "स्वामी समर्थ नगर",
+    "place": "neighbourhood",
+    "wikidata": "Q5042162",
+    "wikipedia": "en:Lokhandwala Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 1646854000,
+  "lat": 19.2088514,
+  "lon": 72.8182221,
+  "tags": {
+    "name": "Charkop Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1646887486,
+  "lat": 19.1450637,
+  "lon": 72.8302884,
+  "tags": {
+    "name": "Adarsh Nagar",
+    "name:hi": "आदर्श नगर",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1646887494,
+  "lat": 19.1190441,
+  "lon": 72.9234984,
+  "tags": {
+    "name": "Surya Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1646957809,
+  "lat": 19.2036132,
+  "lon": 73.0015402,
+  "tags": {
+    "name": "Kharegaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1647344892,
+  "lat": 19.0580400,
+  "lon": 72.8472584,
+  "tags": {
+    "name": "Gandhi Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1647344904,
+  "lat": 19.0546701,
+  "lon": 72.8485093,
+  "tags": {
+    "name": "Kala Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1647456081,
+  "lat": 19.1916840,
+  "lon": 72.8140978,
+  "tags": {
+    "name": "Kharodi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1647556012,
+  "lat": 19.2609471,
+  "lon": 72.8625905,
+  "tags": {
+    "name": "Ashish Complex",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1647556033,
+  "lat": 19.2592685,
+  "lon": 72.8620869,
+  "tags": {
+    "name": "Avdhut Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1647556041,
+  "lat": 19.1982684,
+  "lon": 72.8093427,
+  "tags": {
+    "name": "Malvani Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1648168297,
+  "lat": 19.2225206,
+  "lon": 72.8722221,
+  "tags": {
+    "AND_a_nosr_p": "10004415",
+    "name": "Mallapada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1648168299,
+  "lat": 19.2222177,
+  "lon": 72.8751693,
+  "tags": {
+    "AND_a_nosr_p": "10004417",
+    "name": "Talaopada",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 1648244660,
+  "lat": 19.1032332,
+  "lon": 72.8916304,
+  "tags": {
+    "name": "Mohli Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1648244664,
+  "lat": 19.1193710,
+  "lon": 72.8924338,
+  "tags": {
+    "name": "Tunga Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1650223806,
+  "lat": 19.0452594,
+  "lon": 73.0712178,
+  "tags": {
+    "name": "Kharghar Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1650308571,
+  "lat": 19.1896170,
+  "lon": 72.8729839,
+  "tags": {
+    "alt_name": "Appa Pada",
+    "alt_name:en": "Appa Pada",
+    "alt_name:hi": "अप्पा पाड़ा",
+    "alt_name:mr": "अप्पा पाड़ा",
+    "name": "Appapada",
+    "name:en": "Appapada",
+    "name:hi": "अप्पापाड़ा",
+    "name:mr": "अप्पापाड़ा",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1650716579,
+  "lat": 19.0156614,
+  "lon": 72.8617964,
+  "tags": {
+    "name": "New BPT Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1650738173,
+  "lat": 19.0173569,
+  "lon": 72.8634317,
+  "tags": {
+    "name": "Nadkarni Park",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1651678056,
+  "lat": 19.1336970,
+  "lon": 72.9381936,
+  "tags": {
+    "name": "Kanjur Gaon",
+    "name:en": "Kanjur Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1651803182,
+  "lat": 19.1331581,
+  "lon": 72.8690001,
+  "tags": {
+    "name": "Model Town",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1651803183,
+  "lat": 19.1318421,
+  "lon": 72.8682445,
+  "tags": {
+    "name": "Takshila Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1651812871,
+  "lat": 19.1268361,
+  "lon": 72.8597332,
+  "tags": {
+    "name": "Aghadi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 1652037108,
+  "lat": 19.0146179,
+  "lon": 72.8892409,
+  "tags": {
+    "name": "Mahul Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2128601586,
+  "lat": 19.0509346,
+  "lon": 72.8386133,
+  "tags": {
+    "name": "Qureshi Nagar Hutment Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2168562597,
+  "lat": 18.9394438,
+  "lon": 72.8333427,
+  "tags": {
+    "name": "Bori Bunder",
+    "name:hi": "बोरी बंदर",
+    "place": "neighbourhood",
+    "wikidata": "Q4945105",
+    "wikipedia": "en:Bori Bunder"
+  }
+},
+{
+  "type": "node",
+  "id": 2173559344,
+  "lat": 19.0622146,
+  "lon": 72.8289581,
+  "tags": {
+    "name": "Adarsh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2174602452,
+  "lat": 18.9363735,
+  "lon": 72.8355736,
+  "tags": {
+    "name": "Bora Bazaar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2176723311,
+  "lat": 18.9204831,
+  "lon": 72.8289577,
+  "tags": {
+    "name": "Cusrow Baug",
+    "name:hi": "खुसरो बाग",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2294332684,
+  "lat": 19.0427072,
+  "lon": 72.8443699,
+  "tags": {
+    "name": "Navjivan Society",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2294332685,
+  "lat": 19.0340242,
+  "lon": 72.8452800,
+  "tags": {
+    "name": "Telephone Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 2294332687,
+  "lat": 19.0325181,
+  "lon": 72.8440251,
+  "tags": {
+    "name": "VSNL Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 2294442679,
+  "lat": 18.9833940,
+  "lon": 72.8278010,
+  "tags": {
+    "name": "Shantinagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 2317278913,
+  "lat": 19.0725501,
+  "lon": 72.9154451,
+  "tags": {
+    "name": "Kamaraj Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2364412584,
+  "lat": 19.1380387,
+  "lon": 72.8280164,
+  "tags": {
+    "name": "Shastri Nagar",
+    "name:hi": "शास्त्री नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2435514129,
+  "lat": 19.0894810,
+  "lon": 72.8358837,
+  "tags": {
+    "name": "Rizvi Nagar",
+    "name:en": "Rizvi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2440334021,
+  "lat": 19.1638829,
+  "lon": 73.0801184,
+  "tags": {
+    "name": "Nilaje Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2442390173,
+  "lat": 19.0635061,
+  "lon": 72.8304537,
+  "tags": {
+    "name": "Pali Village",
+    "name:en": "Pali Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2442971946,
+  "lat": 19.2338958,
+  "lon": 72.8504209,
+  "tags": {
+    "name": "Govind Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 2453909124,
+  "lat": 19.0757324,
+  "lon": 72.8631867,
+  "tags": {
+    "name": "Sundar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2630028159,
+  "lat": 18.9284581,
+  "lon": 72.8325994,
+  "tags": {
+    "name": "Kala Ghoda",
+    "name:en": "Kala Ghoda",
+    "name:hi": "काला घोडा",
+    "name:mr": "काळा घोडा",
+    "place": "neighbourhood",
+    "wikidata": "Q6349947",
+    "wikimedia_commons": "Category:Kala_Ghoda",
+    "wikipedia": "en:Kala Ghoda"
+  }
+},
+{
+  "type": "node",
+  "id": 2647295138,
+  "lat": 19.0579376,
+  "lon": 72.8968948,
+  "tags": {
+    "name": "Chembur Gaothan",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2647295139,
+  "lat": 19.0320750,
+  "lon": 72.8709317,
+  "tags": {
+    "name": "Sardar Vallabhbhai Patel Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 2663176335,
+  "lat": 19.0385829,
+  "lon": 72.9360089,
+  "tags": {
+    "name": "Mandala",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2663548200,
+  "lat": 18.9108384,
+  "lon": 72.8179634,
+  "tags": {
+    "name": "Dhobi Ghat",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2720451205,
+  "lat": 19.1297617,
+  "lon": 72.8213781,
+  "tags": {
+    "name": "Seven Bungalows",
+    "name:hi": "सात बंगला",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2720451206,
+  "lat": 19.1287942,
+  "lon": 72.8255543,
+  "tags": {
+    "name": "Four Bungalows",
+    "name:hi": "चार बंगला",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2720457383,
+  "lat": 19.1332580,
+  "lon": 72.8232509,
+  "tags": {
+    "name": "Model Town",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 2851559458,
+  "lat": 19.0488129,
+  "lon": 72.8227516,
+  "tags": {
+    "name": "Mount Mary",
+    "name:en": "Mount Mary",
+    "name:mr": "माउंट मेरी",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3204171991,
+  "lat": 19.0537812,
+  "lon": 72.9357219,
+  "tags": {
+    "name": "Bainga Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3206235282,
+  "lat": 19.0514916,
+  "lon": 72.8788545,
+  "tags": {
+    "name": "Rahul Nagar No.2",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3212404937,
+  "lat": 19.1379576,
+  "lon": 72.8241873,
+  "tags": {
+    "name": "New Mhada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3213761322,
+  "lat": 18.9480268,
+  "lon": 72.8364964,
+  "tags": {
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3224764161,
+  "lat": 19.0670061,
+  "lon": 72.9244301,
+  "tags": {
+    "name": "Milan Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3232946141,
+  "lat": 19.1635438,
+  "lon": 72.9463214,
+  "tags": {
+    "addr:city": "Mulund (West)",
+    "name": "Sarvodaya Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3308147208,
+  "lat": 19.0553090,
+  "lon": 72.8415287,
+  "tags": {
+    "name": "Garib Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3308169788,
+  "lat": 19.0389639,
+  "lon": 72.8531682,
+  "tags": {
+    "name": "Cooperative Housing Society",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3417234389,
+  "lat": 19.0565143,
+  "lon": 72.8242201,
+  "tags": {
+    "name": "Chimbai Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3564787019,
+  "lat": 19.0993828,
+  "lon": 72.9115929,
+  "tags": {
+    "name": "Anand nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3587142678,
+  "lat": 19.1301932,
+  "lon": 72.9359451,
+  "tags": {
+    "name": "Nutan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3588266504,
+  "lat": 19.1163289,
+  "lon": 72.9163751,
+  "tags": {
+    "name": "Swami Narayan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3664811366,
+  "lat": 19.1283153,
+  "lon": 72.8400381,
+  "tags": {
+    "name": "Azad Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3680461765,
+  "lat": 19.1395152,
+  "lon": 72.9234340,
+  "tags": {
+    "addr:city": "Mumbai",
+    "addr:place": "Bhandup West",
+    "name": "Farid Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3708865583,
+  "lat": 19.0920602,
+  "lon": 72.8994007,
+  "tags": {
+    "name": "Azad Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3766935667,
+  "lat": 19.0116844,
+  "lon": 72.8436070,
+  "tags": {
+    "name": "Shindewadi",
+    "name:en": "Shindewadi",
+    "name:hi": "शिंदेवाडी",
+    "name:mr": "शिंदेवाडी",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3792256440,
+  "lat": 19.1566163,
+  "lon": 72.8382077,
+  "tags": {
+    "name": "Motilal Nagar I",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3862553557,
+  "lat": 19.1387416,
+  "lon": 72.8722454,
+  "tags": {
+    "name": "Durganagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3878467629,
+  "lat": 19.1339874,
+  "lon": 72.8133820,
+  "tags": {
+    "name": "Aram Nagar 2",
+    "name:hi": "आराम नगर पार्ट २",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3878473584,
+  "lat": 19.1342726,
+  "lon": 72.8109705,
+  "tags": {
+    "AND_a_nosr_p": "10004625",
+    "name": "Jeet Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 3878473585,
+  "lat": 19.1360715,
+  "lon": 72.8091531,
+  "tags": {
+    "AND_a_nosr_p": "10004626",
+    "name": "Mangal Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 3878505997,
+  "lat": 19.0541142,
+  "lon": 72.9089703,
+  "tags": {
+    "name": "Nagesh Patil Wadi",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 3933822733,
+  "lat": 19.1319501,
+  "lon": 72.8147329,
+  "tags": {
+    "name": "Aramnagar Part 1",
+    "name:hi": "आराम नगर पार्ट १",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3981413767,
+  "lat": 19.0657535,
+  "lon": 72.9268690,
+  "tags": {
+    "name": "Sanjay Nagar I",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 3981413768,
+  "lat": 19.0673942,
+  "lon": 72.9274567,
+  "tags": {
+    "name": "Sanjay Nagar II",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4131027887,
+  "lat": 19.1657976,
+  "lon": 72.9558930,
+  "tags": {
+    "name": "Azad Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4264781361,
+  "lat": 19.1045213,
+  "lon": 72.9014595,
+  "tags": {
+    "name": "Sangharsh Nagar",
+    "name:hi": "संघर्ष नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4292823049,
+  "lat": 19.0508747,
+  "lon": 72.8890543,
+  "tags": {
+    "AND_a_nosr_p": "10004871",
+    "name": "Sindhi Society",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 4292858290,
+  "lat": 19.0287526,
+  "lon": 72.8984217,
+  "tags": {
+    "name": "Anik Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4296286803,
+  "lat": 19.0498829,
+  "lon": 72.9209034,
+  "tags": {
+    "name": "Deonar Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4296977738,
+  "lat": 19.0631262,
+  "lon": 72.8656239,
+  "tags": {
+    "name": "G Block",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4340947501,
+  "lat": 19.1082081,
+  "lon": 72.9209503,
+  "tags": {
+    "name": "Godrej Hillside Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420090,
+  "lat": 19.0837209,
+  "lon": 72.8474008,
+  "tags": {
+    "name": "Aagri Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420091,
+  "lat": 19.0813635,
+  "lon": 72.8481893,
+  "tags": {
+    "name": "Anand Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420092,
+  "lat": 19.0845244,
+  "lon": 72.8496136,
+  "tags": {
+    "name": "D'mello Compound",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420093,
+  "lat": 19.0822655,
+  "lon": 72.8438324,
+  "tags": {
+    "name": "Dauri Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420094,
+  "lat": 19.0837995,
+  "lon": 72.8492005,
+  "tags": {
+    "name": "Dhobighat",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420095,
+  "lat": 19.0835714,
+  "lon": 72.8501447,
+  "tags": {
+    "name": "Dutta Mandir",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420096,
+  "lat": 19.0858476,
+  "lon": 72.8531326,
+  "tags": {
+    "name": "Indira Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420097,
+  "lat": 19.0860707,
+  "lon": 72.8542216,
+  "tags": {
+    "name": "Lasunwadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420098,
+  "lat": 19.0860301,
+  "lon": 72.8554447,
+  "tags": {
+    "name": "Madraswadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420099,
+  "lat": 19.0848793,
+  "lon": 72.8542055,
+  "tags": {
+    "name": "Milind Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420100,
+  "lat": 19.0851733,
+  "lon": 72.8533097,
+  "tags": {
+    "name": "Subhash Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420101,
+  "lat": 19.0844028,
+  "lon": 72.8503592,
+  "tags": {
+    "name": "Utkarsha Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420102,
+  "lat": 19.0852088,
+  "lon": 72.8493346,
+  "tags": {
+    "name": "Vagri Wada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4342420103,
+  "lat": 19.0772165,
+  "lon": 72.8541304,
+  "tags": {
+    "name": "Yashwant Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4344894291,
+  "lat": 19.1048027,
+  "lon": 72.9289024,
+  "tags": {
+    "name": "Vikhroli Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4344903492,
+  "lat": 19.1052091,
+  "lon": 72.9327930,
+  "tags": {
+    "name": "Godrej Creek Side Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4374647321,
+  "lat": 19.2703629,
+  "lon": 72.8858475,
+  "tags": {
+    "name": "Kashigaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4681233372,
+  "lat": 19.1974156,
+  "lon": 72.8204124,
+  "tags": {
+    "name": "Janakalyan Nagar",
+    "name:mr": "जनकल्याण नगर",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 4846898844,
+  "lat": 19.0425635,
+  "lon": 72.8427072,
+  "tags": {
+    "name": "Mahim Parsi Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5076459628,
+  "lat": 19.2538894,
+  "lon": 72.9578380,
+  "tags": {
+    "name": "Pachwad",
+    "name:en": "Pachwad",
+    "name:hi": "पाचवड",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5138326407,
+  "lat": 19.0712777,
+  "lon": 72.9099330,
+  "tags": {
+    "name": "Ramabai Sahakar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5177728190,
+  "lat": 19.2244184,
+  "lon": 73.0924165,
+  "tags": {
+    "name": "Railway Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5178045377,
+  "lat": 19.1697955,
+  "lon": 73.0787158,
+  "tags": {
+    "name": "Katai",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5178045378,
+  "lat": 19.1686909,
+  "lon": 73.0866337,
+  "tags": {
+    "name": "Kole",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5265596382,
+  "lat": 19.0635611,
+  "lon": 72.8253892,
+  "tags": {
+    "name": "Malla",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5296411371,
+  "lat": 19.0519073,
+  "lon": 72.8308306,
+  "tags": {
+    "name": "Vaidya Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972837,
+  "lat": 18.9655566,
+  "lon": 73.0155350,
+  "tags": {
+    "name": "Kharkopar Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972869,
+  "lat": 18.9561916,
+  "lon": 73.0085435,
+  "tags": {
+    "name": "Gavan Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972870,
+  "lat": 18.9760302,
+  "lon": 73.0340908,
+  "tags": {
+    "name": "Vahal Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972871,
+  "lat": 18.9846340,
+  "lon": 73.0233255,
+  "tags": {
+    "name": "Morave Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972872,
+  "lat": 18.9719165,
+  "lon": 73.0242883,
+  "tags": {
+    "name": "Bamandongri Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972874,
+  "lat": 18.9619015,
+  "lon": 73.0266171,
+  "tags": {
+    "name": "Jawle Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5441972875,
+  "lat": 18.9583366,
+  "lon": 73.0200978,
+  "tags": {
+    "name": "Shelghar Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5442005123,
+  "lat": 18.9892080,
+  "lon": 73.0314018,
+  "tags": {
+    "name": "Moha Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5442005126,
+  "lat": 18.9262648,
+  "lon": 73.0302632,
+  "tags": {
+    "name": "Chirle",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5442005127,
+  "lat": 18.9207438,
+  "lon": 73.0205644,
+  "tags": {
+    "name": "Ranjanpada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5442005128,
+  "lat": 18.9149383,
+  "lon": 73.0277312,
+  "tags": {
+    "name": "Dhutum",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5442005129,
+  "lat": 18.8925023,
+  "lon": 73.0155198,
+  "tags": {
+    "name": "Borkhar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5449635139,
+  "lat": 19.0198781,
+  "lon": 73.0363989,
+  "tags": {
+    "name": "Agroli Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5450615066,
+  "lat": 19.0143516,
+  "lon": 73.0358530,
+  "tags": {
+    "name": "Shahbaz Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5453475996,
+  "lat": 19.1734229,
+  "lon": 72.9980972,
+  "tags": {
+    "name": "Digha Gaon",
+    "name:en": "Digha Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5453475997,
+  "lat": 19.1846328,
+  "lon": 72.9902315,
+  "tags": {
+    "name": "Vitawa Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5456500632,
+  "lat": 19.1071458,
+  "lon": 72.9144734,
+  "tags": {
+    "name": "Anandgadh",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5461223518,
+  "lat": 19.0356933,
+  "lon": 73.0742815,
+  "tags": {
+    "name": "Kopra Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5461505048,
+  "lat": 19.0290316,
+  "lon": 73.0589142,
+  "tags": {
+    "name": "Belpada Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5461505049,
+  "lat": 19.0505251,
+  "lon": 73.0801710,
+  "tags": {
+    "name": "Murbi Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5461505050,
+  "lat": 19.0629801,
+  "lon": 73.0816792,
+  "tags": {
+    "name": "Pethapada Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5461505051,
+  "lat": 19.0718878,
+  "lon": 73.0757928,
+  "tags": {
+    "name": "Owe Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5461505052,
+  "lat": 19.0671680,
+  "lon": 73.0604958,
+  "tags": {
+    "name": "Owe Camp",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5477750894,
+  "lat": 19.0920487,
+  "lon": 72.8820992,
+  "tags": {
+    "name": "Jarimari",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5482345507,
+  "lat": 19.1316825,
+  "lon": 72.8756297,
+  "tags": {
+    "name": "Sriput Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5495380211,
+  "lat": 19.0938554,
+  "lon": 72.9146793,
+  "tags": {
+    "addr:postcode": "400075",
+    "name": "Nityanand Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5496716436,
+  "lat": 19.0782328,
+  "lon": 72.8393130,
+  "tags": {
+    "addr:city": "Mumbai",
+    "addr:postcode": "400054",
+    "name": "Willingdon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5501172877,
+  "lat": 19.1466580,
+  "lon": 73.0039386,
+  "tags": {
+    "name": "Rabale Gaon",
+    "name:en": "Rabale Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5526822722,
+  "lat": 19.0963204,
+  "lon": 72.8643595,
+  "tags": {
+    "name": "Sutar Pakhadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5631616217,
+  "lat": 19.1460094,
+  "lon": 72.7906517,
+  "tags": {
+    "name": "Gabriel Wadi",
+    "name:hi": "गेब्रिएल वाडी",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5705458089,
+  "lat": 19.1722019,
+  "lon": 72.9632085,
+  "tags": {
+    "name": "Gavan Pada Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5746301555,
+  "lat": 19.1841024,
+  "lon": 72.9437657,
+  "tags": {
+    "name": "Model Town",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5839627467,
+  "lat": 19.1682298,
+  "lon": 72.9324791,
+  "tags": {
+    "name": "Amar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5839627468,
+  "lat": 19.1652706,
+  "lon": 72.9317201,
+  "tags": {
+    "name": "Rajaram Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5841547697,
+  "lat": 19.1515483,
+  "lon": 72.9300624,
+  "tags": {
+    "name": "Ganesh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5841547869,
+  "lat": 19.1576140,
+  "lon": 72.9319721,
+  "tags": {
+    "name": "Milind Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5841547870,
+  "lat": 19.1569097,
+  "lon": 72.9311165,
+  "tags": {
+    "name": "Govind Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5843139503,
+  "lat": 19.1393605,
+  "lon": 72.9204279,
+  "tags": {
+    "name": "Pratap Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5843139504,
+  "lat": 19.1412761,
+  "lon": 72.9207605,
+  "tags": {
+    "name": "Hanuman Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5890165451,
+  "lat": 19.0607777,
+  "lon": 72.8433817,
+  "tags": {
+    "name": "Shivajinagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308816,
+  "lat": 19.0318761,
+  "lon": 72.8882146,
+  "tags": {
+    "name": "Vashi Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308817,
+  "lat": 19.0407251,
+  "lon": 72.8917015,
+  "tags": {
+    "name": "Maraoli Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308818,
+  "lat": 19.0816423,
+  "lon": 72.8970712,
+  "tags": {
+    "name": "Kirol VIllage",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308819,
+  "lat": 19.0822659,
+  "lon": 72.8840089,
+  "tags": {
+    "name": "Kurla Christian Village",
+    "old_name": "Old Kurla",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308820,
+  "lat": 19.0753000,
+  "lon": 72.8676796,
+  "tags": {
+    "name": "Kalina Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308821,
+  "lat": 19.0787881,
+  "lon": 72.8643215,
+  "tags": {
+    "name": "Kolivery Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308822,
+  "lat": 19.0842532,
+  "lon": 72.8274411,
+  "tags": {
+    "name": "Tara Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308823,
+  "lat": 19.0050981,
+  "lon": 72.8460610,
+  "tags": {
+    "name": "Bhoiwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907308824,
+  "lat": 18.9999313,
+  "lon": 72.8447176,
+  "tags": {
+    "name": "Parel Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907322637,
+  "lat": 19.1084739,
+  "lon": 72.8597027,
+  "tags": {
+    "name": "Chakala Village",
+    "name:hi": "चकाला",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5907330383,
+  "lat": 19.0407302,
+  "lon": 72.8642303,
+  "tags": {
+    "name": "Sion Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5909533871,
+  "lat": 19.1412711,
+  "lon": 72.8562427,
+  "tags": {
+    "name": "Pratap Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5909533890,
+  "lat": 19.1392946,
+  "lon": 72.8573263,
+  "tags": {
+    "name": "Gufa Tekdi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5910381578,
+  "lat": 19.0452660,
+  "lon": 72.9006466,
+  "tags": {
+    "name": "Wadavli Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911311146,
+  "lat": 19.0799440,
+  "lon": 72.8563178,
+  "tags": {
+    "name": "Vakola Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911339565,
+  "lat": 19.0526325,
+  "lon": 72.9040237,
+  "tags": {
+    "name": "Ghatla Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911339579,
+  "lat": 19.0559726,
+  "lon": 72.9081058,
+  "tags": {
+    "name": "Khardev Nagar",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 5911636623,
+  "lat": 19.0649420,
+  "lon": 72.9103053,
+  "tags": {
+    "name": "Jai Ambe Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911636864,
+  "lat": 19.0615449,
+  "lon": 72.9051501,
+  "tags": {
+    "name": "Garib Janta Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911636865,
+  "lat": 19.0599072,
+  "lon": 72.9084599,
+  "tags": {
+    "name": "Gaikwad Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911636866,
+  "lat": 19.0640142,
+  "lon": 72.9055524,
+  "tags": {
+    "name": "Rahul Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911636867,
+  "lat": 19.0609314,
+  "lon": 72.9065341,
+  "tags": {
+    "name": "Ambedkar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911636870,
+  "lat": 19.0608072,
+  "lon": 72.9079664,
+  "tags": {
+    "name": "Adarsh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911695101,
+  "lat": 19.0535667,
+  "lon": 72.9214874,
+  "tags": {
+    "name": "Patilwadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5911695104,
+  "lat": 19.0483871,
+  "lon": 72.9260123,
+  "tags": {
+    "name": "Agarwadi Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5912237816,
+  "lat": 19.0536503,
+  "lon": 72.9240918,
+  "tags": {
+    "name": "Deonar Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5912237861,
+  "lat": 19.0526286,
+  "lon": 72.9197627,
+  "tags": {
+    "name": "Tata Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5912237931,
+  "lat": 19.0536782,
+  "lon": 72.9273668,
+  "tags": {
+    "name": "Lallubhai Compound",
+    "place": "neighbourhood",
+    "wikidata": "Q6480499",
+    "wikipedia": "en:Lallubhai Compound"
+  }
+},
+{
+  "type": "node",
+  "id": 5912238149,
+  "lat": 19.0563630,
+  "lon": 72.9275680,
+  "tags": {
+    "name": "Dr Zakir Hussain Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5912238198,
+  "lat": 19.0535794,
+  "lon": 72.9294777,
+  "tags": {
+    "name": "Annabhau Sathe Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913226235,
+  "lat": 19.0592481,
+  "lon": 72.9122150,
+  "tags": {
+    "name": "Limboni Baug",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913226243,
+  "lat": 19.0602622,
+  "lon": 72.9154444,
+  "tags": {
+    "name": "New Gautam Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913226261,
+  "lat": 19.0592050,
+  "lon": 72.9109007,
+  "tags": {
+    "name": "New Limboni Baug",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278068,
+  "lat": 19.0674872,
+  "lon": 72.9261571,
+  "tags": {
+    "name": "Nirankari Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278310,
+  "lat": 19.0654186,
+  "lon": 72.9283351,
+  "tags": {
+    "name": "Shashtri Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278312,
+  "lat": 19.0641916,
+  "lon": 72.9311514,
+  "tags": {
+    "name": "Shanti Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278313,
+  "lat": 19.0603103,
+  "lon": 72.9281124,
+  "tags": {
+    "name": "Adarsh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278314,
+  "lat": 19.0601405,
+  "lon": 72.9287294,
+  "tags": {
+    "name": "Bharat Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278315,
+  "lat": 19.0606526,
+  "lon": 72.9298130,
+  "tags": {
+    "name": "Indira Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278316,
+  "lat": 19.0617883,
+  "lon": 72.9302663,
+  "tags": {
+    "name": "Chikalwadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913278317,
+  "lat": 19.0628784,
+  "lon": 72.9310709,
+  "tags": {
+    "name": "Padma Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913464773,
+  "lat": 19.0551208,
+  "lon": 72.9132128,
+  "tags": {
+    "name": "Govandi Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913594285,
+  "lat": 19.0864635,
+  "lon": 72.8435397,
+  "tags": {
+    "name": "Prabhat Colony",
+    "place": "neighbourhood",
+    "source": "AND"
+  }
+},
+{
+  "type": "node",
+  "id": 5913594286,
+  "lat": 19.0816879,
+  "lon": 72.8400797,
+  "tags": {
+    "name": "Bajaj Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913594287,
+  "lat": 19.0737385,
+  "lon": 72.8390229,
+  "tags": {
+    "name": "Ram Krishna Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5913743889,
+  "lat": 19.2451847,
+  "lon": 72.8545904,
+  "tags": {
+    "name": "Shivaji Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5921458394,
+  "lat": 19.1050777,
+  "lon": 72.8433734,
+  "tags": {
+    "name": "Hastiraj Plot",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862582,
+  "lat": 19.2032745,
+  "lon": 72.9587728,
+  "tags": {
+    "name": "Dnyaneshwar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862692,
+  "lat": 19.1816061,
+  "lon": 72.9745495,
+  "tags": {
+    "name": "Parshi Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5923862735,
+  "lat": 19.1864165,
+  "lon": 72.9805196,
+  "tags": {
+    "name": "Chendani Koliwada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5924611734,
+  "lat": 19.1652605,
+  "lon": 72.9452866,
+  "tags": {
+    "addr:city": "Mumbai",
+    "name": "Gavni Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5924793303,
+  "lat": 19.1510112,
+  "lon": 72.9432535,
+  "tags": {
+    "name": "Bhandup Village West",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5924793304,
+  "lat": 19.1505602,
+  "lon": 72.9457211,
+  "tags": {
+    "name": "Bhandup Village East",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5924793791,
+  "lat": 19.1788853,
+  "lon": 72.9532850,
+  "tags": {
+    "name": "Babu Jagjivan Ram Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5936647182,
+  "lat": 19.1164520,
+  "lon": 72.8709733,
+  "tags": {
+    "name": "Kondivita Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5936647183,
+  "lat": 19.1176077,
+  "lon": 72.8760588,
+  "tags": {
+    "name": "Shivaji Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5936647216,
+  "lat": 19.1215307,
+  "lon": 72.8796691,
+  "tags": {
+    "name": "Vijay Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5936692750,
+  "lat": 19.1369178,
+  "lon": 72.8691280,
+  "tags": {
+    "name": "Poonam Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5936692778,
+  "lat": 19.1276887,
+  "lon": 72.8627819,
+  "tags": {
+    "name": "Sher e Punjab Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5937358379,
+  "lat": 19.1400092,
+  "lon": 72.8947484,
+  "tags": {
+    "name": "Filter Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5937381422,
+  "lat": 19.1470533,
+  "lon": 72.8949416,
+  "tags": {
+    "name": "Sai Bangoda Adivasi Gaothan",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5937381558,
+  "lat": 19.1222707,
+  "lon": 72.8827429,
+  "tags": {
+    "name": "Bhavani Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5937381560,
+  "lat": 19.1144347,
+  "lon": 72.8776145,
+  "tags": {
+    "name": "Marol Village",
+    "place": "neighbourhood",
+    "wikidata": "Q4933335",
+    "wikimedia_commons": "Category:Marol",
+    "wikipedia": "en:Marol"
+  }
+},
+{
+  "type": "node",
+  "id": 5937604816,
+  "lat": 19.1371560,
+  "lon": 72.8614676,
+  "tags": {
+    "name": "Shyam Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5938628743,
+  "lat": 19.1631171,
+  "lon": 72.8764129,
+  "tags": {
+    "name": "Mali Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5939253605,
+  "lat": 19.1732562,
+  "lon": 72.8808439,
+  "tags": {
+    "name": "Nagari Niwara Colony",
+    "place": "neighbourhood",
+    "website": "http://www.nivara.org/"
+  }
+},
+{
+  "type": "node",
+  "id": 5939602672,
+  "lat": 19.1645055,
+  "lon": 72.8873134,
+  "tags": {
+    "name": "Adivasi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5939660384,
+  "lat": 19.1506007,
+  "lon": 72.8830647,
+  "tags": {
+    "name": "Adarsh Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5939662878,
+  "lat": 19.1538287,
+  "lon": 72.8863263,
+  "tags": {
+    "name": "Royal Palms Estate",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5939665724,
+  "lat": 19.1530534,
+  "lon": 72.8804683,
+  "tags": {
+    "name": "Navjeevan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5939688543,
+  "lat": 19.1444030,
+  "lon": 72.8661454,
+  "tags": {
+    "name": "Ketli Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5968928052,
+  "lat": 19.1618156,
+  "lon": 72.9462889,
+  "tags": {
+    "name": "Hira Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5969724488,
+  "lat": 19.1649666,
+  "lon": 72.9505706,
+  "tags": {
+    "name": "Indira Nagar No.2",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5969983550,
+  "lat": 19.1645131,
+  "lon": 72.9523516,
+  "tags": {
+    "name": "Nane Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5970073726,
+  "lat": 19.1714017,
+  "lon": 72.9382110,
+  "tags": {
+    "name": "Veer Sambhaji Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 5984940268,
+  "lat": 19.1776756,
+  "lon": 72.9366839,
+  "tags": {
+    "name": "Hanuman Pada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6005555745,
+  "lat": 19.2018735,
+  "lon": 72.9843457,
+  "tags": {
+    "name": "Kranti Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6005555746,
+  "lat": 19.2039882,
+  "lon": 72.9842657,
+  "tags": {
+    "name": "Kamgar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6005555747,
+  "lat": 19.2046962,
+  "lon": 72.9813068,
+  "tags": {
+    "name": "Kolse Wadi",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6017562072,
+  "lat": 19.2081529,
+  "lon": 72.9542828,
+  "tags": {
+    "name": "Yashodhan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6126211462,
+  "lat": 19.0813635,
+  "lon": 72.8538930,
+  "tags": {
+    "name": "Vakola",
+    "name:en": "Vakola",
+    "name:hi": "वकोला",
+    "name:mr": "वकोला",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6133404372,
+  "lat": 19.0452872,
+  "lon": 72.8200580,
+  "tags": {
+    "name": "Land's End",
+    "place": "neighbourhood",
+    "wikidata": "Q6483808",
+    "wikipedia": "en:Land's End, Bandra"
+  }
+},
+{
+  "type": "node",
+  "id": 6229353243,
+  "lat": 19.1692533,
+  "lon": 72.9530060,
+  "tags": {
+    "name": "Vijay Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6230922018,
+  "lat": 19.1717817,
+  "lon": 72.9444230,
+  "tags": {
+    "name": "P&T Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6230922809,
+  "lat": 19.1695877,
+  "lon": 72.9477167,
+  "tags": {
+    "name": "Ramghad Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6230922820,
+  "lat": 19.1663448,
+  "lon": 72.9469871,
+  "tags": {
+    "name": "Saint Pius Colony",
+    "name:en": "Saint Pius Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6235398866,
+  "lat": 19.1776845,
+  "lon": 72.9643357,
+  "tags": {
+    "name": "Gandhi Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6235398867,
+  "lat": 19.1785386,
+  "lon": 72.9662240,
+  "tags": {
+    "name": "Anand Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6235398868,
+  "lat": 19.1745887,
+  "lon": 72.9651296,
+  "tags": {
+    "name": "Neelam Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6290451223,
+  "lat": 19.3169444,
+  "lon": 72.8548241,
+  "tags": {
+    "name": "Jesal Park",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6786347962,
+  "lat": 19.1247542,
+  "lon": 72.9201221,
+  "tags": {
+    "name": "Ramabai Ambedkar Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6786347965,
+  "lat": 19.1242410,
+  "lon": 72.9178737,
+  "tags": {
+    "name": "Tirandaz Village",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6786447317,
+  "lat": 19.1826600,
+  "lon": 72.9471534,
+  "tags": {
+    "name": "Govardhan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 6802852056,
+  "lat": 19.2133655,
+  "lon": 72.9830253,
+  "tags": {
+    "name": "Majiwada Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 8016003137,
+  "lat": 19.3876845,
+  "lon": 72.8276771,
+  "tags": {
+    "name": "Vishal Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 8717192415,
+  "lat": 19.0012230,
+  "lon": 72.8371802,
+  "tags": {
+    "name": "Railway Colony",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 8729122917,
+  "lat": 19.1634468,
+  "lon": 73.0748889,
+  "tags": {
+    "name": "Palava Phase 1",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 8740794597,
+  "lat": 18.9714363,
+  "lon": 72.8051492,
+  "tags": {
+    "name": "Breach Candy",
+    "place": "neighbourhood",
+    "wikidata": "Q4959100",
+    "wikipedia": "en:Breach Candy"
+  }
+},
+{
+  "type": "node",
+  "id": 8795603899,
+  "lat": 19.1494850,
+  "lon": 72.9968060,
+  "tags": {
+    "name": "Airoli Sector 5",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 8846665382,
+  "lat": 19.1095551,
+  "lon": 72.9160541,
+  "tags": {
+    "name": "Shivaji nagar",
+    "place": "neighbourhood",
+    "source": "local knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 9172427760,
+  "lat": 19.0120315,
+  "lon": 73.0801560,
+  "tags": {
+    "name": "Jui",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 9214906431,
+  "lat": 19.2189174,
+  "lon": 72.9734820,
+  "tags": {
+    "name": "Nalpada",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 9348211565,
+  "lat": 18.9157866,
+  "lon": 72.8189036,
+  "tags": {
+    "name": "Cuffe Parade",
+    "name:hi": "कफ़ परेड",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 9404702300,
+  "lat": 19.0537259,
+  "lon": 72.8275798,
+  "tags": {
+    "name": "Ranwar Village Square",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 9405918643,
+  "lat": 19.0509424,
+  "lon": 72.8352795,
+  "tags": {
+    "addr:state": "MH",
+    "addr:street": "L K Mehta Marg",
+    "name": "Lal Mati (Lal Mitti)",
+    "name:en": "Lal Mati (Lal Mitti)",
+    "name:hi": "लाल मिट्टी",
+    "name:mr": "लाल माती",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 9836196084,
+  "lat": 19.1471021,
+  "lon": 72.9878663,
+  "tags": {
+    "name": "Airoli Sector 10",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10244138456,
+  "lat": 19.1855580,
+  "lon": 72.9470569,
+  "tags": {
+    "name": "Vaishali Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10246522251,
+  "lat": 19.2132744,
+  "lon": 73.0747247,
+  "tags": {
+    "name": "Kopar Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10246522252,
+  "lat": 19.2051185,
+  "lon": 73.0826104,
+  "tags": {
+    "name": "Aayre Gaon",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10248764916,
+  "lat": 19.1640081,
+  "lon": 72.9337862,
+  "tags": {
+    "name": "Azad Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10257592374,
+  "lat": 19.1734198,
+  "lon": 72.9326151,
+  "tags": {
+    "name": "New Rahul Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10257627239,
+  "lat": 19.1705656,
+  "lon": 72.9319507,
+  "tags": {
+    "name": "Highland Park",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10257627240,
+  "lat": 19.1674596,
+  "lon": 72.9333347,
+  "tags": {
+    "name": "Lok Rachna",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10259407203,
+  "lat": 19.1765053,
+  "lon": 72.9545564,
+  "tags": {
+    "name": "Narayan Nagar",
+    "place": "neighbourhood"
+  }
+},
+{
+  "type": "node",
+  "id": 10263176449,
+  "lat": 19.1183882,
+  "lon": 72.9114640,
+  "tags": {
+    "name": "Hiranandani Gardens",
+    "place": "neighbourhood",
+    "wikidata": "Q23808255",
+    "wikimedia_commons": "Category:Hiranandani Gardens, Mumbai",
+    "wikipedia": "en:Hiranandani Gardens, Mumbai"
+  }
+},
+{
+  "type": "node",
+  "id": 10266021394,
+  "lat": 19.1230766,
+  "lon": 72.8896201,
+  "tags": {
+    "name": "Shiv Shakti Nagar",
+    "place": "neighbourhood"
+  }
+}
+
+  ]
+}

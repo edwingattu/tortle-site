@@ -1,0 +1,68 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-07-28T02:16:18Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 245681323,
+  "lat": 19.2119251,
+  "lon": 72.8468858,
+  "tags": {
+    "name": "Poisar",
+    "place": "quarter",
+    "wikidata": "Q7208428",
+    "wikipedia": "en:Poisar"
+  }
+},
+{
+  "type": "node",
+  "id": 12871624391,
+  "lat": 19.2168967,
+  "lon": 72.8478350,
+  "tags": {
+    "name": "Sai Baba Nagar",
+    "place": "quarter"
+  }
+},
+{
+  "type": "node",
+  "id": 12871624392,
+  "lat": 19.2238836,
+  "lon": 72.8476854,
+  "tags": {
+    "name": "Shimpoli",
+    "place": "quarter",
+    "wikidata": "Q7497036",
+    "wikipedia": "en:Shimpoli"
+  }
+},
+{
+  "type": "node",
+  "id": 12871624396,
+  "lat": 19.2149882,
+  "lon": 72.8378643,
+  "tags": {
+    "name": "Mahavir Nagar",
+    "place": "quarter"
+  }
+},
+{
+  "type": "node",
+  "id": 12871650510,
+  "lat": 19.2283752,
+  "lon": 72.8258655,
+  "tags": {
+    "name": "Gorai",
+    "place": "quarter",
+    "wikidata": "Q4932603",
+    "wikipedia": "en:Gorai"
+  }
+}
+
+  ]
+}
