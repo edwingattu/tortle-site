@@ -9,9 +9,9 @@
 
 const THREE_URL = 'https://esm.sh/three@0.161.0';
 const MAX_CAST = 60; // launched tiles per region stay far below this
-const PRISM_DEPTH_M = 10; // extrusion thickness, meters
-const HOVER_GAP_M = 8; // clear gap between flat tile and prism base
-const BOUNCE_AMP_M = 2.5; // gentle hover amplitude
+const PRISM_DEPTH_M = 48; // extrusion thickness, meters — must read at street zoom
+const HOVER_GAP_M = 30; // clear gap between flat tile and prism base
+const BOUNCE_AMP_M = 6; // gentle hover amplitude
 const BOUNCE_PERIOD_MS = 2600;
 
 export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
