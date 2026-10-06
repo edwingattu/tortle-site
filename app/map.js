@@ -76,9 +76,10 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     try {
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
-      // Quest-tile pulse: fill + border breathe on the same phase (in sync).
+      // Quest-tile pulse: the border always breathes; the fill breathes
+      // only on the quest map — explorer holds its yellow steady.
       if (map.getLayer('quest-tile-pulse')) {
-        map.setPaintProperty('quest-tile-pulse', 'fill-opacity', 0.08 + 0.2 * k);
+        map.setPaintProperty('quest-tile-pulse', 'fill-opacity', questMode ? 0.08 + 0.2 * k : 0.18);
       }
       if (map.getLayer('quest-tile-edge')) {
         map.setPaintProperty('quest-tile-edge', 'line-opacity', 0.55 + 0.45 * k);
