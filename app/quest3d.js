@@ -15,6 +15,21 @@ const BOUNCE_AMP_M = 2.5; // gentle hover amplitude
 const BOUNCE_PERIOD_MS = 2600;
 
 export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
+  // Staged boot status Heavy diagnostics live here (not swallowed):
+  // read window.__quest3d in the console (?debug=1) to see where it stops.
+  const status = {
+    stage: 'init',
+    error: null,
+    cellCount: 0,
+    meshCount: 0,
+    renderFrames: 0,
+  };
+  try { window.__quest3d = status; } catch {}
+  function mark(stage, err) {
+    status.stage = stage;
+    if (err !== undefined) status.error = String((err && err.message) || err);
+    try { console.log('[quest3d]', stage, status.error || ''); } catch {}
+  }
   let THREE = null;
   let renderer = null;
   let scene = null;
@@ -29,6 +44,7 @@ export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
     failed: false,
     setCells(cells) {
       pendingCells = Array.isArray(cells) ? cells.slice(0, MAX_CAST) : [];
+      status.cellCount = pendingCells.length;
       needsRebuild = true;
     },
   };
@@ -95,11 +111,14 @@ export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
   }
 
   async function boot() {
+    mark('import-start');
     try {
       const mod = await import(/* @vite-ignore */ THREE_URL);
       THREE = mod.default ?? mod;
-    } catch {
+      mark('import-ok');
+    } catch (err) {
       api.failed = true;
+      mark('import-fail', err);
       return;
     }
     try {
@@ -108,39 +127,52 @@ export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
         type: 'custom',
         renderingMode: '3d',
         onAdd(m, gl) {
-          renderer = new THREE.WebGLRenderer({ canvas: map.getCanvas(), context: gl, antialias: true, alpha: true });
-          renderer.autoClear = false;
-          scene = new THREE.Scene();
-          camera = new THREE.Camera();
-          scene.add(new THREE.HemisphereLight(0xfff6e0, 0x1d242e, 1.1));
-          const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-          dir.position.set(0.5, 1, 0.8);
-          scene.add(dir);
-          material = new THREE.MeshLambertMaterial({
-            color: 0xffd98a,
-            emissive: 0x7a4d12,
-            emissiveIntensity: 0.55,
-          });
-          group = new THREE.Group();
-          scene.add(group);
+          try {
+            renderer = new THREE.WebGLRenderer({ canvas: map.getCanvas(), context: gl, antialias: true, alpha: true });
+            renderer.autoClear = false;
+            scene = new THREE.Scene();
+            camera = new THREE.Camera();
+            scene.add(new THREE.HemisphereLight(0xfff6e0, 0x1d242e, 1.1));
+            const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+            dir.position.set(0.5, 1, 0.8);
+            scene.add(dir);
+            material = new THREE.MeshLambertMaterial({
+              color: 0xffd98a,
+              emissive: 0x7a4d12,
+              emissiveIntensity: 0.55,
+            });
+            group = new THREE.Group();
+            scene.add(group);
+            mark('layer-ok');
+          } catch (err) {
+            mark('renderer-fail', err);
+            throw err;
+          }
         },
         render(gl, matrix) {
           try {
             if (!renderer) return;
             if (needsRebuild) rebuild();
+            status.meshCount = group ? group.children.length : 0;
             if (!group.children.length) return; // nothing hovering, no loop
             const now = performance.now();
             for (const child of group.children) placeMesh(child, now);
             camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
             renderer.resetState();
             renderer.render(scene, camera);
+            status.renderFrames += 1;
+            if (status.renderFrames === 1) mark('render-first-frame');
             map.triggerRepaint();
-          } catch {}
+          } catch (err) {
+            mark('render-fail', err);
+          }
         },
       });
+      mark('addLayer-ok');
       api.ready = true;
-    } catch {
+    } catch (err) {
       api.failed = true;
+      mark('addLayer-fail', err);
     }
   }
 
