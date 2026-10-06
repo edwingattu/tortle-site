@@ -76,10 +76,10 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     try {
       pulsePhase += 0.35;
       const k = 0.5 + 0.5 * Math.sin(pulsePhase);
-      // Quest-tile pulse: the border always breathes; the fill breathes
-      // only on the quest map — explorer holds its yellow steady.
+      // Quest-tile fill holds 55% on both maps (no breathing — the quest
+      // border carries the motion). Explorer holds steady; quest map too.
       if (map.getLayer('quest-tile-pulse')) {
-        map.setPaintProperty('quest-tile-pulse', 'fill-opacity', questMode ? 0.08 + 0.2 * k : 0.18);
+        map.setPaintProperty('quest-tile-pulse', 'fill-opacity', 0.55);
       }
       if (map.getLayer('quest-tile-edge')) {
         map.setPaintProperty('quest-tile-edge', 'line-opacity', 0.55 + 0.45 * k);
@@ -1129,7 +1129,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         filter: ['in', ['get', 'h3'], ['literal', []]],
         paint: {
           'fill-color': '#ffec5e',
-          'fill-opacity': 0.12,
+          'fill-opacity': 0.55,
         },
       },
       'selected-outline',
@@ -1396,7 +1396,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           map.setFilter('selected-outline', ['==', ['get', 'h3'], cell || '']);
           map.setPaintProperty('selected-outline', 'line-color', questMode ? '#ffd05e' : '#ffffff');
           map.setPaintProperty('selected-outline', 'line-width', 3);
-          map.setPaintProperty('selected-outline', 'line-opacity', 0.95);
+          // Quest map selection carries no border — the yellow fill speaks.
+          map.setPaintProperty('selected-outline', 'line-opacity', questMode ? 0 : 0.95);
         }
         if (map.getLayer('selected-fill')) {
           map.setFilter('selected-fill', ['==', ['get', 'h3'], cell || '']);
