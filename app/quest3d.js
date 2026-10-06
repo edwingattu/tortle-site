@@ -89,7 +89,12 @@ export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
           else shape.lineTo(x, y);
         }
         const geo = new THREE.ExtrudeGeometry(shape, { depth: PRISM_DEPTH_M, bevelEnabled: false });
-        const mesh = new THREE.Mesh(geo, material);
+        // Diagnostic sledgehammer: unlit + depth-test off + culling off =
+        // impossible to miss if placement/scale are right.
+        const diagMat = new THREE.MeshBasicMaterial({ color: 0xffd98a, depthTest: false, transparent: true, opacity: 0.95 });
+        const mesh = new THREE.Mesh(geo, diagMat);
+        mesh.frustumCulled = false;
+        mesh.renderOrder = 999;
         mesh.userData.center = center;
         mesh.userData.phase = Math.random() * Math.PI * 2; // desync bounce
         group.add(mesh);
