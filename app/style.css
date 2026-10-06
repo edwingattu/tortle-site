@@ -2423,44 +2423,6 @@ button {
   color: #6b4a1f;
 }
 
-/* Quest hoardings: standing billboards glued to quest tile centers.
- * Bottom-anchored (pole base at the point); pointer-transparent so tile
- * taps pass through. Board reads at street zoom without covering neighbors.
- */
-.qhoard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none;
-}
-
-.qhoard-board {
-  max-width: 148px;
-  background: rgba(23, 54, 104, 0.92);
-  border: 1px solid #ffd05e;
-  border-radius: 8px;
-  padding: 6px 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-}
-
-.qhoard-title {
-  display: block;
-  max-width: 128px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 11px;
-  font-weight: 800;
-  color: #ffec5e;
-  text-align: center;
-}
-
-.qhoard-pole {
-  width: 3px;
-  height: 26px;
-  background: linear-gradient(180deg, #ffd05e, rgba(255, 208, 94, 0.25));
-}
-
 @keyframes puck-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-7px); }

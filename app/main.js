@@ -1545,13 +1545,8 @@ async function refreshQuests(force = false) {
     // every live quest, explorer takes launched only. Center dots are gone —
     // tile taps already select.
     const live = (pts || []).filter((q) => q.status !== 'recalled');
-    const shown = questMode ? live : live.filter((q) => q.status === 'deployed');
     try {
-      mapView.setQuestCells(shown.map((q) => q.h3_cell));
-    } catch {}
-    // Standing hoardings ride the same quest set on both maps.
-    try {
-      mapView.setQuestHoardings(shown.filter((q) => q.lat != null && q.lng != null));
+      mapView.setQuestCells((questMode ? live : live.filter((q) => q.status === 'deployed')).map((q) => q.h3_cell));
     } catch {}
     // Quest names + counts on the card read the cache — repaint now.
     renderHud();
