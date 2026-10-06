@@ -166,7 +166,27 @@ export function createQuestTiles3D(map, { boundaryFor, cellCenter }) {
             renderer.resetState();
             renderer.render(scene, camera);
             status.renderFrames += 1;
-            if (status.renderFrames === 1) mark('render-first-frame');
+            if (status.renderFrames === 1) {
+              mark('render-first-frame');
+              try {
+                const m0 = group.children[0];
+                const sc = m0.scale.x;
+                const proj = map.project([m0.userData.center.lng, m0.userData.center.lat]);
+                const gl2 = renderer.getContext();
+                console.log('[quest3d] probe', JSON.stringify({
+                  meshCount: group.children.length,
+                  pos: m0.position.toArray(),
+                  scale: sc,
+                  screenX: Math.round(proj.x),
+                  screenY: Math.round(proj.y),
+                  canvasW: map.getCanvas().clientWidth,
+                  canvasH: map.getCanvas().clientHeight,
+                  version: gl2.getParameter(gl2.VERSION),
+                }));
+              } catch (err) {
+                mark('probe-fail', err);
+              }
+            }
             map.triggerRepaint();
           } catch (err) {
             mark('render-fail', err);

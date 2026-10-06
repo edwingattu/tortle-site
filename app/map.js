@@ -1195,8 +1195,8 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         return dx * dx + dy * dy <= 18 * 18;
       } catch { return false; }
     }
-    map.on('click', 'hex-fills', (event) => {
-      // Quest marking preempts selection at every band.
+    // Quest marking preempts selection at every band.
+    function handleHexClick(event) {
       if (markingMode) {
         const ll = event.lngLat;
         if (ll) onQuestMark?.({ lng: ll.lng, lat: ll.lat });
@@ -1211,7 +1211,13 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       playTapTile(feature.geometry, feature.properties.status);
       try { navigator.vibrate?.(12); } catch {}
       onHexSelect?.(selectedCell, feature.properties.status);
-    });
+    }
+    map.on('click', 'hex-fills', handleHexClick);
+    // Quest cells punch clear through hex-fills (untappable there) — the
+    // pulse layer carries the same features, so taps ride it instead.
+    if (map.getLayer('quest-tile-pulse')) {
+      map.on('click', 'quest-tile-pulse', handleHexClick);
+    }
 
     map.on('mouseenter', 'hex-fills', () => {
       map.getCanvas().style.cursor = 'pointer';
