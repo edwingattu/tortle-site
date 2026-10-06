@@ -1218,6 +1218,12 @@ function renderHud() {
   updateCountdown(rec, hudStatus);
   renderTitleField(snap.store.tiles[selectedCell]?.name, hudStatus);
   renderQuestList();
+  // Sandbox search: the location bar stays up under the joystick so the
+  // pointer can teleport anywhere (Mumbai checks included).
+  try {
+    const search = $('#questSearchBar');
+    if (search) search.hidden = !(questMode || joystickApi?.isActive?.());
+  } catch {}
   layoutToolbar();
   layoutQuestCreate();
   try { renderTileGallery(); } catch {}
@@ -1476,6 +1482,11 @@ function flyToPoint(lat, lng) {
       zoom: Math.max(mapView.map.getZoom(), CONFIG.defaultZoom),
       duration: 750,
     });
+  } catch {}
+  try {
+    // Sandbox teleport: the user pointer jumps with the camera so the
+    // joystick walk continues from the searched place.
+    if (engine.isSandbox()) mapView.setUserLocation(lng, lat);
   } catch {}
   try {
     selectCell(cellAt(lat, lng), { src: 'search' });
@@ -3267,7 +3278,7 @@ $('#tiltLevel')?.addEventListener('click', async () => {
   renderHud(); // neutral card behind the gate
   try { await showLocationGate(); } catch {}
 });
-setupJoystick({
+const joystickApi = setupJoystick({
   mapView,
   engine,
   selectCell,
