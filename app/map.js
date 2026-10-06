@@ -792,7 +792,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'match',
           ['get', 'status'],
           'unlocked',
-          'rgba(0,0,0,0)',
+          '#4ea7da',
           'mastered',
           'rgba(0,0,0,0)',
           'activated',
@@ -803,7 +803,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
           'match',
           ['get', 'status'],
           'unlocked',
-          0,
+          0.15,
           'mastered',
           0,
           'activated',
@@ -1337,6 +1337,26 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     // from the last store so the switch applies instantly.
     setQuestMode(on) {
       questMode = !!on;
+      // Unlocked wash lives on the explorer map only — quest mode reports
+      // every tile unlocked, so it keeps the clear treatment there.
+      try {
+        if (map.getLayer('hex-fills')) {
+          map.setPaintProperty('hex-fills', 'fill-color', [
+            'match', ['get', 'status'],
+            'unlocked', questMode ? 'rgba(0,0,0,0)' : '#4ea7da',
+            'mastered', 'rgba(0,0,0,0)',
+            'activated', '#4ea7da',
+            '#1d242e',
+          ]);
+          map.setPaintProperty('hex-fills', 'fill-opacity', [
+            'match', ['get', 'status'],
+            'unlocked', questMode ? 0 : 0.15,
+            'mastered', 0,
+            'activated', 0.65,
+            0.62,
+          ]);
+        }
+      } catch {}
       applyQuestPulse();
       if (lastStoreRef) schedulePaint(lastStoreRef);
     },
