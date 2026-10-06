@@ -25,9 +25,9 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
     // Neutral wide view until the gate grants a real place — never a street.
     center: [0, 22],
     zoom: CONFIG.defaultZoom,
-    pitch: 60,
-    maxPitch: 60,
-    minPitch: 60,
+    pitch: 50,
+    maxPitch: 50,
+    minPitch: 50,
     attributionControl: true,
   });
 
