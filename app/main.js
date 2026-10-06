@@ -1477,6 +1477,11 @@ function focusEditedTile() {
 }
 function flyToPoint(lat, lng) {
   try {
+    // Searched places load their region: camera alone never pulls packs.
+    const next = areasDbg.regionForPoint(lat, lng);
+    if (next && next !== areasDbg.getRegion()) switchRegion(next).catch(() => {});
+  } catch {}
+  try {
     mapView.map.easeTo({
       center: [lng, lat],
       zoom: Math.max(mapView.map.getZoom(), CONFIG.defaultZoom),
