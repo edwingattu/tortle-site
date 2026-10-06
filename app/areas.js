@@ -37,6 +37,14 @@ const REGIONS = {
     credit:
       'Boundaries: NYC Dept. of City Planning / NYC Open Data · State: GADM · Countries: Natural Earth',
   },
+  bom: {
+    dir: 'bom/',
+    label: 'Mumbai',
+    bbox: [72.7, 18.8, 73.1, 19.4],
+    center: [72.8599, 19.0744],
+    credit:
+      'Boundaries: MCGM via sanjanakrishnan/mumbai_spatial_data (CC BY 4.0) · State: GADM · Countries: Natural Earth',
+  },
 };
 const REGION_KEY = 'tortle.v0.region';
 let region = 'hyd';
@@ -60,10 +68,12 @@ export function regionCenter() {
   return REGIONS[region].center;
 }
 
-/** GPS detect: NYC bbox wins, everything else is Hyderabad (V0 footprint). */
+/** GPS detect: NYC bbox wins, then Mumbai, everything else Hyderabad. */
 export function regionForPoint(lat, lng) {
-  const b = REGIONS.nyc.bbox;
-  if (lng >= b[0] && lat >= b[1] && lng <= b[2] && lat <= b[3]) return 'nyc';
+  const n = REGIONS.nyc.bbox;
+  if (lng >= n[0] && lat >= n[1] && lng <= n[2] && lat <= n[3]) return 'nyc';
+  const b = REGIONS.bom.bbox;
+  if (lng >= b[0] && lat >= b[1] && lng <= b[2] && lat <= b[3]) return 'bom';
   return 'hyd';
 }
 

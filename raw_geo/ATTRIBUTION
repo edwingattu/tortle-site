@@ -1,0 +1,16 @@
+# Boundary data sources / licences for raw_geo downloads.
+# Packs built by scripts/build-areas.py, scripts/build-nyc.py,
+# scripts/build-mumbai.py. Outputs committed under app/data/.
+
+- ghmc-wards.geojson: GHMC wards via datameet/Municipal_Spatial_Data (OSM-derived, ODbL). Hyderabad areas.
+- tg-districts-33.geojson: Telangana 33 districts via datta07/INDIAN-SHAPEFILES.
+- india-states-gadm.json: India states, GADM 4.1 level 1.
+- usa-states-gadm.json: US states, GADM 4.1 level 1.
+- nta-2020.geojson: NYC Neighborhood Tabulation Areas 2020 (NYC Open Data).
+- nyc-boroughs.geojson: NYC boroughs (NYC Dept. of City Planning / NYC Open Data).
+- countries-110m.json: world-atlas 110m TopoJSON (Natural Earth).
+- iso-regions.csv: lukes/ISO-3166-Countries-with-Regional-Codes.
+- mumbai-admin-wards.geojson: MCGM administrative wards (24),
+  sanjanakrishnan/mumbai_spatial_data (MCGM-sourced, CC BY 4.0).
+- mumbai-prabhags-2022.geojson: MCGM 2022 electoral prabhags (236),
+  sanjanakrishnan/mumbai_spatial_data (MCGM-sourced, CC BY 4.0).

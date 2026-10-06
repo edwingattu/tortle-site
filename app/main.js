@@ -2998,14 +2998,14 @@ function renderCityCards(filter) {
   const wrap = $('#gateCards');
   if (!wrap) return;
   wrap.innerHTML = '';
-  const regions = filter === 'IN' ? ['hyd'] : filter === 'US' ? ['nyc'] : ['hyd', 'nyc'];
+  const regions = filter === 'IN' ? ['hyd', 'bom'] : filter === 'US' ? ['nyc'] : ['hyd', 'bom', 'nyc'];
   for (const r of regions) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'city-card';
     btn.dataset.region = r;
     const label = areasDbg.regionLabel(r);
-    const count = r === 'nyc' ? '262 NTAs' : '145 wards';
+    const count = r === 'nyc' ? '262 NTAs' : r === 'bom' ? '236 prabhags' : '145 wards';
     btn.innerHTML = `<span><b>${label}</b><small>${count} · ${r === 'nyc' ? 'USA' : 'India'}</small></span><span>→</span>`;
     btn.addEventListener('click', async () => {
       setLocationChoice(`city:${r}`);
@@ -3203,7 +3203,7 @@ function autoRegion(lat, lng) {
   const next = regionForPoint(lat, lng);
   if (next !== areasDbg.getRegion()) {
     switchRegion(next);
-    toast(next === 'nyc' ? 'Welcome to New York — loading local tiles.' : 'Welcome home — loading Hyderabad tiles.');
+    toast(next === 'nyc' ? 'Welcome to New York — loading local tiles.' : next === 'bom' ? 'Welcome to Mumbai — loading local tiles.' : 'Welcome home — loading Hyderabad tiles.');
   }
 }
 
