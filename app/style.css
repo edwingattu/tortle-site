@@ -2582,6 +2582,25 @@ button {
 
 .g-del.armed { background: #c0392b; }
 
+/* Missing-file references: honest placeholder, not a spinner. */
+.g-item.missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  background: #f3ede2;
+  border: 1px dashed #c9bfae;
+  border-radius: 12px;
+}
+
+.g-missing-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #8a7a5f;
+}
+
+.vslab.missing { opacity: 0.75; }
+
 .g-item.selecting .g-del { display: none; }
 
 .g-check {

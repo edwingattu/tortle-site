@@ -784,6 +784,77 @@ function buildVoiceSlab(v, forCell) {
   return slab;
 }
 
+// Missing-file references: the activity row outlived its bucket object
+// (legacy bucket, failed upload, out-of-band delete). Rendered honestly
+// with a reference remover instead of retried forever.
+function clearActivityMediaRef(id) {
+  try {
+    const rec = engine.getSnapshot().store.activities.find((a) => a.id === id);
+    if (!rec) return;
+    rec.media_path = null;
+    rec.media_url = null;
+    try { engine.persist(); } catch {}
+  } catch {}
+  gallerySig = null; // force rebuild; the entry drops out of the gallery
+  renderTileGallery().catch(() => {});
+}
+function armConfirmButton(btn, label, fn) {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!btn.dataset.armed) {
+      btn.dataset.armed = '1';
+      btn.classList.add('armed');
+      const old = btn.textContent;
+      btn.textContent = label;
+      setTimeout(() => {
+        if (!btn.isConnected) return;
+        delete btn.dataset.armed;
+        btn.classList.remove('armed');
+        btn.textContent = old;
+      }, 3000);
+      return;
+    }
+    fn();
+  });
+}
+function buildMissingTile(a) {
+  const wrap = document.createElement('div');
+  wrap.className = 'g-item missing';
+  const label = document.createElement('span');
+  label.className = 'g-missing-label';
+  label.textContent = a.captureType === 'video' ? 'Video missing' : 'Photo missing';
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'g-del';
+  del.setAttribute('aria-label', 'Remove missing file reference');
+  del.textContent = '×';
+  armConfirmButton(del, '!', () => clearActivityMediaRef(a.id));
+  wrap.append(label, del);
+  return wrap;
+}
+function buildMissingSlab(a) {
+  const slab = document.createElement('div');
+  slab.className = 'vslab missing';
+  const icon = document.createElement('span');
+  icon.className = 'vslab-icon';
+  icon.innerHTML = VOICE_SVG;
+  const meta = document.createElement('span');
+  meta.className = 'vslab-meta';
+  const title = document.createElement('b');
+  title.textContent = a.title || 'Voice note';
+  const sub = document.createElement('small');
+  sub.textContent = 'File missing on server';
+  meta.append(title, sub);
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'vslab-del';
+  del.setAttribute('aria-label', 'Remove missing file reference');
+  del.textContent = '×';
+  armConfirmButton(del, '!', () => clearActivityMediaRef(a.id));
+  slab.append(icon, meta, del);
+  return slab;
+}
+
 async function renderTileGallery() {
   const gal = $('#tileGallery');
   const vgal = $('#voiceGallery');
@@ -808,8 +879,10 @@ async function renderTileGallery() {
       return;
     }
     // Resolve view URLs: same-session blob first (instant + private), else a
-    // fresh signed URL from the stored path (never persisted).
+    // fresh signed URL from the stored path (never persisted). Dead paths
+    // (sign failures, negative-cached) collect separately for honest UI.
     const items = [];
+    const deadItems = [];
     for (const a of acts) {
       let url = a.localUrl || null;
       if (!url) {
@@ -821,6 +894,7 @@ async function renderTileGallery() {
           // Signed-URL failures (bucket/policy) mean the whole tile is
           // unloadable — trace the path so dashboard keys can be compared.
           noteMediaError(a.id, p, `sign:${e?.message || e}`);
+          deadItems.push(a);
           continue;
         }
         if (my !== galleryToken || forCell !== selectedCell) return;
@@ -838,11 +912,16 @@ async function renderTileGallery() {
       .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     viewerItems = gridItems;
     lastGridCount = gridItems.length;
+    // Dead references partition by section: voice notes to the slab list,
+    // everything else to the square grid.
+    const deadKind = (a) => (a.captureType === 'voice' ? 'audio' : a.captureType === 'video' ? 'video' : 'image');
+    const gridDead = deadItems.filter((a) => deadKind(a) !== 'audio');
+    const voiceDead = deadItems.filter((a) => deadKind(a) === 'audio');
     // Prune selections that no longer exist.
     const alive = new Set(gridItems.map((it) => it.id));
     for (const id of [...gallerySelected]) if (!alive.has(id)) gallerySelected.delete(id);
     gal.innerHTML = '';
-    gal.hidden = gridItems.length === 0;
+    gal.hidden = gridItems.length === 0 && gridDead.length === 0;
     for (const { id, url, kind } of gridItems) {
       const wrap = document.createElement('div');
       wrap.className = 'g-item' + (gallerySelectMode ? ' selecting' : '') + (gallerySelected.has(id) ? ' selected' : '');
@@ -906,11 +985,12 @@ async function renderTileGallery() {
       wrap.append(el, check, del);
       gal.appendChild(wrap);
     }
+    for (const a of gridDead) gal.appendChild(buildMissingTile(a));
     updateGalleryChrome(gridItems.length);
     if (vgal) {
       vgal.innerHTML = '';
       closeSlabPlayer();
-      if (!voiceItems.length) {
+      if (!voiceItems.length && !voiceDead.length) {
         vgal.hidden = true;
       } else {
         vgal.hidden = false;
@@ -919,6 +999,7 @@ async function renderTileGallery() {
         head.textContent = `Voice notes · ${voiceItems.length}`;
         vgal.appendChild(head);
         for (const v of voiceItems) vgal.appendChild(buildVoiceSlab(v, forCell));
+        for (const a of voiceDead) vgal.appendChild(buildMissingSlab(a));
       }
     }
   } catch (e) { console.warn('[gallery] render failed:', e?.message || e); }

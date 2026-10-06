@@ -69,14 +69,27 @@ export async function flushMediaOutbox(engine) {
 
 // Signed URLs: minted per view (1h), cached in memory until near-expiry.
 // Storage paths (not URLs) are what sync carries — URLs never persist.
+// Failures negative-cache for 10 minutes: a dead path must not re-hit the
+// network (and re-spam the console) on every gallery render.
 const signCache = new Map();
+const signFailCache = new Map(); // path -> { until, message }
+const SIGN_FAIL_TTL_MS = 10 * 60 * 1000;
 export async function signedUrl(path, expiresIn = 3600) {
   const hit = signCache.get(path);
   if (hit && hit.exp > Date.now() + 5 * 60 * 1000) return hit.url;
-  const { data, error } = await supabase.storage.from('tortle-media').createSignedUrl(path, expiresIn);
-  if (error) throw error;
-  signCache.set(path, { url: data.signedUrl, exp: Date.now() + expiresIn * 1000 });
-  return data.signedUrl;
+  const fail = signFailCache.get(path);
+  if (fail && fail.until > Date.now()) throw new Error(fail.message);
+  try {
+    const { data, error } = await supabase.storage.from('tortle-media').createSignedUrl(path, expiresIn);
+    if (error) throw error;
+    signCache.set(path, { url: data.signedUrl, exp: Date.now() + expiresIn * 1000 });
+    signFailCache.delete(path);
+    return data.signedUrl;
+  } catch (e) {
+    const message = e?.message || String(e);
+    signFailCache.set(path, { until: Date.now() + SIGN_FAIL_TTL_MS, message });
+    throw e instanceof Error ? e : new Error(message);
+  }
 }
 
 // Back-compat: pre-privacy rows carry only a public media_url — derive the path.
