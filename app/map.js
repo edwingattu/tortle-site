@@ -1,7 +1,6 @@
 import * as maplibreNs from 'https://esm.sh/maplibre-gl@5.6.0';
 const maplibregl = maplibreNs.default ?? maplibreNs;
 import { CONFIG, CATEGORY_COLORS } from './config.js';
-import { createQuestTiles3D } from './quest3d.js';
 import * as areas from './areas.js';
 import {
   cellAt,
@@ -91,9 +90,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
   // Live quest cells for the tile pulse (pushed from the quests cache).
   let questCellList = [];
-  // Quest 3D cast: hovering prisms over launched tiles. Dynamic import
-  // inside quest3d.js keeps a CDN failure off the critical path.
-  let questTiles3D = null;
   function questPulseFilter() {
     return ['in', ['get', 'h3'], ['literal', questCellList]];
   }
@@ -114,8 +110,6 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       // The selection loop used to own the timer — quest cells start it too
       // so the pulse breathes with no tile ever tapped.
       if (questCellList.length && !pulseTimer) pulseTimer = window.setInterval(pulseTick, 120);
-      // The 3D cast follows the same cell list (no-op until its layer boots).
-      try { questTiles3D?.setCells(questCellList); } catch {}
     } catch {}
   }
   // No silent user position: null until a real fix lands via the gate,
@@ -1154,13 +1148,11 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       },
       'selected-outline',
     );
-    // Quest 3D cast boots here (style is loaded; the layer self-registers).
-    try {
-      questTiles3D = createQuestTiles3D(map, { boundaryFor, cellCenter });
-      if (questCellList.length) questTiles3D.setCells(questCellList);
-    } catch {}
-    // Selected tile fill: the looping pulse lives here (green for open
-    // taps, white for active/locked). Sits above the base fills (and below
+    // Selected tile fill: the looping pulse lives here (white on the
+    // regular map, amber in quest mode). Sits above the base fills (and below
+    // the selected edge + mastered border, which both draw on top untouched).
+    // Selected tile fill: the looping pulse lives here (white on the
+    // regular map, amber in quest mode). Sits above the base fills (and below
     // the selected edge + mastered border, which both draw on top untouched).
     map.addLayer(
       {
