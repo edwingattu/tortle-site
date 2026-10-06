@@ -1357,7 +1357,7 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       // quest map keeps the full-amber treatment on both.
       try {
         if (map.getLayer('quest-tile-pulse')) {
-          map.setPaintProperty('quest-tile-pulse', 'fill-color', questMode ? '#e8a33d' : '#ffec5e');
+          map.setPaintProperty('quest-tile-pulse', 'fill-color', '#ffec5e');
         }
         if (map.getLayer('quest-tile-edge')) {
           map.setPaintProperty('quest-tile-edge', 'line-color', questMode ? '#e8a33d' : '#ffffff');
