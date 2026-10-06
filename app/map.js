@@ -97,6 +97,58 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
   }
   // Live quest cells for the tile pulse (pushed from the quests cache).
   let questCellList = [];
+  // Quest hoardings: standing billboards (pole + title board) glued to
+  // quest tile centers. Markers reproject every frame, so they stand
+  // through tilt/pan/zoom with no math. Pointer-transparent — taps fall
+  // through to the tile underneath.
+  const hoardings = new Map(); // questId -> Marker
+  const HOARD_MAX = 50;
+  function setQuestHoardings(items) {
+    try {
+      const want = new Map();
+      for (const q of (items || []).slice(0, HOARD_MAX)) {
+        if (!q || !q.id) continue;
+        want.set(q.id, q);
+      }
+      for (const [id, marker] of hoardings) {
+        if (!want.has(id)) {
+          try { marker.remove(); } catch {}
+          hoardings.delete(id);
+        }
+      }
+      for (const [id, q] of want) {
+        const ex = hoardings.get(id);
+        if (ex) {
+          try {
+            ex.setLngLat([q.lng, q.lat]);
+            const label = ex.getElement()?.querySelector('.qhoard-title');
+            if (label && label.textContent !== (q.title || 'Untitled quest')) {
+              label.textContent = q.title || 'Untitled quest';
+            }
+          } catch {}
+          continue;
+        }
+        try {
+          const el = document.createElement('div');
+          el.className = 'qhoard';
+          el.setAttribute('aria-hidden', 'true');
+          const board = document.createElement('div');
+          board.className = 'qhoard-board';
+          const label = document.createElement('span');
+          label.className = 'qhoard-title';
+          label.textContent = q.title || 'Untitled quest';
+          board.appendChild(label);
+          const pole = document.createElement('div');
+          pole.className = 'qhoard-pole';
+          el.append(board, pole);
+          const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+            .setLngLat([q.lng, q.lat])
+            .addTo(map);
+          hoardings.set(id, marker);
+        } catch {}
+      }
+    } catch {}
+  }
   function questPulseFilter() {
     return ['in', ['get', 'h3'], ['literal', questCellList]];
   }
@@ -1373,7 +1425,12 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
         });
       } catch {}
     },
-    // Quest-tile pulse: feed the live quest cell list (creator map).
+    // Quest hoardings: repaint the standing billboards (or clear).
+    setQuestHoardings(items) {
+      setQuestHoardings(items);
+    },
+    // Quest-tile pulse: feed the live quest cell list (both maps —
+    // quest map takes all live quests, explorer takes launched only).
     setQuestCells(cells) {
       questCellList = Array.isArray(cells) ? [...new Set(cells.filter(Boolean))] : [];
       applyQuestPulse();
