@@ -193,7 +193,22 @@ export function ensureLevel(level) {
 export function getPack(name) {
   return packs[name] || null;
 }
-export function getMeta() {
+
+// Locality names (OSM places): per-region orientation labels, e.g. Bandra
+// West over the civic wards. Regions without the file resolve to [].
+let localityCache = {};
+export async function loadLocalities() {
+  if (localityCache[region] !== undefined) return localityCache[region];
+  try {
+    const res = await fetch(
+      new URL(`./data/${REGIONS[region].dir}localities.json`, import.meta.url));
+    if (!res.ok) throw new Error('no localities pack');
+    localityCache[region] = await res.json();
+  } catch {
+    localityCache[region] = [];
+  }
+  return localityCache[region];
+}export function getMeta() {
   return packs.meta;
 }
 export function getCity() {

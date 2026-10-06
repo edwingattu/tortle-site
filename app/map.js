@@ -917,11 +917,32 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       });
     }
     // Our tile labels replace the basemap's: hide every base symbol layer.
-    for (const l of map.getStyle().layers) {
-      if (l.type === 'symbol' && !/^(area|district|city|state|country|continent)-labels$/.test(l.id)) {
+    for (const l of map.getStyle().layers) {      if (l.type === 'symbol' && !/^(area|district|city|state|country|continent)-labels$/.test(l.id)) {
         map.setLayoutProperty(l.id, 'visibility', 'none');
       }
     }
+    // Locality names (OSM places): real names floating over civic wards.
+    // Fed per region (empty elsewhere); street + area bands only.
+    map.addSource('localities-labels', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+    map.addLayer({
+      id: 'localities-labels',
+      type: 'symbol',
+      source: 'localities-labels',
+      minzoom: 10.5,
+      layout: {
+        'text-field': ['get', 'name'],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': ['match', ['get', 'rank'], 0, 15, 1, 13, 12],
+        'text-allow-overlap': false,
+        'text-ignore-placement': false,
+        'text-padding': 20,
+      },
+      paint: {
+        'text-color': '#3d5a73',
+        'text-halo-color': 'rgba(255,255,255,0.9)',
+        'text-halo-width': 1.5,
+      },
+    });
 
     // Activity pins: hidden unless a mastered tile is tapped. Same green as
     // the mastered border, pitch-aligned so they sit flat on the tilted map.
@@ -1322,11 +1343,20 @@ export function createMap({ onHexSelect, onMove, onLevelSelect, onUserGesture, o
       window.clearTimeout(pinFadeTimer);
       setPinsOpacity(0, 300);
     },
-    // Quest-tile pulse: feed the live quest cell list (both maps —
-    // quest map takes all live quests, explorer takes launched only).
-    setQuestCells(cells) {
-      questCellList = Array.isArray(cells) ? [...new Set(cells.filter(Boolean))] : [];
-      applyQuestPulse();
+    // Locality names: repaint the region's OSM place labels (or clear).
+    setLocalities(points) {
+      const src = map.getSource('localities-labels');
+      if (!src) return;
+      try {
+        src.setData({
+          type: 'FeatureCollection',
+          features: (points || []).map((p) => ({
+            type: 'Feature',
+            properties: { name: p.name, rank: p.rank ?? 9 },
+            geometry: { type: 'Point', coordinates: p.c },
+          })),
+        });
+      } catch {}
     },
     // Objective pins: repaint the open quest's dropped blips (role-colored).
     showObjectivePins(points) {

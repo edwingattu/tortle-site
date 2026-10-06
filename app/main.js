@@ -3179,6 +3179,10 @@ async function postGateSetup(region, opts = {}) {
   selectCell(mapView.cellUnderUser(), { src: 'boot' });
   const credit = $('#dataCredit');
   if (credit) credit.textContent = areasDbg.regionCredit();
+  // Locality names follow the region (empty where no pack ships).
+  areasDbg.loadLocalities().then((pts) => {
+    try { mapView.setLocalities(pts); } catch {}
+  }).catch(() => {});
   // Push the fresh grant/city base to the cloud NOW (don't wait 30s — a
   // quick close used to leave a stale cloud row behind).
   flush(engine).catch(() => {});
@@ -3197,6 +3201,10 @@ async function switchRegion(next) {
     mapView.paint(engine.getSnapshot().store);
     // Quest availability follows the region.
     refreshQuests().catch(() => {});
+    // Locality names follow the region too.
+    areasDbg.loadLocalities().then((pts) => {
+      try { mapView.setLocalities(pts); } catch {}
+    }).catch(() => {});
     // New region, new live context: drop any pinned selection.
     selectionPinned = false;
     lastLiveCell = null;

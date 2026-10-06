@@ -88,6 +88,10 @@ def main():
     cy = sum(c[1] for c in mcenters) / len(mcenters)
     city = {'id': 'city-mumbai', 'name': 'Mumbai',
             'members': members, 'c': [cx, cy]}
+    # Districts roll up to Maharashtra (GADM IND.20_1) so the state lights up.
+    maharashtra = 'st-IND.20_1'
+    for d in ward_items:
+        d['parent'] = maharashtra
 
     def pack(items):
         return [{'id': it['id'], 'name': it['name'],
